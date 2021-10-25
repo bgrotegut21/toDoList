@@ -1,0 +1,455 @@
+.pageContent {
+    display:flex;
+    overflow:auto;
+}
+
+.addBoard {
+    width: 250px;
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+    background:rgb(198, 198, 198);
+    margin:10px;
+    padding-bottom:10px;
+    
+  
+}
+
+input {
+    outline: none;
+}
+
+
+.boardContent {
+
+    font-family: 'Roboto', sans-serif;
+}
+
+.board {
+    text-align:center;
+    background:rgb(198, 198, 198);
+    width: 290px;
+    margin:10px;
+
+
+    
+    padding-bottom:5px;
+}
+
+.taskHolder {
+    display:flex;
+    align-items:center;
+}
+
+.taskTextBox {
+    width:135px;
+}
+.exampleBoardText {
+    position:relative;
+    top:4px;
+    font-size: large
+}
+
+
+.addBoardText {
+    margin-top:5px;
+    font-size: large;
+
+
+}
+
+
+
+.task {
+    background:rgb(237, 230, 230);
+    border-left: 8px solid red;
+    margin:10px;
+}
+
+.taskTools {
+    display:flex;
+    justify-content:space-between;
+    padding-left:10px;
+    padding-right:10px;
+    margin-top:10px;
+
+}
+.tools {
+    display:flex;
+}
+
+
+.taskLabel {
+    position: relative;
+    top:5px;
+
+    margin-bottom:10px;
+    font-size: smaller;
+
+    border: 0;
+
+}
+.generalText {
+    font-size:10px;
+    margin-right: 20px;
+
+}
+
+.generalTextHolder {
+    display:flex;
+}
+
+
+
+
+.circleIcon {
+    width:10px;
+    height:10px;
+    border-radius:20px;
+    border: 3px solid black;
+    cursor:pointer;
+}
+.edit {
+    width:20px;
+    cursor:pointer;
+    margin-right:6px;
+}
+
+.circleIcon:hover {
+    background:black;
+}
+
+
+
+
+.taskAdder:hover {
+   cursor:pointer;
+   background:rgb(178, 178, 178)
+}
+
+
+
+
+
+
+
+
+.priority {
+    display:flex;
+    margin:5px;
+
+}
+.editTools {
+    display:flex;
+    width:50px;
+
+}
+.dateTool {
+    margin:5px;
+    margin-right:14px;
+    display:flex;
+}
+.taskTextBox {
+    height:20px;
+    font-family: 'Roboto', sans-serif;
+    margin:5px;
+}
+
+.editToolHolder {
+
+    display:flex;
+    justify-content:space-between;
+    
+}
+
+.buttons {
+    margin-left: 5px;
+}
+
+.datePicker {
+    margin-left:5px;
+    width:135px;
+    height:20px;
+    border:0;
+}
+
+
+
+.taskEditor {
+    background: rgb(237, 230, 230);
+    margin:10px;
+    margin-left:20px;
+    display:flex;
+    align-items: center;
+    border-left: 8px blue solid;
+    flex-direction: column;
+
+
+}
+
+
+.taskTextBox{
+    border:0;
+    margin:5px;
+
+}
+
+
+
+
+.buttons .button {
+
+    cursor: pointer;
+}
+
+.high {
+    border:5px solid red;
+}
+
+.medium {
+    border: 5px solid rgb(255,202,10);
+}
+
+
+.low {
+
+    border:5px solid green;
+}
+
+.low:hover {
+    background:green;
+}
+
+.high:hover {
+    background:red;
+}
+
+.medium:hover {
+    background: rgb(255,202,10);
+}
+
+.button {
+    color:black;
+    height:15px;
+    width:35px;
+    line-height: 15px;
+    font-size: x-small;
+    margin:2px; 
+
+}
+
+
+.buttons {
+    display:flex;
+    justify-content:center;
+    align-items: center;
+
+
+}
+
+.trashIt, .finished {
+    cursor: pointer;
+}
+
+
+.projectTypeText {
+    position:relative;
+    bottom:2px;
+}
+
+.addBoarderButton {
+    background:0;
+    width:100%;
+    border:0;
+    margin-top: 5px;
+    height:20px;
+    cursor:pointer;
+}
+
+.addBoarderButton:hover {
+    background:rgb(178, 178, 178);
+}
+
+.addBoarderTextBox {
+    font-family: 'Roboto', sans-serif;
+    border:0;
+    margin-top:5px;
+    height:20px;
+    width:220px;
+}
+
+
+.hamburgerMenu {
+    width:40px;
+    height:40px;
+    border :0;
+    background:none;
+    background-image: url(../images/hamburgerMenu.svg);
+    background-repeat:no-repeat;
+    background-size: 40px;
+    
+
+}
+
+.mobileMenu {
+    background:rgb(19, 75, 205);
+    color:white;
+    font-family: 'Roboto', sans-serif;
+    height:50px;
+    line-height: 40px;
+
+
+}
+
+
+.hamburgerMenu {
+    cursor: pointer;
+
+    margin-top :5px;
+}
+
+
+
+.mobileMenuTitle {
+    font-family: 'Cutive Mono', monospace;
+    margin:auto;
+}
+
+
+
+
+
+
+@media only screen and (max-width: 300px){
+
+    
+
+
+    .board{
+        width:185px;
+    }
+
+    .taskLabel {
+        font-size:xx-small
+    }
+
+    .edit {
+
+        width:10px;
+        
+
+    }
+
+    .generalText {
+        font-size:6px;
+        
+    }
+
+    
+    .exampleBoardText {
+        font-size: x-small;
+    }
+
+    .addBoard {
+    
+        width:185px;
+      
+    }
+
+    .addBoardText {
+        font-size:x-small;
+    }
+
+    .addBoarderTextBox {
+        height:12px;
+        font-size: xx-small;
+        width:160px;
+    }
+    
+    .addBoarderButton {
+        font-size: x-small;
+    }
+
+    .task {
+        margin:5px; 
+    }
+    .circleIcon {
+        width:2px;
+        height:2px
+    }
+
+    .taskHolderText, .dateText, .buttonText {
+        font-size:xx-small;
+        
+    }
+
+    .taskTools {
+        
+        padding-right:5px;
+        padding-left:5px;
+        margin-top:5px;
+
+    }
+
+    .taskTextBox {
+        width:80px;
+        height:12px;
+        font-size: xx-small;
+    }
+
+    .datePicker {
+        width:80px;
+        font-size: 6px;
+        height:12px;
+    }
+
+
+    
+    .high {
+        border: 3px solid red;
+    }
+
+    .medium {
+        border: 3px solid rgb(255,202,10);
+    }
+
+    .low {
+        border: 3px solid green;
+   
+    }
+
+    .task {
+        border-left: 4px solid red;
+    }
+
+    .taskEditor {
+        border-left:  4px solid blue;
+    }
+
+
+
+
+    .button {
+
+        height:10px;
+        line-height: 10px;
+        width:20px;
+        font-size: 6px;
+    }
+
+    .editTools {
+        margin-left: 30px;
+    }
+
+    .trashIt, .finished {
+        width:15px;
+
+    }
+
+    .taskAdder {
+        font-size: xx-small;
+    }
+
+
+
+}
