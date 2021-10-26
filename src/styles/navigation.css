@@ -139,6 +139,10 @@
 
 }
 
+.projectTaskHolder {
+    width:100%;
+}
+
 .plusSign {
     margin-left: 5px;
 }
