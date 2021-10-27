@@ -1,5 +1,9 @@
 import emit from "./emit.js";
 
+import "../styles/board.css";
+import "../styles/navigation.css";
+import "../styles/styles.css"
+
 const elementEvents = () => {
     const makeElement = (template) => {
         let newObject = template;
@@ -37,17 +41,17 @@ const elementEvents = () => {
         return newParentElement;
     }
 
-    const addClickBindings = (elements,func) => {
-        if (!Array.isArray(elements)) elements.addEventListener("click",func);
-        else elements.forEach(element => element.addEventListener("click",func));
+    const addBindings = (elements,func,binding) => {
+        if (!Array.isArray(elements)) elements.addEventListener(binding,func);
+        else elements.forEach(element => element.addEventListener(binding,func));
     }
 
-    const removeClickBindings = (elements,func) => {
-        if (!Array.isArray(elements)) elements.removeEventListener("click",func);
-        else elements.forEach(element => element.removeEventListener("click",func));
+    const removeBindings = (elements,func,binding) => {
+        if (!Array.isArray(elements)) elements.removeEventListener(binding,func);
+        else elements.forEach(element => element.removeEventListener(binding,func));
     }
 
-    return {makeElement, addElements, addClickBindings, removeClickBindings};
+    return {makeElement, addElements, addBindings, removeBindings};
 
 }
 
