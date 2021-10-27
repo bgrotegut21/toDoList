@@ -1,9 +1,8 @@
 import element from "./elementEvents.js"
 import dom from "./pageLayout.js";
 
-import "../styles/board.css";
-import "../styles/navigation.css";
-import "../styles/styles.css"
+
+
 
 const app = () => {
    
