@@ -9,22 +9,31 @@ const app = () => {
     let domElements;
     let projectTasks = [];
 
-    let editItems = Array.from(document.getElementsByClassName("editProject"));
-    let deleteProjects = Array.from(document.getElementsByClassName("deleteProject"));
-    let addProjectLabels = Array.from(document.getElementsByClassName("addProjectLabel"));
 
 
+
+
+    const getUpdatedElements = () => {
+        let editItems = Array.from(document.getElementsByClassName("editProject"));
+        let deleteProjects = Array.from(document.getElementsByClassName("deleteProject"));
+        let addProjectLabels = Array.from(document.getElementsByClassName("addProjectLabel"));
+        return {editItems, deleteProjects, addProjectLabels};
+    }
 
     const removeNavigationBindings = () => {
-        element.removeBindings(editItems,editItem,"click");
-        element.removeBindings(deleteProjects, deleteItem, "click");
-        element.removeBindings(addProjectLabels,createProjectTasks, "click");
+        let updatedItems = getUpdatedElements();
+        element.removeBindings(updatedItems.editItems,editItem,"click");
+        element.removeBindings(updatedItems.deleteProjects, deleteItem, "click");
+        element.removeBindings(updatedItems.addProjectLabels,createProjectTasks, "click");
+
+
     }
 
     const addNavigationBindings = () => {
-        element.addBindings(editItems,editItem,"click");
-        element.addBindings(deleteProjects, deleteItem, "click");
-        element.addBindings(addProjectLabels,createProjectTasks, "click");
+        let updatedItems = getUpdatedElements()
+        element.addBindings(updatedItems.editItems,editItem,"click");
+        element.addBindings(updatedItems.deleteProjects, deleteItem, "click");
+        element.addBindings(updatedItems.addProjectLabels,createProjectTasks, "click");
 
     }
 
@@ -39,6 +48,8 @@ const app = () => {
     }
 
     const createProjectTasks = () => {
+        console.log("projectTasks")
+        let taskText = getTextBoxValues()
         let task = {task: domElements.editText.value};
         projectTasks.push(task);
         renderProjectTasks();
@@ -47,6 +58,12 @@ const app = () => {
     }
 
 
+    const getTextBoxValues = () => {
+        let editText = document.querySelector(".editText")
+        let text = ""
+        editText.value.length == 0? text = "New Project": text = editText.value;
+        return text;
+    }
    
     const createProjectEditor = (template) => {
         let editorText = ` <div class = "editProjectButton">
@@ -76,29 +93,52 @@ const app = () => {
 
     }
 
+    const exitEditor = () => {
+        removeEditor();
+    }
+
+    const removeEditor = () => {
+        let newTask = projectTasks.filter(task => task.edit != true);
+        projectTasks = newTask;
+        renderProjectTasks();
+        renderOverlay();
+
+    }
+
     const renderOverlay =() => {
-        checkProjectEditor() ?domElements.overlay.style.display = "block": domElements.overlay.style.display = "none";
+        if (checkProjectEditor()){
+            domElements.overlay.style.display = "block";
+            domElements.wholeOverlay.style.display = "block";
+            element.addBindings(domElements.wholeOverlay,exitEditor,"click");
+        } else {
+            domElements.overlay.style.display = "none";
+            element.removeBindings(domElements.wholeOverlay)
+            domElements.wholeOverlay.style.display = "none";
+        
+        }
     }
 
     const checkProjectEditor = () => {
+        let bool = false;
         projectTasks.forEach( task => {
-            if (task.edit) return true;
+            if (task.edit) bool = true;
         })
-        return false;
+        return bool;
     }
 
     const activateProjectTask = (event) => {
         console.log(event.target)
         console.log(event.target.temporaryText)
-        if (checkProjectEditor() == false ) projectTasks.push({edit: true, placeholder: event.target.temporaryText});
+        console.log(checkProjectEditor())
+        checkProjectEditor();
+        if (!checkProjectEditor()) projectTasks.push({edit: true, placeholder: event.target.temporaryText});
         else {
-            let newTask = projectTasks.filter(task.edit != true);
+            removeEditor();
             console.log(newTask)
         }
         console.log(projectTasks)
         renderProjectTasks();
-
-
+        renderOverlay();
     }
     // when dom is called it will create the default elements
     const activateWebpage = () => {

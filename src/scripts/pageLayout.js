@@ -7,6 +7,7 @@ const createDomElements = () => {
     let body = document.body;
 
     let pageText = `    <div class = "content">
+    <div class = "wholeOverlay"></div>
     <div class = "mobileMenu">
         <button class = "hamburgerMenu"></button>
         <h2 class = "mobileMenuTitle">To Do List</h2>
@@ -56,11 +57,12 @@ const createDomElements = () => {
     let editText = document.querySelector(".editText");
     let addProjectLabel = document.querySelector(".addProjectLabel");
     let pageContent = document.querySelector(".pageContent");
+    let wholeOverlay = document.querySelector(".wholeOverlay")
 
     return {section, navigation, overlay, exit, elements,
             listTitle, upComingButton, projectAdder, projectText,
             plusSign, projectTaskHolder, editProjectButton, editText,
-            addProjectLabel,pageContent}
+            addProjectLabel,pageContent, wholeOverlay}
     }
 
 export default createDomElements;
