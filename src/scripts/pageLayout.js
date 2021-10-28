@@ -19,10 +19,13 @@ const createDomElements = () => {
             <div class = "elements">
         
                 <h1 class = "listTitle" >To Do List</h1>
+
                 <div class = "upComingButton">
                     <p>Upcoming</p>
                 </div>
-                <div class = "projectContainter">
+
+
+                <div class = "projectAdder">
                     <h2 class = "projectText">Project</h2>
                     <h2 class = "plusSign">+</h2>
                 </div>
@@ -37,7 +40,7 @@ const createDomElements = () => {
     </div>`
 
     body.innerHTML = pageText;
-        
+
     let section = document.querySelector(".sections");
     let navigation = document.querySelector(".navigation");
     let overlay = document.querySelector(".overlay");
@@ -45,7 +48,7 @@ const createDomElements = () => {
     let elements = document.querySelector(".elements");
     let listTitle = document.querySelector(".listTitle");
     let upComingButton = document.querySelector(".upComingButton");
-    let projectContainer = document.querySelector(".projectContainer");
+    let projectAdder = document.querySelector(".projectAdder");
     let projectText =  document.querySelector(".projectText");
     let plusSign = document.querySelector(".plusSign");
     let projectTaskHolder = document.querySelector(".projectTaskHolder");
@@ -55,9 +58,9 @@ const createDomElements = () => {
     let pageContent = document.querySelector(".pageContent");
 
     return {section, navigation, overlay, exit, elements,
-            listTitle, upComingButton, projectContainer, projectText,
+            listTitle, upComingButton, projectAdder, projectText,
             plusSign, projectTaskHolder, editProjectButton, editText,
-            addProjectLabel,}
+            addProjectLabel,pageContent}
     }
 
 export default createDomElements;

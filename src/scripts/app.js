@@ -61,11 +61,14 @@ const app = () => {
         removeNavigationBindings();
         domElements.projectTaskHolder.innerHTML = "";
         projectTasks.forEach(task => {
+          //  console.log(task.edit)
             if (task.edit){
                 let editorText  = createProjectEditor(task);
+       //         console.log(editorText)
+                
                 domElements.projectTaskHolder.innerHTML += editorText
             } else {
-                console.log("doing something")
+        //        console.log("doing something")
                 // do something;
             }
         })
@@ -85,16 +88,29 @@ const app = () => {
     }
 
     const activateProjectTask = (event) => {
-        if (!checkProjectEditor()) projectTasks.push({edit: true, placeholder: event.target.temporaryText});
+        console.log(event.target)
+        console.log(event.target.temporaryText)
+        if (checkProjectEditor() == false ) projectTasks.push({edit: true, placeholder: event.target.temporaryText});
+        else {
+            let newTask = projectTasks.filter(task.edit != true);
+            console.log(newTask)
+        }
+        console.log(projectTasks)
         renderProjectTasks();
 
 
     }
     // when dom is called it will create the default elements
     const activateWebpage = () => {
-        domElements = dom()
-        domElements.plusSign.temporaryText = "New Project"
-        element.addBindings(domElements.plusSign, activateProjectTask,"click")
+        domElements = dom();
+
+
+        domElements.plusSign.temporaryText = "New Project";
+        domElements.projectText.temporaryText = "New Project"
+        element.addBindings(domElements.projectAdder,activateProjectTask,"click");
+       
+    
+
 
     }
 

@@ -55,4 +55,4 @@ const elementEvents = () => {
 
 }
 
-export default elementEvents
+export default elementEvents();
