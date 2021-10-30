@@ -8,6 +8,19 @@ const createDomElements = () => {
 
     let pageText = `    <div class = "content">
     <div class = "wholeOverlay"></div>
+    <div class = "errorMessage">
+    <div class = "messageHolder">
+        <div class = "contentHolder">
+            <h2>Error</h2>
+            <p class = "errorMessageText">Text Cannot be over 10 chracters</p>
+            <button class = "exitButton">Exit</button>
+
+        </div>
+
+
+    </div>
+
+</div>
     <div class = "mobileMenu">
         <button class = "hamburgerMenu"></button>
         <h2 class = "mobileMenuTitle">To Do List</h2>
@@ -58,11 +71,14 @@ const createDomElements = () => {
     let addProjectLabel = document.querySelector(".addProjectLabel");
     let pageContent = document.querySelector(".pageContent");
     let wholeOverlay = document.querySelector(".wholeOverlay")
+    let errorMessage = document.querySelector(".errorMessage")
+    let errorMessageText = document.querySelector(".errorMessageText");
+    let exitButton = document.querySelector(".exitButton");
 
     return {section, navigation, overlay, exit, elements,
             listTitle, upComingButton, projectAdder, projectText,
             plusSign, projectTaskHolder, editProjectButton, editText,
-            addProjectLabel,pageContent, wholeOverlay}
+            addProjectLabel,pageContent, wholeOverlay, exitButton, errorMessage, errorMessageText}
     }
 
 export default createDomElements;

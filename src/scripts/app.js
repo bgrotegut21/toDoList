@@ -1,10 +1,15 @@
 import element from "./elementEvents.js"
 import dom from "./pageLayout.js";
 
+import trashImage from "../images/trash.svg";
+import editIcon from "../images/editOff.svg";
+
+
 
 
 
 const app = () => {
+    console.log(editIcon, "edit icon")
    
     let domElements;
     let projectTasks = [];
@@ -15,47 +20,92 @@ const app = () => {
 
     const getUpdatedElements = () => {
         let editItems = Array.from(document.getElementsByClassName("editProject"));
-        let deleteProjects = Array.from(document.getElementsByClassName("deleteProject"));
+        let deleteItems = Array.from(document.getElementsByClassName("deleteItem"));
         let addProjectLabels = Array.from(document.getElementsByClassName("addProjectLabel"));
-        return {editItems, deleteProjects, addProjectLabels};
+        let projectButton = Array.from(document.getElementsByClassName("projectButton"));
+        return {editItems, deleteItems, addProjectLabels, projectButton};
     }
 
-    const removeNavigationBindings = () => {
+    const removeNavigationBindings = (notRemoveAddProjectLabel) => {
         let updatedItems = getUpdatedElements();
         element.removeBindings(updatedItems.editItems,editItem,"click");
-        element.removeBindings(updatedItems.deleteProjects, deleteItem, "click");
-        element.removeBindings(updatedItems.addProjectLabels,createProjectTasks, "click");
+        element.removeBindings(updatedItems.deleteItems, deleteItem, "click");
+       if (!notRemoveAddProjectLabel) element.removeBindings(updatedItems.addProjectLabels,createProjectTasks, "click");
+       if (!notRemoveAddProjectLabel && updatedItems.addProjectLabels.length != 0) element.removeBindings(window, createProjectTasksKeys, "keydown")
+
+       console.log("binding events have been removed")
 
 
     }
+
+
+
+
 
     const addNavigationBindings = () => {
+        console.log("bindings have been added")
         let updatedItems = getUpdatedElements()
         element.addBindings(updatedItems.editItems,editItem,"click");
-        element.addBindings(updatedItems.deleteProjects, deleteItem, "click");
+        element.addBindings(updatedItems.deleteItems, deleteItem, "click");
         element.addBindings(updatedItems.addProjectLabels,createProjectTasks, "click");
+        if (updatedItems.addProjectLabels.length != 0) element.addBindings(window, createProjectTasksKeys, "keydown");
 
     }
 
-    const editItem = () => {
-        return;
-        // edits the item;
+    const addProjectButtonWholeOverayBindings = () => {
+        let updatedItems = getUpdatedElements();
+        element.addBindings(updatedItems.projectButton,exitEditor, "click");
     }
 
-    const deleteItem = () => {
-        return;
-        // deletes the item
+    const removeProjectWholeOverlayBindings = () => {
+        let updatedItems = getUpdatedElements();
+        element.removeBindings(updatedItems.projectButton, exitEditor, "click");
     }
 
-    const createProjectTasks = () => {
-        console.log("projectTasks")
-        let taskText = getTextBoxValues()
-        let task = {task: domElements.editText.value};
-        projectTasks.push(task);
+
+
+    const removeItem = (index) => {
+        let newTasks = [];
+        for (let i = 0; i < projectTasks.length; i ++){
+            if (i != index){
+                newTasks.push(projectTasks[i]);
+            }
+        }
+        projectTasks = newTasks;
         renderProjectTasks();
+    }
+
+    const deleteItem = (event) => {
+        removeItem(event.target.currentIndex)
+    }
+
+    const createProjectTasksKeys = (event)  => {
+        console.log("pressing a key")
+        if (event.key == "Enter") {
+            createProjectTasks();
+        }
+
+    }
+
+    const createProjectTasks = (index) => {
+        let taskText = getTextBoxValues()
+        let task = {task: taskText};
+      
+        typeof index != "undefined" ? projectTasks[index] = task:   projectTasks.push(task);
+        renderProjectTasks();
+        removeEditor();
 
 
     }
+
+    const editItem = (event) => {
+        let newTasks = projectTasks;
+        newTasks[event.target.currentIndex] = {edit: true, placeHolder:event.target.currentText};
+        
+
+
+    }
+
 
 
     const getTextBoxValues = () => {
@@ -74,6 +124,32 @@ const app = () => {
 
     }
 
+    const renderErrorMessage = () => {
+        // will create error message
+        return;
+    }
+
+
+    const createTask = (task) => {
+
+        let taskText = `                             <div class  = "projectButton projectButtonHover">
+        <div class = "projectTools">
+                <img  class = "deleteItem" src="${trashImage}" alt="">
+                <img class = "editProject" src="${editIcon}" alt="">
+            </div> 
+
+            <div class = "projectContainer">
+                <p class = "projectContainerText">${task.task}</p>
+            </div>
+        </div>`
+        return taskText;
+
+
+
+
+
+    }
+
     const renderProjectTasks = () => {
         removeNavigationBindings();
         domElements.projectTaskHolder.innerHTML = "";
@@ -85,8 +161,33 @@ const app = () => {
                 
                 domElements.projectTaskHolder.innerHTML += editorText
             } else {
-        //        console.log("doing something")
-                // do something;
+                let taskText = createTask(task);
+                domElements.projectTaskHolder.innerHTML += taskText
+
+            
+                let deleteElement = Array.from(document.getElementsByClassName("deleteItem"));
+                let editElement = Array.from(document.getElementsByClassName("editProject"));
+                let projectContainerText = Array.from(document.getElementsByClassName("projectContainerText"));
+
+
+                let elementIndex = deleteElement.length -1;
+
+                deleteElement = deleteElement[elementIndex];
+                editElement = editElement[elementIndex];
+                projectContainerText = projectContainerText[elementIndex];
+
+                console.log(elementIndex, "current element index")
+                deleteElement.currentIndex = elementIndex;
+                console.log(editElement, "edit element")
+                editElement.currentIndex = elementIndex;
+                editElement.currentText = projectContainerText;
+                
+
+            
+           //     console.log(taskElement, "task element");
+            //    console.log(taskElement.currentIndex, "task element current index")
+
+                
             }
         })
         addNavigationBindings();
@@ -94,6 +195,7 @@ const app = () => {
     }
 
     const exitEditor = () => {
+        console.log("exiting editor")
         removeEditor();
     }
 
@@ -110,10 +212,13 @@ const app = () => {
             domElements.overlay.style.display = "block";
             domElements.wholeOverlay.style.display = "block";
             element.addBindings(domElements.wholeOverlay,exitEditor,"click");
+            addProjectButtonWholeOverayBindings()
+            
         } else {
             domElements.overlay.style.display = "none";
             element.removeBindings(domElements.wholeOverlay)
             domElements.wholeOverlay.style.display = "none";
+            removeProjectWholeOverlayBindings();
         
         }
     }
@@ -125,13 +230,24 @@ const app = () => {
         })
         return bool;
     }
+    const disablePageContentElements = () => {
+        removeNavigationBindings(true);
+        let updatedElement = getUpdatedElements();
+        if (updatedElement.projectButton.length == 0) return;
+        updatedElement.projectButton.forEach( button =>{
+            console.log(button, "current button")
+            button.classList.remove("projectButtonHover")
+            button.style.color = "rgb(157,162,175)";
+            button.style.cursor = "pointer"
 
-    const activateProjectTask = (event) => {
-        console.log(event.target)
-        console.log(event.target.temporaryText)
-        console.log(checkProjectEditor())
-        checkProjectEditor();
-        if (!checkProjectEditor()) projectTasks.push({edit: true, placeholder: event.target.temporaryText});
+        })
+
+    }
+
+    const createEditor = (text,index) => {
+        if (!checkProjectEditor()) {
+            typeof index != "undefined" ?projectTasks[index] = {edit:true, placeholder:}:projectTasks.push({edit: true, placeholder: text})
+        }
         else {
             removeEditor();
             console.log(newTask)
@@ -139,6 +255,13 @@ const app = () => {
         console.log(projectTasks)
         renderProjectTasks();
         renderOverlay();
+        disablePageContentElements();
+
+    }
+
+    const activateProjectTask = (event) => {
+        createEditor(event.target.temporaryText);
+
     }
     // when dom is called it will create the default elements
     const activateWebpage = () => {
@@ -147,6 +270,8 @@ const app = () => {
 
         domElements.plusSign.temporaryText = "New Project";
         domElements.projectText.temporaryText = "New Project"
+        domElements.projectAdder.temporaryText = "New Project"
+
         element.addBindings(domElements.projectAdder,activateProjectTask,"click");
        
     
