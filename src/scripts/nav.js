@@ -137,10 +137,6 @@ const nav = () => {
 
     }
 
-    const renderErrorMessage = () => {
-        // will create error message
-        return;
-    }
 
     
 

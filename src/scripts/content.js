@@ -20,14 +20,6 @@ const content = () => {
         return {boardTextBox, boarderButton}
     }
 
-    const addBoard = (text,index) => {
-        if (text.length != 0) {
-            let boardTask = {board: true, text};
-            listTasks = element.addItem(listTasks,index,boardTask);
-        }
-        renderListTasks();
-    }
-
     const removeContentBindings = () => {
         let elements = getUpdatedElements();
         element.removeBindings(elements.boarderButton, addBoard,"click");
@@ -58,8 +50,8 @@ const content = () => {
         
     }
 
-    const createBoard = (board) => {
-        let text = board.text;
+    const createBoard = (template) => {
+        let text = template.text;
         let boardText =`<div class = "boardContent">
                             <div class = "board">
                                 <h2 class = "exampleBoardText">${text}</h2>
@@ -70,7 +62,17 @@ const content = () => {
     }
 
     const createAddBoard = () => {
-        let 
+        let addBoardText = ` <div class = "boardContent">
+                                <div class = "addBoard">
+                                    <h2 class = "addBoardText">Add Board</h2>
+                                    <input class = "addBoarderTextBox" type="text">
+
+
+                                    <button class = "addBoarderButton">Add</button>
+                                </div>
+
+                            </div>`
+        return addBoardText;
     }
 
 
@@ -78,16 +80,33 @@ const content = () => {
     const renderListTasks = () => {
         removeContentBindings();
         dom.pageContent.innerHTML = "";
+
         listTasks.forEach(task => {
             if (task.board){
                 let board = createBoard(task);
                 dom.pageContent.innerHTML = board
-            } else if (task.addBoard) {
-                
+            }                
+        })    
+
+        listTasks.forEach(task => {
+            if (task.addBoard){
+                let addBoard = createAddBoard();
+                dom.pageContent.innerHTML = addBoard
+
             }
         })
+        addContentBindings();
 
-        
+
+    }
+
+
+    const createBoardTemplate =(currenText) => {
+        if (currenText.length == 0) return;
+        let board = {board: true, text:"", tasks: []};
+        listTasks.push(board);
+        renderListTasks();
+
 
     }
 
@@ -98,6 +117,7 @@ const content = () => {
 
     const ativateContent = (index) => {
         listTasks = retrieveData(index);
+
     }
     
 
