@@ -1,9 +1,8 @@
 
+import nav from "./nav.js";
+import {createDomElements} from "./pageLayout.js";
 
 
-import app from "./app.js";
-
-
-
-let mainApp = app();
-mainApp.activateWebpage();
+createDomElements();
+let mainNavigation = nav();
+mainNavigation.activateNavigation();

@@ -55,6 +55,11 @@ const createDomElements = () => {
 
     body.innerHTML = pageText;
 
+}
+
+
+
+const getDomElements = () => {
     let section = document.querySelector(".sections");
     let navigation = document.querySelector(".navigation");
     let overlay = document.querySelector(".overlay");
@@ -81,5 +86,6 @@ const createDomElements = () => {
             addProjectLabel,pageContent, wholeOverlay, exitButton, errorMessage, errorMessageText}
     }
 
-export default createDomElements;
+
+export  {getDomElements, createDomElements}
     

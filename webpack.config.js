@@ -6,10 +6,13 @@ module.exports = {
     mode:"development",
     entry: {
         index:"./src/scripts/index.js",
-        app:"./src/scripts/app.js",
+        nav:"./src/scripts/nav.js",
         layout:"./src/scripts/pageLayout.js",
         emit:"./src/scripts/emit.js",
         elementEvent: "./src/scripts/elementEvents.js",
+        content: "./src/scripts/content.js",
+        send: "./src/scripts/send.js"
+
 
     },
     output: {

@@ -82,6 +82,10 @@
 
 }
 
+.projectContainerText {
+    cursor: pointer;
+}
+
 .projectContainer p {
     margin-right:40px;
 }
