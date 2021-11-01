@@ -142,6 +142,8 @@ const nav = () => {
         return;
     }
 
+    
+
 
     const createTask = (task) => {
         let taskText = `                             <div class  = "projectButton projectButtonHover">
