@@ -2,7 +2,6 @@
 
 const send = (
     () => {
-        let index;
         let items = {};
         const sendData = (data,index) => {
             items[index] = data;
@@ -12,7 +11,7 @@ const send = (
             if (items[index]){
                 return items[data]
             } else {
-                return new Error('Data Does not Exist!')
+                return new Error('Items do not exist')
             }
         }
         
@@ -20,3 +19,5 @@ const send = (
 
     }
 )()
+
+export {send};

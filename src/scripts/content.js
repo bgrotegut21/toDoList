@@ -1,6 +1,12 @@
+import trashImage from "../images/trash.svg";
+import editIcon from "../images/editOff.svg";
+
+
+
 import element from "./elementEvents.js"
-import {sendData, retrieveData} from "./send.js"
+import {send} from "./send.js"
 import { getDomElements } from "./pageLayout.js";
+
 
 const content = () => {
     let listTasks = [];
@@ -50,14 +56,35 @@ const content = () => {
         
     }
 
+    const createBoardEditor = () => {
+        boardText = `                <div class = "boardTextEditor">
+        <input class = "boardtextBox" type="text">
+        <p class = "changeBoardTitleButton">+</p>
+    </div>`
+    }
+
+
+
     const createBoard = (template) => {
         let text = template.text;
-        let boardText =`<div class = "boardContent">
-                            <div class = "board">
-                                <h2 class = "exampleBoardText">${text}</h2>
-                                <div class = "taskContent"></div>
- 
-                                </div>`
+        let boardText = `                <div class = "boardContent">
+                                            <div class = "board">
+                                                <div class = "boardOverlay"></div>
+                                                    <div class = "editExampleIcons">
+                                                        <img class ="deleteBoard"  src="${trashImage}" alt="">
+                                                        <img class = "editBoard" src="${editIcon}" alt="">
+                                                    </div>
+                                                    <h2 class = "exampleBoardText">${text}</h2>
+                                                    <div class = "boardEditorLayout"></div>
+                                                    <div class = "taskLayout></div>
+
+                                                    <div class = "taskAdder">
+                                                        <p>+ Add Task</p>
+                                                    </div>
+
+            
+                                                    </div>
+                                                        </div>`
         return boardText;
     }
 
@@ -87,14 +114,7 @@ const content = () => {
                 dom.pageContent.innerHTML = board
             }                
         })    
-
-        listTasks.forEach(task => {
-            if (task.addBoard){
-                let addBoard = createAddBoard();
-                dom.pageContent.innerHTML = addBoard
-
-            }
-        })
+        
         addContentBindings();
 
 
@@ -112,11 +132,12 @@ const content = () => {
 
 
     const closeContent = (index) => {
-        //closes content
+        send.sendData(listTasks,index);
     }
 
     const ativateContent = (index) => {
-        listTasks = retrieveData(index);
+        listTasks = send.retrieveData(index);
+        renderListTasks();
 
     }
     
