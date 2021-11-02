@@ -11,7 +11,7 @@ const send = (
             if (items[index]){
                 return items[data]
             } else {
-                return new Error('Items do not exist')
+                return false;
             }
         }
         
