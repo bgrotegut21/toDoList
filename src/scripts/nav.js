@@ -1,8 +1,12 @@
-import element from "./elementEvents.js"
+import {removeItem, addItem, addBindings, removeBindings, setArray} from "./elementEvents.js"
 import {getDomElements} from "./pageLayout.js";
+import {send} from "./send"
 
 import trashImage from "../images/trash.svg";
 import editIcon from "../images/editOff.svg";
+
+import Content from "./content.js";
+
 
 
 
@@ -11,8 +15,9 @@ import editIcon from "../images/editOff.svg";
 const nav = () => {
 
     let domElements;
-    let projectTasks = [];
-
+    let changedTasks = [];
+    let staticTasks = [];
+    let content = Content();
 
     const getUpdatedElements = () => {
         let editItems = Array.from(document.getElementsByClassName("editProject"));
@@ -31,47 +36,48 @@ const nav = () => {
 
     const removeNavigationBindings = (notRemoveAddProjectLabel) => {
         let updatedItems = getUpdatedElements();
-        element.removeBindings(updatedItems.editItems,editItem,"click");
-        element.removeBindings(updatedItems.deleteItems, deleteItem, "click");
-       if (!notRemoveAddProjectLabel) element.removeBindings(updatedItems.addProjectLabels,createProjectTasksClick, "click");
-       if (!notRemoveAddProjectLabel && updatedItems.addProjectLabels.length != 0) element.removeBindings(window, createProjectTasksKeys, "keydown")
+        removeBindings(updatedItems.editItems,editItem,"click");
+        removeBindings(updatedItems.deleteItems, deleteItem, "click");
+        removeBindings(updatedItems.projectButton, switchPage, "click");
+       if (!notRemoveAddProjectLabel) removeBindings(updatedItems.addProjectLabels,createProjectTasksClick, "click");
+       if (!notRemoveAddProjectLabel && updatedItems.addProjectLabels.length != 0) removeBindings(window, createProjectTasksKeys, "keydown")
 
 
     }
 
 
     const lookUpTask = (index) => {
-        return projectTasks[index];
+        return staticTasks[index];
     }
-
 
 
 
     const addNavigationBindings = () => {
         let updatedItems = getUpdatedElements()
-        element.addBindings(updatedItems.editItems,editItem,"click");
-        element.addBindings(updatedItems.deleteItems, deleteItem, "click");
-        element.addBindings(updatedItems.addProjectLabels,createProjectTasksClick, "click");
-        if (updatedItems.addProjectLabels.length != 0) element.addBindings(window, createProjectTasksKeys, "keydown");
+        addBindings(updatedItems.editItems,editItem,"click");
+        addBindings(updatedItems.deleteItems, deleteItem, "click");
+        addBindings(updatedItems.addProjectLabels,createProjectTasksClick, "click");
+        addBindings(updatedItems.projectButton,switchPage, "click")
+        if (updatedItems.addProjectLabels.length != 0) addBindings(window, createProjectTasksKeys, "keydown");
 
     } 
 
     const addProjectButtonWholeOverayBindings = () => {
         let updatedItems = getUpdatedElements();
-        element.addBindings(updatedItems.projectButton,createProjectTasksClick, "click");
+        addBindings(updatedItems.projectButton,createProjectTasksClick, "click");
     }
 
     const removeProjectWholeOverlayBindings = () => {
         let updatedItems = getUpdatedElements();
-        element.removeBindings(updatedItems.projectButton, createProjectTasksClick, "click");
+        removeBindings(updatedItems.projectButton, createProjectTasksClick, "click");
     }
 
 
+    const switchPage = (event) => {
+        console.log(event.target, "event target current index")
 
-
-
-
-
+        content.activateContent(event.target.currentIndex);
+    }
 
 
 
@@ -92,22 +98,45 @@ const nav = () => {
     }
 
     const createProjectTasksClick = () => {
+        console.log("create project tasks")
         let currentIndex = getCurrentIndex();
         createProjectTasks(currentIndex);
     }
 
+
+
+
     const createProjectTasks = (index) => {
         let taskText = getTextBoxValues()
-        let task = {task: taskText, listTasks: [{addBoard:true}]};        
+        let task = {task: taskText};   
 
-        if (taskText.length != 0)projectTasks = element.addItem(projectTasks,index,task);
+        if (taskText.length != 0) {
+            if(staticTasks[index]) staticTasks[index] = task;
+            else staticTasks.push(task)
+        }
+
+
+     
+        changedTasks = setArray(staticTasks);
+        
 
         renderProjectTasks();
-        removeEditor();
+        renderOverlay();
+
     }
 
+
+
+    
+
     const deleteItem = (event) => {
-        projectTasks = element.removeItem(projectTasks,event.target.currentIndex)
+        let index = event.target.currentIndex;
+        staticTasks = removeItem(staticTasks,index);
+        send.deleteData(index);
+        content.activateContent();
+
+        changedTasks = setArray(staticTasks);
+        
         renderProjectTasks();
     }
 
@@ -180,6 +209,10 @@ const nav = () => {
                 } else if (childElement.getAttribute("class") == "addProjectLabel"){
                     childElement.currentIndex = index;
                 }
+                if (childElement.getAttribute("class") == "projectContainer"){
+                    let childArray = Array.from(childElement.children);
+                    childArray[0].currentIndex = index;
+                }
             })
             index ++;
         })
@@ -192,7 +225,7 @@ const nav = () => {
         removeNavigationBindings();
 
         domElements.projectTaskHolder.innerHTML = "";
-        projectTasks.forEach(task => {
+        changedTasks.forEach(task => {
 
             if (task.edit){
                 let editorText  = createProjectEditor(task);
@@ -210,24 +243,18 @@ const nav = () => {
 
     }
 
-    const removeEditor = () => {
-        let newTask = projectTasks.filter(task => task.edit != true);
-        projectTasks = newTask;
-        renderProjectTasks();
-        renderOverlay();
 
-    }
 
     const renderOverlay =() => {
         if (checkProjectEditor()){
             domElements.overlay.style.display = "block";
             domElements.wholeOverlay.style.display = "block";
-            element.addBindings(domElements.wholeOverlay,createProjectTasksClick,"click");
+            addBindings(domElements.wholeOverlay,createProjectTasksClick,"click");
             addProjectButtonWholeOverayBindings()
             
         } else {
             domElements.overlay.style.display = "none";
-            element.removeBindings(domElements.wholeOverlay, createProjectTasksClick,"click");
+            removeBindings(domElements.wholeOverlay, createProjectTasksClick,"click");
             domElements.wholeOverlay.style.display = "none";
             removeProjectWholeOverlayBindings();
         
@@ -236,7 +263,7 @@ const nav = () => {
 
     const checkProjectEditor = () => {
         let bool = false;
-        projectTasks.forEach( task => {
+        changedTasks.forEach( task => {
             if (task.edit) bool = true;
         })
         return bool;
@@ -259,34 +286,29 @@ const nav = () => {
         if (typeof text != "undefined") editorText = text;
 
         if (!checkProjectEditor()) {
-            typeof index != "undefined" ? projectTasks = element.addItem(projectTasks,index,{edit:true, value:editorText}): projectTasks.push({edit: true})
+            typeof index != "undefined" ? changedTasks = addItem(changedTasks,index,{edit:true, value:editorText}): changedTasks.push({edit: true})
         }
-        else {
-            removeEditor();
-        }
+        console.log(changedTasks, "the changed tasks");
+        console.log(staticTasks, "the static tasks");
+
+   
         renderProjectTasks();
         renderOverlay();
+
         disablePageContentElements();
 
     }
 
     const activateProjectTask = () => {
-        console.log("activating project tasks")
         createEditor();
 
     }
 
-
-    const randomEvent = () => {
-        console.log("the random event");
-    }
     // when dom is called it will create the default elements
     const activateNavigation = () => {
         domElements = getDomElements();
 
-        console.log(domElements.projectAdder)
-        element.addBindings(domElements.projectAdder,activateProjectTask,"click");
-        element.addBindings(domElements.projectAdder,randomEvent,"click");       
+        addBindings(domElements.projectAdder,activateProjectTask,"click");
     
 
  

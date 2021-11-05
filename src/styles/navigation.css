@@ -74,6 +74,10 @@
     text-align: center;
 }
 
+.projectTaskHolder {
+    width:100%;
+    z-index:3;
+}
 
 .projectContainer {
     white-space: nowrap;
@@ -101,7 +105,7 @@
     position:absolute;
     height:100%;
     width:100%;
-    z-index:2;
+    z-index:3;
     cursor: pointer;
     display:none;
  
@@ -132,6 +136,7 @@
 
 
 
+
 .editProjectButton{
 
     width:100%;
@@ -140,9 +145,11 @@
  
     justify-content:flex-end;
     background:rgb(22, 83, 227);
+ 
 
  
  }
+ 
  
  .addProjectLabel {
      line-height: 28px;

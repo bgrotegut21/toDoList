@@ -158,6 +158,10 @@ input {
 
 
 
+.taskAdder {
+    margin-top:10px;
+}
+
 
 .taskAdder:hover {
    cursor:pointer;
@@ -308,9 +312,7 @@ input {
 }
 
 
-.otherOverlay {
 
-}
 .addBoarderTextBox {
     font-family: 'Roboto', sans-serif;
     border:0;

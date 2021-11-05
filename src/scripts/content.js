@@ -3,13 +3,20 @@ import editIcon from "../images/editOff.svg";
 
 
 
-import element from "./elementEvents.js"
+import {removeItem, addItem, addBindings, removeBindings, setArray} from "./elementEvents.js"
 import {send} from "./send.js"
 import { getDomElements } from "./pageLayout.js";
 
 
-const content = () => {
-    let listTasks = [];
+
+
+const Content = () => {
+
+    let staticListTasks = [];
+    let changedListTasks = []; 
+    let index;
+
+
     let dom = getDomElements();
 
     const assignBoardBindings = () => {
@@ -28,14 +35,35 @@ const content = () => {
 
     const removeContentBindings = () => {
         let elements = getUpdatedElements();
-        element.removeBindings(elements.boarderButton, addBoard,"click");
+        removeBindings(elements.boarderButton, addBoardTasks,"click");
+        removeBindings(elements.boarderButton, addBoardTaskKeys,"keydown")
 
     }
 
     const addContentBindings = () => {
         let elements = getUpdatedElements();
-        element.addBindings(elements.boarderButton, addBoard,"click");
+        addBindings(elements.boarderButton, addBoardTasks,"click");
+        addBindings(elements.boarderButton, addBoardTaskKeys, "keydown")
         
+    }
+
+
+    const addBoardTaskKeys = (event) => {
+        if (event.key == "Enter") {
+            addBoardTasks();
+        }
+    }
+
+
+    const addBoardTasks = () => {
+        let elements = getUpdatedElements();
+        let text = elements.boardTextBox[0].value;
+        if(text.length == 0) return;
+        let task = createBoardTemplate(text);
+        staticListTasks.push(task);
+        changedListTasks = setArray(staticListTasks)
+        console.log(changedListTasks);
+        renderListTasks();
     }
 
     const createTask = (task) => {
@@ -57,7 +85,7 @@ const content = () => {
     }
 
     const createBoardEditor = () => {
-        boardText = `                <div class = "boardTextEditor">
+        let boardText = `<div class = "boardTextEditor">
         <input class = "boardtextBox" type="text">
         <p class = "changeBoardTitleButton">+</p>
     </div>`
@@ -71,30 +99,34 @@ const content = () => {
                                             <div class = "board">
                                                 <div class = "boardOverlay"></div>
                                                     <div class = "editExampleIcons">
-                                                        <img class ="deleteBoard"  src="${trashImage}" alt="">
-                                                        <img class = "editBoard" src="${editIcon}" alt="">
+                                                        <img class ="deleteBoard"  src="${trashImage}" alt="trash icon for deleting">
+                                                        <img class = "editBoard" src="${editIcon}" alt="editing icon">
                                                     </div>
+
+                                                    
                                                     <h2 class = "exampleBoardText">${text}</h2>
-                                                    <div class = "boardEditorLayout"></div>
-                                                    <div class = "taskLayout></div>
+
+                                                    <div class = "boardTextEditor">
+                                                        <input class = "boardtextBox" type="text">
+                                                        <p class = "changeBoardTitleButton">+</p>
+                                                    </div>
+
+                                                    <div class = "taskHolder"></div>
 
                                                     <div class = "taskAdder">
                                                         <p>+ Add Task</p>
                                                     </div>
-
-            
-                                                    </div>
-                                                        </div>`
+                                                </div> 
+                                                    </div>`
         return boardText;
     }
 
     const createAddBoard = () => {
-        let addBoardText = ` <div class = "boardContent">
+        let addBoardText = `<div class = "boardContent">
                                 <div class = "addBoard">
+                                    <div class = "emptyrow">empty row</div>
                                     <h2 class = "addBoardText">Add Board</h2>
                                     <input class = "addBoarderTextBox" type="text">
-
-
                                     <button class = "addBoarderButton">Add</button>
                                 </div>
 
@@ -104,16 +136,23 @@ const content = () => {
 
 
 
-    const renderListTasks = () => {
+    const renderListTasks = (bool) => {
         removeContentBindings();
         dom.pageContent.innerHTML = "";
-
-        listTasks.forEach(task => {
+        if (!bool)changedListTasks.push({addBoard:true});
+        changedListTasks.forEach(task => {
+            console.log(task, "current task")
             if (task.board){
                 let board = createBoard(task);
-                dom.pageContent.innerHTML = board
-            }                
+                dom.pageContent.innerHTML += board
+            } else if (task.addBoard){
+                let addBoard = createAddBoard();
+                dom.pageContent.innerHTML += addBoard;
+            }
         })    
+    
+
+
         
         addContentBindings();
 
@@ -121,27 +160,52 @@ const content = () => {
     }
 
 
-    const createBoardTemplate =(currenText) => {
-        if (currenText.length == 0) return;
-        let board = {board: true, text:"", tasks: []};
-        listTasks.push(board);
+    const createBoardTemplate =(currentText,tasks) => {
+        let currentTasks = [];
+        if (typeof tasks != "undefined") currentTasks = tasks; 
+
+        let board = {board: true, text:currentText, tasks: []};
+        return board;
+
+
+    }
+
+    const deleteContent = () => {
+        console.log("deleting content")
+        staticListTasks = [];
         renderListTasks();
-
-
     }
 
 
-    const closeContent = (index) => {
-        send.sendData(listTasks,index);
-    }
 
-    const ativateContent = (index) => {
-        listTasks = send.retrieveData(index);
+    const activateContent = (currentIndex) => {
+        changedListTasks = [];
+        if (typeof index != "undefined") send.sendData(staticListTasks,index);   
+        index = currentIndex;
+        if (typeof index == "undefined") return deleteContent();
+
+        let newTasks = send.retrieveData(index);
+        if (!newTasks){
+            send.sendData([],index)
+            newTasks = send.retrieveData(index);
+        }
+        staticListTasks = newTasks;
+        changedListTasks = setArray(staticListTasks);
+
         renderListTasks();
-
+    
     }
+
+    return {activateContent};
     
 
 
 
+
 }
+
+export default Content;
+
+
+
+
