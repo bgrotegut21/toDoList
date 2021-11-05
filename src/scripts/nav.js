@@ -74,8 +74,8 @@ const nav = () => {
 
 
     const switchPage = (event) => {
-        console.log(event.target, "event target current index")
-
+        console.log("switching page")
+        console.log(event.target.currentIndex, "event tageet current index")
         content.activateContent(event.target.currentIndex);
     }
 
@@ -98,7 +98,6 @@ const nav = () => {
     }
 
     const createProjectTasksClick = () => {
-        console.log("create project tasks")
         let currentIndex = getCurrentIndex();
         createProjectTasks(currentIndex);
     }
@@ -210,6 +209,7 @@ const nav = () => {
                     childElement.currentIndex = index;
                 }
                 if (childElement.getAttribute("class") == "projectContainer"){
+                    childElement.currentIndex = index;
                     let childArray = Array.from(childElement.children);
                     childArray[0].currentIndex = index;
                 }
@@ -288,9 +288,6 @@ const nav = () => {
         if (!checkProjectEditor()) {
             typeof index != "undefined" ? changedTasks = addItem(changedTasks,index,{edit:true, value:editorText}): changedTasks.push({edit: true})
         }
-        console.log(changedTasks, "the changed tasks");
-        console.log(staticTasks, "the static tasks");
-
    
         renderProjectTasks();
         renderOverlay();

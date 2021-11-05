@@ -62,7 +62,6 @@ const Content = () => {
         let task = createBoardTemplate(text);
         staticListTasks.push(task);
         changedListTasks = setArray(staticListTasks)
-        console.log(changedListTasks);
         renderListTasks();
     }
 
@@ -141,7 +140,6 @@ const Content = () => {
         dom.pageContent.innerHTML = "";
         if (!bool)changedListTasks.push({addBoard:true});
         changedListTasks.forEach(task => {
-            console.log(task, "current task")
             if (task.board){
                 let board = createBoard(task);
                 dom.pageContent.innerHTML += board
@@ -171,9 +169,8 @@ const Content = () => {
     }
 
     const deleteContent = () => {
-        console.log("deleting content")
         staticListTasks = [];
-        renderListTasks();
+        renderListTasks(true);
     }
 
 
@@ -193,6 +190,7 @@ const Content = () => {
         changedListTasks = setArray(staticListTasks);
 
         renderListTasks();
+    
     
     }
 

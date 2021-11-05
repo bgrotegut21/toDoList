@@ -17,18 +17,11 @@ const send = (
 
         const deleteData = (index) => {
             if (items[index]){
-                let currentItems = items;
-                let currentItemsKeys = Object.keys(items).filter(key => key != index);
-                let newItems = currentItemsKeys.map(key => currentItems[key]  = currentItems[key]);
-                let newItemsKeys = Object.keys(newItems)
-
-                let newerItems = {};
-
-                for (let i =0; i < newItemsKeys.length; i++) {
-                    newerItems[i] = newItems[newItemsKeys[i]]
+          
+                let newItems = {};
+                for (let i  = 0; i < newItemsKeys.length; i++) {
+                    if (inde)
                 }
-                items = newerItems;
-                console.log(items, "the items")
             }
 
 
