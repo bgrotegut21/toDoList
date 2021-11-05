@@ -9,21 +9,60 @@
     height:100vh;
 }
 
+.errorMessage {
+
+    position:absolute;
+    background:rgba(0, 0, 0, 0.299);
+
+    height:100%;
+    width:100%;
+    z-index:30;
+    display:none;
+
+    justify-content:center;
+    align-items:center;
+    
+}
+
+.messageHolder {
+    font-family: 'Roboto', sans-serif;
+    background:silver;
+    height:150px;
+    width:200px;
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
 
 
+    align-items: center;
 
 
+}
+
+.contentHolder {
+
+    text-align: center;
+    width:200px;
+}
+
+.exitButton {
+    cursor: pointer;
+    width:100px;
+    height:30px;
+    border:0;
+    color:white;
+    font-family: 'Roboto', sans-serif;
+    background:royalblue;
+
+}
+
+.exitButton:hover{
+    background:rgb(55, 88, 188);
+}
 
 
-
-
-
-
-
-
-
-
-
-
+.conteentHolder h2, .conteentHolder p, .exitButton {
+    margin:10px;
+}
 
 

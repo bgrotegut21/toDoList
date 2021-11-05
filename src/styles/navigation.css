@@ -1,5 +1,35 @@
 
-.navigation {
+
+/* roboto-regular - latin */
+@font-face {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    src: url('../fonts/roboto-v29-latin-regular.eot'); /* IE9 Compat Modes */
+    src: local(''),
+         url('../fonts/roboto-v29-latin-regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+         url('../fonts/roboto-v29-latin-regular.woff2') format('woff2'), /* Super Modern Browsers */
+         url('../fonts/roboto-v29-latin-regular.woff') format('woff'), /* Modern Browsers */
+         url('../fonts/roboto-v29-latin-regular.ttf') format('truetype'), /* Safari, Android, iOS */
+         url('../fonts/roboto-v29-latin-regular.svg#Roboto') format('svg'); /* Legacy iOS */
+  }
+
+  /* cutive-mono-regular - latin */
+@font-face {
+    font-family: 'Cutive Mono';
+    font-style: normal;
+    font-weight: 400;
+    src: url('../fonts/cutive-mono-v9-latin-regular.eot'); /* IE9 Compat Modes */
+    src: local(''),
+         url('../fonts/cutive-mono-v9-latin-regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+         url('../fonts/cutive-mono-v9-latin-regular.woff2') format('woff2'), /* Super Modern Browsers */
+         url('../fonts/cutive-mono-v9-latin-regular.woff') format('woff'), /* Modern Browsers */
+         url('../fonts/cutive-mono-v9-latin-regular.ttf') format('truetype'), /* Safari, Android, iOS */
+         url('../fonts/cutive-mono-v9-latin-regular.svg#CutiveMono') format('svg'); /* Legacy iOS */
+  }
+
+
+  .navigation {
     width:250px;
     flex-shrink: 0;
     font-family: 'Roboto', sans-serif;
@@ -10,17 +40,20 @@
 }
 
 .projectButton, .upComingButton {
-    cursor: pointer;
 
     height:30px;
     line-height:28px;
 
     width:100%;
-   
+
     font-size: small;
 
     
     
+}
+
+.deleteItem, .editProject {
+    cursor: pointer;
 }
 
 .mobileMenu {
@@ -37,15 +70,24 @@
 }
 
 .upComingButton {
-
+    cursor:pointer;
     text-align: center;
 }
 
+.projectTaskHolder {
+    width:100%;
+    z-index:3;
+}
 
 .projectContainer {
+    white-space: nowrap;
     width:75%;
     text-align: center;
 
+}
+
+.projectContainerText {
+    cursor: pointer;
 }
 
 .projectContainer p {
@@ -57,20 +99,17 @@
     
 }
 
-.projectButton, .upComingButton {
-    cursor: pointer;
 
-    height:30px;
-    line-height:28px;
-
+.wholeOverlay {
+    background:none;
+    position:absolute;
+    height:100%;
     width:100%;
-   
-    font-size: small;
-
-    
-    
+    z-index:3;
+    cursor: pointer;
+    display:none;
+ 
 }
-
 
 
 .projectButton{
@@ -96,21 +135,27 @@
 }
 
 
+
+
 .editProjectButton{
 
     width:100%;
     display:flex;
-    z-index:20;
+    z-index:3;
+ 
     justify-content:flex-end;
     background:rgb(22, 83, 227);
-    display:none;
+ 
+
  
  }
+ 
  
  .addProjectLabel {
      line-height: 28px;
      position:relative;
      right:3px;
+
      
      cursor: pointer;
  
@@ -143,9 +188,9 @@
     margin-left: 5px;
 }
 
-.projectButton:hover, .projectContainter:hover, .upComingButton:hover{
-
+.projectButtonHover:hover, .projectAdder:hover, .upComingButton:hover{
     background:rgb(22, 83, 227);
+    
 }
 
  
@@ -162,22 +207,27 @@
      background:rgba(0, 0, 0, 0.299);
      height:100%;
      width:250px;
+     z-index:1;
      
      text-indent: -9999px;
      position:absolute;
      top:0px;
+
+
      display:none;
  
    
  
 }
 
-.projectContainter {
-    cursor: pointer;
+.projectAdder {
+
     margin-top:20px;
     margin-bottom: 20px;
     justify-content: center;
     display:flex;
+    cursor:pointer;
+
     width:100%
     
 }
@@ -324,3 +374,4 @@
     }
 
 }
+

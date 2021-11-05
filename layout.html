@@ -14,6 +14,22 @@
 </head>
 <body>
     <div class = "content">
+        <div class = "wholeOverlay"></div>
+
+
+        <div class = "errorMessage">
+            <div class = "messageHolder">
+                <div class = "contentHolder">
+                    <h2>Error</h2>
+                    <p>Text Cannot be over 10 chracters</p>
+                    <button class = "exitButton">Exit</button>
+
+                </div>
+
+
+            </div>
+
+        </div>
         <div class = "mobileMenu">
             <button class = "hamburgerMenu"></button>
             <h2 class = "mobileMenuTitle">To Do List</h2>
@@ -29,44 +45,12 @@
                     <div class = "upComingButton">
                         <p>Upcoming</p>
                     </div>
-                    <div class = "projectContainter">
+                    <div class = "projectAdder">
                         <h2 class = "projectText">Project</h2>
                         <h2 class = "plusSign">+</h2>
                     </div>
-                    <div class  = "projectButton">
-                    <div class = "projectTools">
-                            <img  class = "deleteItem" src="src/images/trash.svg" alt="">
-                            <img class = "editProject" src="src/images/editOff.svg" alt="">
-                        </div> 
+            
 
-                        <div class = "projectContainer">
-                            <p>Dummy Project</p>
-                        </div>
-                        
-                    </div>
-                    <div class  = "projectButton">
-                        <div class = "projectTools">
-                                <img  class = "deleteItem" src="src/images/trash.svg" alt="">
-                                <img class = "editProject" src="src/images/editOff.svg" alt="">
-                            </div> 
-    
-                            <div class = "projectContainer">
-                                <p>Dummy Project</p>
-                            </div>
-                            
-                        </div>
-
-                        <div class  = "projectButton">
-                            <div class = "projectTools">
-                                    <img  class = "deleteItem" src="src/images/trash.svg" alt="">
-                                    <img class = "editProject" src="src/images/editOff.svg" alt="">
-                                </div> 
-        
-                                <div class = "projectContainer">
-                                    <p>Dummy Project</p>
-                                </div>
-                                
-                            </div>
                     
                             <div class  = "projectButton">
                                 <div class = "projectTools">
@@ -93,8 +77,30 @@
                
                 
                 <div class = "boardContent">
+
                     <div class = "board">
-                        <h2 class = "exampleBoardText">Example Board</h2>
+                        <div class = "boardOverlay"></div>
+                    
+                        
+  
+                            <div class = "editExampleIcons">
+                                <img class ="deleteBoard"  src="./src/images/trash.svg" alt="">
+                                <img class = "editBoard" src="./src/images/editOff.svg" alt="">
+
+
+
+                            </div>
+
+                          
+                            <h2 class = "exampleBoardText">Example Board</h2>
+
+                            <div class = "boardTextEditor">
+                                <input class = "boardtextBox" type="text">
+                                <p class = "changeBoardTitleButton">+</p>
+                            </div>
+
+
+
                         <div class = "task">
                             <p class = "taskLabel">Doing Laundary</p>
                             <div class = "taskTools">
@@ -174,17 +180,22 @@
                                 </div>
 
                             </div>
-
+                           
                             <div class = "taskAdder">
                                 <p>+ Add Task</p>
                             </div>
+                          
+                            
                         </div>  
                         
                         </div>
 
                         <div class = "boardContent">
+
                             <div class = "addBoard">
+                                <div class = "emptyrow">empty row</div>
                                 <h2 class = "addBoardText">Add Board</h2>
+
                                 <input class = "addBoarderTextBox" type="text">
            
                     
