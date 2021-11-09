@@ -53,4 +53,6 @@ const removeBindings = (elements,func,binding) => {
 
 
 
+
+
 export {removeItem, addItem, addBindings, removeBindings, setArray}

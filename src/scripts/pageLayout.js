@@ -59,7 +59,8 @@ const createDomElements = () => {
 
 
 
-const getDomElements = () => {
+
+const getInitialElements = () => {
     let section = document.querySelector(".sections");
     let navigation = document.querySelector(".navigation");
     let overlay = document.querySelector(".overlay");
@@ -87,5 +88,34 @@ const getDomElements = () => {
     }
 
 
-export  {getDomElements, createDomElements}
+    const getUpdatedElements = () => {
+        let boardTextBox = Array.from(document.getElementsByClassName("addBoarderTextBox"))
+        let boarderButton = Array.from(document.getElementsByClassName("addBoarderButton"))
+        let editItems = Array.from(document.getElementsByClassName("editProject"));
+        let deleteItems = Array.from(document.getElementsByClassName("deleteItem"));
+        let projectContainerText = Array.from(document.getElementsByClassName("projectContainerText"));
+        let addProjectLabels = Array.from(document.getElementsByClassName("addProjectLabel"));
+        let projectButton = Array.from(document.getElementsByClassName("projectButton"));
+
+        let projectTaskHolder = document.querySelector(".projectTaskHolder");
+        let projectTaskHolderChildren = Array.from(projectTaskHolder.children);
+        
+        let pageContent = document.querySelector(".pageContent");
+        let pageContentChildren = Array.from(pageContent.children);
+
+
+        let deleteBoard = Array.from(document.getElementsByClassName("deleteBoard"));
+        let editBoard  = Array.from(document.getElementsByClassName("editBoard"));
+
+
+        return {editItems, deleteItems, addProjectLabels, projectButton,
+            projectTaskHolderChildren, projectContainerText, boardTextBox, boarderButton, 
+            deleteBoard, editBoard, pageContent, pageContentChildren
+        };
+    
+    }
+    
+
+
+export  {getInitialElements, createDomElements, getUpdatedElements}
     

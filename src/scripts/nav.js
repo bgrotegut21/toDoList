@@ -1,5 +1,5 @@
 import {removeItem, addItem, addBindings, removeBindings, setArray} from "./elementEvents.js"
-import {getDomElements} from "./pageLayout.js";
+import {getInitialElements, getUpdatedElements} from "./pageLayout.js";
 import {send} from "./send"
 
 import trashImage from "../images/trash.svg";
@@ -18,21 +18,8 @@ const nav = () => {
     let changedTasks = [];
     let staticTasks = [];
     let content = Content();
+    let highlightedIndex;
 
-    const getUpdatedElements = () => {
-        let editItems = Array.from(document.getElementsByClassName("editProject"));
-        let deleteItems = Array.from(document.getElementsByClassName("deleteItem"));
-        let projectContainerText = Array.from(document.getElementsByClassName("projectContainerText"));
-        let addProjectLabels = Array.from(document.getElementsByClassName("addProjectLabel"));
-        let projectButton = Array.from(document.getElementsByClassName("projectButton"));
-        let projectTaskHolder = document.querySelector(".projectTaskHolder");
-        let projectTaskHolderChildren = Array.from(projectTaskHolder.children);
-
-
-        return {editItems, deleteItems, addProjectLabels, projectButton,
-                projectTaskHolderChildren, projectContainerText
-        };
-    }
 
     const removeNavigationBindings = (notRemoveAddProjectLabel) => {
         let updatedItems = getUpdatedElements();
@@ -74,9 +61,47 @@ const nav = () => {
 
 
     const switchPage = (event) => {
-        console.log("switching page")
-        console.log(event.target.currentIndex, "event tageet current index")
+    //    console.log("switching page")
+   //     console.log(event.target.currentIndex, "event tageet current index")
         content.activateContent(event.target.currentIndex);
+        highlightedIndex = event.target.currentIndex;
+        renderHighlightElements();
+        renderProjectTasks();
+    }
+
+    const unHighlightButton = () => {
+        let index = 0;
+        changedTasks.forEach(task => {
+            if (task.navTask){
+                if (task.highlight){
+                    task.highlight = false;
+                }
+            }
+            index ++;
+        })
+
+
+    } 
+
+    const renderHighlightElements = () => {
+        if (staticTasks.length == 0) return;
+        
+        
+
+        let isEdit = changedTasks.filter(task => task.edit);
+        console.log(isEdit, "is edit array")
+        if (isEdit.length != 0){
+            unHighlightButton();
+        } else {
+            highlightButton(highlightedIndex);
+        }
+    }
+
+
+    const highlightButton = (index) => {
+        unHighlightButton();
+        changedTasks[index].highlight = true;
+        console.log("high lighting button", index)
     }
 
 
@@ -105,21 +130,24 @@ const nav = () => {
 
 
 
+
+
     const createProjectTasks = (index) => {
         let taskText = getTextBoxValues()
-        let task = {task: taskText};   
+        let task = {navTask:true,task: taskText, highlight:false};   
 
         if (taskText.length != 0) {
             if(staticTasks[index]) staticTasks[index] = task;
             else staticTasks.push(task)
+            highlightedIndex = index;
         }
 
 
      
         changedTasks = setArray(staticTasks);
-        
-
+        renderHighlightElements();
         renderProjectTasks();
+        if (index == changedTasks.length -1) content.activateContent(index);
         renderOverlay();
 
     }
@@ -132,17 +160,21 @@ const nav = () => {
         let index = event.target.currentIndex;
         staticTasks = removeItem(staticTasks,index);
         send.deleteData(index);
-        content.activateContent();
 
+        let renderIndex = index -1;
+        if (renderIndex < 0){
+            renderIndex = staticTasks.length - 1;
+            if (staticTasks.length == 0) renderIndex = -1;
+        }
+        content.activateContent(renderIndex,"delete");
         changedTasks = setArray(staticTasks);
-        
         renderProjectTasks();
     }
 
     const editItem = (event) => {
         let projectTask = lookUpTask(event.target.currentIndex);
         let text = projectTask.task;
-        createEditor(text,event.target.currentIndex)
+        createEditor(text,event.target.currentIndex,true)
     }
 
 
@@ -169,8 +201,14 @@ const nav = () => {
     
 
 
-    const createTask = (task) => {
-        let taskText = `                             <div class  = "projectButton projectButtonHover">
+    const createTask = (task, highlighted) => {
+
+
+        let styleText = ''
+        if (highlighted) styleText = 'style = "background:rgb(22, 83, 227);" '
+
+
+        let taskText = `                             <div class  = "projectButton projectButtonHover" ${styleText}>
         <div class = "projectTools">
                 <img  class = "deleteItem" src="${trashImage}" alt="">
                 <img class = "editProject" src="${editIcon}" alt="">
@@ -204,7 +242,9 @@ const nav = () => {
             let elementChildren = Array.from(element.children);
             elementChildren.forEach(childElement => {
                 if (childElement.getAttribute("class") == "projectTools"){
+                    childElement.currentIndex = index;
                     assignTaskActions(index, childElement)
+
                 } else if (childElement.getAttribute("class") == "addProjectLabel"){
                     childElement.currentIndex = index;
                 }
@@ -228,14 +268,15 @@ const nav = () => {
         changedTasks.forEach(task => {
 
             if (task.edit){
+
                 let editorText  = createProjectEditor(task);
                 domElements.projectTaskHolder.innerHTML += editorText
 
-            } else {
-                let taskText = createTask(task);
+            } else if (task.navTask){
+                let taskText;
+              //  console.log(task, " the task")
+                task.highlight? taskText = createTask(task,true): taskText = createTask(task);
                 domElements.projectTaskHolder.innerHTML += taskText
-
-                
             }
         })
         assignValueElements();
@@ -271,6 +312,7 @@ const nav = () => {
     const disablePageContentElements = () => {
         removeNavigationBindings(true);
         let updatedElement = getUpdatedElements();
+        console.log(updatedElement.projectButton,"updated element project button")
         if (updatedElement.projectButton.length == 0) return;
         updatedElement.projectButton.forEach( button =>{
             button.classList.remove("projectButtonHover")
@@ -289,6 +331,7 @@ const nav = () => {
             typeof index != "undefined" ? changedTasks = addItem(changedTasks,index,{edit:true, value:editorText}): changedTasks.push({edit: true})
         }
    
+        renderHighlightElements();
         renderProjectTasks();
         renderOverlay();
 
@@ -298,20 +341,18 @@ const nav = () => {
 
     const activateProjectTask = () => {
         createEditor();
+        
 
     }
 
     // when dom is called it will create the default elements
     const activateNavigation = () => {
-        domElements = getDomElements();
+        domElements = getInitialElements();
 
         addBindings(domElements.projectAdder,activateProjectTask,"click");
-    
-
- 
     }
-
     return {activateNavigation};
 }
+
 
 export default nav;

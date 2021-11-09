@@ -5,7 +5,7 @@ import editIcon from "../images/editOff.svg";
 
 import {removeItem, addItem, addBindings, removeBindings, setArray} from "./elementEvents.js"
 import {send} from "./send.js"
-import { getDomElements } from "./pageLayout.js";
+import { getInitialElements, getUpdatedElements } from "./pageLayout.js";
 
 
 
@@ -14,10 +14,14 @@ const Content = () => {
 
     let staticListTasks = [];
     let changedListTasks = []; 
+
+    let staticBoardLists = [];
+    let changedBoardLists = [];
+
     let index;
 
 
-    let dom = getDomElements();
+    let dom = getInitialElements();
 
     const assignBoardBindings = () => {
         return
@@ -27,28 +31,54 @@ const Content = () => {
         return
     }
 
-    const getUpdatedElements = () => {
-        let boardTextBox = Array.from(document.getElementsByClassName("addBoarderTextBox"))
-        let boarderButton = Array.from(document.getElementsByClassName("addBoarderButton"))
-        return {boardTextBox, boarderButton}
-    }
 
+
+// will add key bindings at a later date
     const removeContentBindings = () => {
         let elements = getUpdatedElements();
         removeBindings(elements.boarderButton, addBoardTasks,"click");
-        removeBindings(elements.boarderButton, addBoardTaskKeys,"keydown")
+        removeBindings(elements.deleteBoard,deleteBoard, "click");
+        removeBindings(elements.editBoard,editBoard,"click");
+
 
     }
 
     const addContentBindings = () => {
         let elements = getUpdatedElements();
         addBindings(elements.boarderButton, addBoardTasks,"click");
-        addBindings(elements.boarderButton, addBoardTaskKeys, "keydown")
+        addBindings(elements.deleteBoard,deleteBoard, "click");
+        addBindings(elements.editBoard,editBoard,"click");
+        
+    }
+
+    const deleteBoard = (event) => {
+        console.log(staticListTasks, " the static list tasks");
+        console.log(send.retrieveData(index), "send retrieve index")
+
+        staticListTasks = removeItem(staticListTasks, event.target.boardIndex);
+    
+
+        console.log(staticListTasks, "static list tasks");
+        changedListTasks = setArray(staticListTasks);
+        console.log(changedListTasks, "the changed list tasks");
+        renderListTasks();
+
+    }
+
+    const editBoard = (event) => {
+
         
     }
 
 
+    const renderBoardLists = (index) => {
+
+
+    }
+
+
     const addBoardTaskKeys = (event) => {
+        console.log(event.key);
         if (event.key == "Enter") {
             addBoardTasks();
         }
@@ -56,14 +86,44 @@ const Content = () => {
 
 
     const addBoardTasks = () => {
+
         let elements = getUpdatedElements();
         let text = elements.boardTextBox[0].value;
         if(text.length == 0) return;
         let task = createBoardTemplate(text);
         staticListTasks.push(task);
         changedListTasks = setArray(staticListTasks)
+
+        console.log(staticListTasks, "the static list tasks")
+
         renderListTasks();
     }
+
+    const addToDoTasks = (currentIndex) => {
+        return;
+
+    }
+
+
+
+    const createBoardTemplate =(currentText,tasks) => {
+        let currentTasks = [];
+        if (typeof tasks != "undefined") currentTasks = tasks; 
+
+        let board = {board: true, text:currentText, tasks: currentTasks, changedTasks: []};
+        return board;
+    }
+
+
+    const createToDoTaskTemplate = (taskText,taskDate,taskPriority) => {
+        let task = {task:true,text: taskText, date: taskDate, priority: taskPriority };
+        return task;
+    }
+    
+
+
+
+    
 
     const createTask = (task) => {
         let taskText = `<div class = "task">
@@ -133,7 +193,45 @@ const Content = () => {
         return addBoardText;
     }
 
+    
 
+    const assignBoardIcons = (element, currentIndex) =>  {
+        let board = Array.from(element.children);
+        board.forEach(childElement => {
+            if (childElement.getAttribute("class") == "editExampleIcons"){
+                childElement.boardIndex = currentIndex;
+                let editExampleIcons = Array.from(childElement.children);
+                editExampleIcons.forEach(itemElement => {
+                    itemElement.boardIndex = currentIndex;
+                })
+
+            }
+            if(childElement.getAttribute("class") == "taskAdder") childElement.boardIndex = currentIndex;
+        })
+    }
+
+
+    const assignBoardElements = () => {
+
+    
+        let elements = getUpdatedElements();
+        let pageContentChildren = elements.pageContentChildren;
+        let currentIndex = 0;
+
+
+     //   console.log(pageContentChildren, " the page content children")
+        pageContentChildren.forEach(element => {
+            if (element.getAttribute("class") == "boardContent"){
+                element.boardIndex = currentIndex;
+                let boardContent = Array.from(element.children);
+                boardContent.forEach(childElement => {
+                    childElement.boardIndex = currentIndex;
+                    if (childElement.getAttribute("class") == "board") assignBoardIcons(childElement,currentIndex)
+                })
+            }
+            currentIndex ++;
+        })
+    }
 
     const renderListTasks = (bool) => {
         removeContentBindings();
@@ -147,48 +245,54 @@ const Content = () => {
                 let addBoard = createAddBoard();
                 dom.pageContent.innerHTML += addBoard;
             }
-        })    
-    
-
-
-        
+        })       
         addContentBindings();
-
-
-    }
-
-
-    const createBoardTemplate =(currentText,tasks) => {
-        let currentTasks = [];
-        if (typeof tasks != "undefined") currentTasks = tasks; 
-
-        let board = {board: true, text:currentText, tasks: []};
-        return board;
-
-
-    }
-
-    const deleteContent = () => {
-        staticListTasks = [];
-        renderListTasks(true);
+        assignBoardElements();
     }
 
 
 
-    const activateContent = (currentIndex) => {
+
+    const removeChangedTasks = () => {
+        let newTasks = staticTasks;
+        let newTasks = newTasks.map(task => {
+            if (task.board) {
+                task = {board:true, text: task.text, tasks: task.tasks, changedTasks: task.changedTasks}
+            }
+        })
+        staticListTasks = newTasks;
+    }
+
+
+
+
+
+    
+    const activateContent = (currentIndex, disruptFlow) => {
         changedListTasks = [];
-        if (typeof index != "undefined") send.sendData(staticListTasks,index);   
-        index = currentIndex;
-        if (typeof index == "undefined") return deleteContent();
+        if (disruptFlow == "delete"){
+            staticListTasks = [];
+            index = null;
+            if (currentIndex < 0) {
+                renderListTasks(true);
+                return;
+            }
+        }
 
+        if (typeof index == "number"){
+            send.sendData(staticListTasks,index);  
+        } 
+        
+        index = currentIndex;
         let newTasks = send.retrieveData(index);
+        console.log(newTasks, " the new task")
         if (!newTasks){
             send.sendData([],index)
             newTasks = send.retrieveData(index);
         }
         staticListTasks = newTasks;
+        console.log(staticListTasks, "the static list tasks")
         changedListTasks = setArray(staticListTasks);
-
         renderListTasks();
     
     

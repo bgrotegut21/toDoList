@@ -310,6 +310,7 @@
     }
 
     .projectContainer {
+        cursor:pointer;
         justify-content: flex-start;
     }
 
