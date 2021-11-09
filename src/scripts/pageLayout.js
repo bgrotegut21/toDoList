@@ -103,14 +103,19 @@ const getInitialElements = () => {
         let pageContent = document.querySelector(".pageContent");
         let pageContentChildren = Array.from(pageContent.children);
 
+        let changeBoardTitleButtons = Array.from(document.getElementsByClassName("changeBoardTitleButton"));
 
         let deleteBoard = Array.from(document.getElementsByClassName("deleteBoard"));
         let editBoard  = Array.from(document.getElementsByClassName("editBoard"));
+        let taskHolders = Array.from(document.getElementsByClassName("taskHolder"));
+        let boardContentTextBox = Array.from(document.getElementsByClassName("boardtextBox"));
 
+        let exampleBoardText = Array.from(document.getElementsByClassName("exampleBoardText"))
 
         return {editItems, deleteItems, addProjectLabels, projectButton,
             projectTaskHolderChildren, projectContainerText, boardTextBox, boarderButton, 
-            deleteBoard, editBoard, pageContent, pageContentChildren
+            deleteBoard, editBoard, pageContent, pageContentChildren, taskHolders, exampleBoardText,
+            changeBoardTitleButtons, boardContentTextBox
         };
     
     }

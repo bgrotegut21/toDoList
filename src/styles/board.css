@@ -74,6 +74,7 @@ input {
 
 
 .taskHolder {
+    width:100%;
     display:flex;
     align-items:center;
 }
@@ -403,11 +404,13 @@ input {
     z-index:3;
     margin-top:10px;
     margin-bottom:10px;
+    width:100%;
 
 
 
     justify-content:center;
     display:flex;
+
 
  
 }

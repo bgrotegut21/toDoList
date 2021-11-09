@@ -19,7 +19,7 @@ const Content = () => {
     let changedBoardLists = [];
 
     let index;
-
+    let currentIndex;
 
     let dom = getInitialElements();
 
@@ -34,11 +34,12 @@ const Content = () => {
 
 
 // will add key bindings at a later date
-    const removeContentBindings = () => {
+    const removeContentBindings = (bool) => {
         let elements = getUpdatedElements();
         removeBindings(elements.boarderButton, addBoardTasks,"click");
         removeBindings(elements.deleteBoard,deleteBoard, "click");
         removeBindings(elements.editBoard,editBoard,"click");
+        if (!bool) removeBindings(elements.changeBoardTitleButtons,changeName, "click");
 
 
     }
@@ -48,6 +49,8 @@ const Content = () => {
         addBindings(elements.boarderButton, addBoardTasks,"click");
         addBindings(elements.deleteBoard,deleteBoard, "click");
         addBindings(elements.editBoard,editBoard,"click");
+        addBindings(elements.changeBoardTitleButtons, changeName, "click");
+
         
     }
 
@@ -66,14 +69,63 @@ const Content = () => {
     }
 
     const editBoard = (event) => {
+        console.log("edit the board")
+        let index = event.target.boardIndex;
+        let changedBoardLists = staticListTasks[index].changedBoardLists
+        let currentText = getElementByBoardIndex(index,"exampleBoardText").textContent;
 
+
+        let editBoardTemplate = {editBoard: true, text:currentText};
+        let newArray = [];
+        newArray.push(editBoardTemplate);
+        let finalArray = newArray.concat(changedBoardLists);
+        staticListTasks[index].changedBoardLists = finalArray;
+        currentIndex = index;
+        renderBoardLists(index);
         
     }
 
 
+    const changeName = (event) => {
+        let elements = getUpdatedElements();
+        let boardText = elements.boardContentTextBox.value;
+        let exampleText = getElementByBoardIndex(currentIndex, "exampleBoardText");
+        exampleText.textContent = boardText;
+        let newTasks = staticListTasks[currentIndex];
+        newTasks = newTasks.filter(task => task.editBoard != true)
+        staticListTasks[currentIndex] = newTasks;
+        renderBoardLists(currentIndex)
+    
+
+    }
+
+
+//dom element names come from the updated element types
+    const getElementByBoardIndex = (index,domElement) => {
+
+        let element = getUpdatedElements();
+        let newElement = false;
+        element[domElement].forEach(childElement => {
+            if (childElement.boardIndex == index) newElement = childElement
+        })
+        return newElement;
+
+
+    }
+
+
     const renderBoardLists = (index) => {
-
-
+        let taskHolder = getElementByBoardIndex(index, "taskHolders");
+        console.log(taskHolder, "the task holder")
+        removeContentBindings();
+        taskHolder.innerHTML = "";
+        staticListTasks[index].changedBoardLists.forEach(task => {
+            if (task.editBoard){
+                let boardText = createBoardEditor(task);
+                taskHolder.innerHTML += boardText;
+            }
+        })
+        addContentBindings();
     }
 
 
@@ -110,7 +162,7 @@ const Content = () => {
         let currentTasks = [];
         if (typeof tasks != "undefined") currentTasks = tasks; 
 
-        let board = {board: true, text:currentText, tasks: currentTasks, changedTasks: []};
+        let board = {board: true, text:currentText, tasks: currentTasks, changedBoardLists: []};
         return board;
     }
 
@@ -143,11 +195,15 @@ const Content = () => {
         
     }
 
-    const createBoardEditor = () => {
+    const createBoardEditor = (task) => {
+        let value = task.text;
+        
         let boardText = `<div class = "boardTextEditor">
-        <input class = "boardtextBox" type="text">
+        <input class = "boardtextBox" type="text" value = "${value}">
         <p class = "changeBoardTitleButton">+</p>
     </div>`
+
+        return boardText;
     }
 
 
@@ -164,11 +220,6 @@ const Content = () => {
 
                                                     
                                                     <h2 class = "exampleBoardText">${text}</h2>
-
-                                                    <div class = "boardTextEditor">
-                                                        <input class = "boardtextBox" type="text">
-                                                        <p class = "changeBoardTitleButton">+</p>
-                                                    </div>
 
                                                     <div class = "taskHolder"></div>
 
@@ -206,7 +257,9 @@ const Content = () => {
                 })
 
             }
-            if(childElement.getAttribute("class") == "taskAdder") childElement.boardIndex = currentIndex;
+            console.log(childElement, "the child element")
+            childElement.boardIndex = currentIndex;
+            console.log(childElement.boardIndex, "child element board index")
         })
     }
 
@@ -253,23 +306,20 @@ const Content = () => {
 
 
 
-    const removeChangedTasks = () => {
-        let newTasks = staticTasks;
-        let newTasks = newTasks.map(task => {
-            if (task.board) {
-                task = {board:true, text: task.text, tasks: task.tasks, changedTasks: task.changedTasks}
-            }
+    const setChangedToDoListsEmpty = () => {
+        staticListTasks.forEach(task => {
+            task.changedBoardLists = [];
+
         })
-        staticListTasks = newTasks;
     }
-
-
 
 
 
     
     const activateContent = (currentIndex, disruptFlow) => {
         changedListTasks = [];
+        setChangedToDoListsEmpty();
+
         if (disruptFlow == "delete"){
             staticListTasks = [];
             index = null;
