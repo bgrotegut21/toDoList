@@ -109,13 +109,14 @@ const getInitialElements = () => {
         let editBoard  = Array.from(document.getElementsByClassName("editBoard"));
         let taskHolders = Array.from(document.getElementsByClassName("taskHolder"));
         let boardContentTextBox = Array.from(document.getElementsByClassName("boardtextBox"));
+        let boardOverlay = Array.from(document.getElementsByClassName("boardOverlay"))
  
         let exampleBoardText = Array.from(document.getElementsByClassName("exampleBoardText"))
 
         return {editItems, deleteItems, addProjectLabels, projectButton,
             projectTaskHolderChildren, projectContainerText, boardTextBox, boarderButton, 
             deleteBoard, editBoard, pageContent, pageContentChildren, taskHolders, exampleBoardText,
-            changeBoardTitleButtons, boardContentTextBox
+            changeBoardTitleButtons, boardContentTextBox, boardOverlay
         };
     
     }

@@ -77,28 +77,13 @@ const Content = () => {
         
     }
 
-    const toggleBoard = (index) => {
-        let newTasks = staticListTasks[index].changedBoardLists;
-        let isTrue = newTasks.filter(list => list.editBoard == true);
-        if (isTrue.length != 0) return true;
-        else return false;
-    }
 
 
-    const removeBoardTextEditor = (index) => {
-        let newTasks = staticListTasks[index].changedBoardLists
-        newTasks = newTasks.filter(task => task != task.editBoard);
-        staticListTasks[index] = newTasks;
-    }
 
     const editBoard = (event) => {
         let index = event.target.boardIndex;
+ 
         removeEditTitleMenu();
-        if (!toggleBoard(index)) {
-            removeBoardTextEditor(index);
-            renderBoardLists()
-            return
-        }
         
 
         console.log(index, " the index")
@@ -185,32 +170,50 @@ const Content = () => {
     }
 
     const renderBoardLists = () => {
+        removeBoardOverlay();
         let indexesLength = staticListTasks.length;
         removeContentBindings();
-    
+        console.log(staticListTasks, "the static list task")
         for (let i = 0; i < indexesLength; i++) {
+            console.log(i, "the index")
             if (staticListTasks.length != 0)renderSingleBoardList(i);
         }
         addContentBindings();
+
+    }
+
+    const removeBoardOverlay = () => {
+        let elements = getUpdatedElements();
+        elements.boardOverlay.forEach(element => {
+            element.style.display = "none";
+        })
+    }
+
+
+    const addBoardOverlay = (index) => {
+        let boardOverlay = getElementByBoardIndex(index,"boardOverlay");
+        boardOverlay.style.display = "block";
+
     }
 
     const renderSingleBoardList = (index) => {
         let taskHolder = getElementByBoardIndex(index, "taskHolders");
        // console.log(taskHolder, "the task holder")
-
         taskHolder.innerHTML = "";
  //       console.log(index, "the index");
 //        console.log(staticListTasks[index], "static list current index");
-
+        console.log(staticListTasks[index], "static list tasks indexes")
 
         staticListTasks[index].changedBoardLists.forEach(task => {
             if (task.editBoard){
                 let boardText = createBoardEditor(task);
                 taskHolder.innerHTML += boardText;
+                addBoardOverlay(index);
             }
         })
 
     }
+
 
 
     const addBoardTaskKeys = (event) => {
