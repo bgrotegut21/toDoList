@@ -76,12 +76,34 @@ const Content = () => {
         })
         
     }
-    const editBoard = (event) => {
-        removeEditTitleMenu();
 
+    const toggleBoard = (index) => {
+        let newTasks = staticListTasks[index].changedBoardLists;
+        let isTrue = newTasks.filter(list => list.editBoard == true);
+        if (isTrue.length != 0) return true;
+        else return false;
+    }
+
+
+    const removeBoardTextEditor = (index) => {
+        let newTasks = staticListTasks[index].changedBoardLists
+        newTasks = newTasks.filter(task => task != task.editBoard);
+        staticListTasks[index] = newTasks;
+    }
+
+    const editBoard = (event) => {
         let index = event.target.boardIndex;
+        removeEditTitleMenu();
+        if (!toggleBoard(index)) {
+            removeBoardTextEditor(index);
+            renderBoardLists()
+            return
+        }
+        
+
         console.log(index, " the index")
         let changedBoardLists = staticListTasks[index].changedBoardLists
+    
         let currentText = getElementByBoardIndex(index,"exampleBoardText").textContent;
 
 
@@ -132,17 +154,34 @@ const Content = () => {
 
     const renderEditBoardTextValues  = () => {
         let index = 0;
+        let elements = getUpdatedElements();
         staticListTasks.forEach(task => {
             task.changedBoardLists.forEach(list =>{
+                console.log(index, " the current index")
                 if (list.editBoard){
-                    console.log(getElementByBoardIndex(index, "boardContentTextBox"))
-                    let currentText = getElementByBoardIndex(index,"boardContentTextBox").value;
+                    let currentText = findBoardTextBox(index);
+                    console.log(currentText, " the current text")
                     list.text = currentText;
                 }
 
             })
             index++;
         })
+    }
+
+    const findBoardTextBox =  (index) => {
+        let taskHolder = getElementByBoardIndex(index,"taskHolders");
+        let buttonText = "could not load text"
+        let taskHolderChildren = Array.from(taskHolder.children)
+       
+        taskHolderChildren.forEach(child => {
+            if (child.getAttribute("class") == "boardTextEditor") {
+                 buttonText = Array.from(child.children)[0].value;
+                 return;
+            }
+            
+        })
+        return buttonText;
     }
 
     const renderBoardLists = () => {
