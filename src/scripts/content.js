@@ -102,6 +102,9 @@ const Content = () => {
         
     }
 
+    const createTaskTemplate = () => {
+        
+    }
 
     const changeName = (event) => {
         let elements = getUpdatedElements();
