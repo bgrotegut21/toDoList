@@ -100,26 +100,15 @@
 }
 
 
-.wholeOverlay, .newOverlay{
+.wholeOverlay {
     background:none;
-    background:rgba(0, 0, 0, 0.299);
     position:absolute;
     height:100%;
     width:100%;
+    z-index:3;
     cursor: pointer;
     display:none;
-
  
-}
-
-.newOverlay {
-    display:none;
-    z-index:4
-}
-
-.wholeOverlay {
-    display:none;
-    z-index:3;
 }
 
 
