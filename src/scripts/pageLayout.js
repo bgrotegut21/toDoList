@@ -109,7 +109,7 @@ const getInitialElements = () => {
         let editBoard  = Array.from(document.getElementsByClassName("editBoard"));
         let taskHolders = Array.from(document.getElementsByClassName("taskHolder"));
         let boardContentTextBox = Array.from(document.getElementsByClassName("boardtextBox"));
-
+ 
         let exampleBoardText = Array.from(document.getElementsByClassName("exampleBoardText"))
 
         return {editItems, deleteItems, addProjectLabels, projectButton,

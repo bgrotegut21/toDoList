@@ -39,7 +39,7 @@ const Content = () => {
         removeBindings(elements.boarderButton, addBoardTasks,"click");
         removeBindings(elements.deleteBoard,deleteBoard, "click");
         removeBindings(elements.editBoard,editBoard,"click");
-        if (!bool) removeBindings(elements.changeBoardTitleButtons,changeName, "click");
+        removeBindings(elements.changeBoardTitleButtons,changeName, "click");
 
 
     }
@@ -68,9 +68,19 @@ const Content = () => {
 
     }
 
+    const removeEditTitleMenu = () => {
+        staticListTasks.forEach(task => {
+            let newTasks = task.changedBoardLists;
+            newTasks = newTasks.filter(list => list.editBoard != true);
+            task.changedBoardLists = newTasks;
+        })
+        
+    }
     const editBoard = (event) => {
-        console.log("edit the board")
+        removeEditTitleMenu();
+
         let index = event.target.boardIndex;
+        console.log(index, " the index")
         let changedBoardLists = staticListTasks[index].changedBoardLists
         let currentText = getElementByBoardIndex(index,"exampleBoardText").textContent;
 
@@ -81,20 +91,26 @@ const Content = () => {
         let finalArray = newArray.concat(changedBoardLists);
         staticListTasks[index].changedBoardLists = finalArray;
         currentIndex = index;
-        renderBoardLists(index);
+        renderBoardLists();
         
     }
 
 
     const changeName = (event) => {
         let elements = getUpdatedElements();
-        let boardText = elements.boardContentTextBox.value;
+        let boardText = elements.boardContentTextBox[0].value;
         let exampleText = getElementByBoardIndex(currentIndex, "exampleBoardText");
+ //       console.log(exampleText, "the example text")
+
+        
         exampleText.textContent = boardText;
-        let newTasks = staticListTasks[currentIndex];
+      //  console.log(boardText, " current board text")
+     //   console.log(exampleText, "the example text content")
+        let newTasks = staticListTasks[currentIndex].changedBoardLists;
+
         newTasks = newTasks.filter(task => task.editBoard != true)
-        staticListTasks[currentIndex] = newTasks;
-        renderBoardLists(currentIndex)
+        staticListTasks[currentIndex].changedBoardLists = newTasks;
+        renderBoardLists()
     
 
     }
@@ -114,23 +130,52 @@ const Content = () => {
     }
 
 
-    const renderBoardLists = (index) => {
-        let taskHolder = getElementByBoardIndex(index, "taskHolders");
-        console.log(taskHolder, "the task holder")
+    const renderEditBoardTextValues  = () => {
+        let index = 0;
+        staticListTasks.forEach(task => {
+            task.changedBoardLists.forEach(list =>{
+                if (list.editBoard){
+                    console.log(getElementByBoardIndex(index, "boardContentTextBox"))
+                    let currentText = getElementByBoardIndex(index,"boardContentTextBox").value;
+                    list.text = currentText;
+                }
+
+            })
+            index++;
+        })
+    }
+
+    const renderBoardLists = () => {
+        let indexesLength = staticListTasks.length;
         removeContentBindings();
+    
+        for (let i = 0; i < indexesLength; i++) {
+            if (staticListTasks.length != 0)renderSingleBoardList(i);
+        }
+        addContentBindings();
+    }
+
+    const renderSingleBoardList = (index) => {
+        let taskHolder = getElementByBoardIndex(index, "taskHolders");
+       // console.log(taskHolder, "the task holder")
+
         taskHolder.innerHTML = "";
+ //       console.log(index, "the index");
+//        console.log(staticListTasks[index], "static list current index");
+
+
         staticListTasks[index].changedBoardLists.forEach(task => {
             if (task.editBoard){
                 let boardText = createBoardEditor(task);
                 taskHolder.innerHTML += boardText;
             }
         })
-        addContentBindings();
+
     }
 
 
     const addBoardTaskKeys = (event) => {
-        console.log(event.key);
+     //   console.log(event.key);
         if (event.key == "Enter") {
             addBoardTasks();
         }
@@ -146,7 +191,7 @@ const Content = () => {
         staticListTasks.push(task);
         changedListTasks = setArray(staticListTasks)
 
-        console.log(staticListTasks, "the static list tasks")
+    //    console.log(staticListTasks, "the static list tasks")
 
         renderListTasks();
     }
@@ -257,9 +302,9 @@ const Content = () => {
                 })
 
             }
-            console.log(childElement, "the child element")
+          //  console.log(childElement, "the child element")
             childElement.boardIndex = currentIndex;
-            console.log(childElement.boardIndex, "child element board index")
+           // console.log(childElement.boardIndex, "child element board index")
         })
     }
 
@@ -287,6 +332,7 @@ const Content = () => {
     }
 
     const renderListTasks = (bool) => {
+        renderEditBoardTextValues();
         removeContentBindings();
         dom.pageContent.innerHTML = "";
         if (!bool)changedListTasks.push({addBoard:true});
@@ -301,6 +347,7 @@ const Content = () => {
         })       
         addContentBindings();
         assignBoardElements();
+        renderBoardLists();
     }
 
 
