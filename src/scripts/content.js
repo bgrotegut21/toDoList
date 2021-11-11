@@ -102,9 +102,21 @@ const Content = () => {
         
     }
 
-    const createTaskTemplate = () => {
-        
+
+    const addListEditor = (index) => {
+        let currentText = "";
+        if (index){
+            //will eventually do something
+            return
+        }
+        let listEditorTemplate = {listEditor: true, text:currentText};
+        let listBoardArray = [listEditorTemplate];
+        let newTasks = staticListTasks[index].changedBoardLists;
+        let finalArray = newTasks.concat(listBoardArray);
+        staticListTasks[index].changedBoardLists = finalArray;
+        renderBoardLists()
     }
+
 
     const changeName = (event) => {
         let elements = getUpdatedElements();
@@ -212,6 +224,8 @@ const Content = () => {
                 let boardText = createBoardEditor(task);
                 taskHolder.innerHTML += boardText;
                 addBoardOverlay(index);
+            } else if (){
+                
             }
         })
 
@@ -263,7 +277,7 @@ const Content = () => {
     }
     
 
-
+    
 
     
 
@@ -272,8 +286,8 @@ const Content = () => {
                             <p class = "taskLabel">Doing Laundary</p>
                             <div class = "taskTools">
                                 <div class = "generalTextHolder">
-                                    <p class = "generalText">Due Nov 15 2021</p>
-                                    <p class = "generalText">Priority: High</p>
+                                    <p class = "generalText dateText">Due Nov 15 2021</p>
+                                    <p class = "generalText priorityText">Priority: High</p>
 
                                 </div>
 

@@ -11,8 +11,7 @@ module.exports = {
         emit:"./src/scripts/emit.js",
         elementEvent: "./src/scripts/elementEvents.js",
         content: "./src/scripts/content.js",
-        send: "./src/scripts/send.js"
-
+        send: "./src/scripts/send.js",
 
     },
     output: {
