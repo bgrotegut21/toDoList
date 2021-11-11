@@ -28,7 +28,7 @@ let emit = (
 
             currentEventKeys.forEach(key => {
                 newEvents[key] = currentEvents[key];
-            })
+            })s
             events = newEvents;
         }
 
