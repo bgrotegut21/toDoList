@@ -108,20 +108,23 @@ const getInitialElements = () => {
         let deleteBoard = Array.from(document.getElementsByClassName("deleteBoard"));
         let editBoard  = Array.from(document.getElementsByClassName("editBoard"));
         let taskHolders = Array.from(document.getElementsByClassName("taskHolder"));
+        let taskLists = Array.from(document.getElementsByClassName("taskLists"));
         let boardContentTextBox = Array.from(document.getElementsByClassName("boardtextBox"));
         let boardOverlay = Array.from(document.getElementsByClassName("boardOverlay"))
+        let taskAdders = Array.from(document.getElementsByClassName("taskAdder"))
  
         let exampleBoardText = Array.from(document.getElementsByClassName("exampleBoardText"))
+        let button = Array.from(document.getElementsByClassName("button"));
 
         return {editItems, deleteItems, addProjectLabels, projectButton,
             projectTaskHolderChildren, projectContainerText, boardTextBox, boarderButton, 
             deleteBoard, editBoard, pageContent, pageContentChildren, taskHolders, exampleBoardText,
-            changeBoardTitleButtons, boardContentTextBox, boardOverlay
+            changeBoardTitleButtons, boardContentTextBox, boardOverlay, taskLists, taskAdders, button
         };
     
     }
     
 
-
+ 
 export  {getInitialElements, createDomElements, getUpdatedElements}
     

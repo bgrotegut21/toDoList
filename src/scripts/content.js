@@ -18,6 +18,8 @@ const Content = () => {
     let staticBoardLists = [];
     let changedBoardLists = [];
 
+    let currentPriorityText = "N/A";
+
     let index;
     let currentIndex;
 
@@ -40,6 +42,9 @@ const Content = () => {
         removeBindings(elements.deleteBoard,deleteBoard, "click");
         removeBindings(elements.editBoard,editBoard,"click");
         removeBindings(elements.changeBoardTitleButtons,changeName, "click");
+        removeBindings(elements.taskAdders, addListEditor, "click")
+        removeBindings(elements.button, shadeButtonColor, "click")
+        
 
 
     }
@@ -50,6 +55,36 @@ const Content = () => {
         addBindings(elements.deleteBoard,deleteBoard, "click");
         addBindings(elements.editBoard,editBoard,"click");
         addBindings(elements.changeBoardTitleButtons, changeName, "click");
+        addBindings(elements.taskAdders, addListEditor, "click");
+        addBindings(elements.button, shadeButtonColor, "click")
+
+        
+    }
+
+
+    const unshadeButtons = ()=> {
+        let elements = getUpdatedElements();
+        let buttons = elements.button;
+        buttons.forEach(element => {
+            let elementChildren = Array.from(element.children);
+            elementChildren.forEach(childElement => {
+                childElement.style.background = "none";
+            })
+        })
+    }
+
+
+
+    const shadeButtonColor = (event) => {
+        unshadeButtons();
+        console.log(event.target.getAttribute("class"), "event target class")
+        if (event.target.getAttribute("class") == "highText") {
+            event.target.style.background = "red"
+        } else if (event.target.getAttribute("class") == "mediumText"){
+            event.target.style.background = "rgb(255,202,10)";
+        } else if (event.target.getAttribute("class") == "lowText"){
+            event.target.style.background = "green";
+        }
 
         
     }
@@ -88,6 +123,7 @@ const Content = () => {
 
         console.log(index, " the index")
         let changedBoardLists = staticListTasks[index].changedBoardLists
+        console.log(changedBoardLists, " the changed board lists")
     
         let currentText = getElementByBoardIndex(index,"exampleBoardText").textContent;
 
@@ -96,19 +132,26 @@ const Content = () => {
         let newArray = [];
         newArray.push(editBoardTemplate);
         let finalArray = newArray.concat(changedBoardLists);
+
         staticListTasks[index].changedBoardLists = finalArray;
+
+        console.log(staticListTasks[index].changedBoardLists, "changed boar list")
         currentIndex = index;
         renderBoardLists();
         
     }
 
 
-    const addListEditor = (index) => {
+    const addListEditor = (event) => {
+    
+        console.log("adding list editor")
+        
         let currentText = "";
-        if (index){
-            //will eventually do something
-            return
-        }
+
+        let index = event.target.boardIndex;
+        console.log(event.target, "event target")
+        console.log(index, "the current new index")
+
         let listEditorTemplate = {listEditor: true, text:currentText};
         let listBoardArray = [listEditorTemplate];
         let newTasks = staticListTasks[index].changedBoardLists;
@@ -170,11 +213,12 @@ const Content = () => {
     }
 
     const findBoardTextBox =  (index) => {
-        let taskHolder = getElementByBoardIndex(index,"taskHolders");
+        let taskLists = getElementByBoardIndex(index,"taskLists");
         let buttonText = "could not load text"
-        let taskHolderChildren = Array.from(taskHolder.children)
+        let taskListChildren = Array.from(taskLists.children)
+    
        
-        taskHolderChildren.forEach(child => {
+        taskListChildren.forEach(child => {
             if (child.getAttribute("class") == "boardTextEditor") {
                  buttonText = Array.from(child.children)[0].value;
                  return;
@@ -185,6 +229,7 @@ const Content = () => {
     }
 
     const renderBoardLists = () => {
+        currentPriorityText = "N/A"
         removeBoardOverlay();
         let indexesLength = staticListTasks.length;
         removeContentBindings();
@@ -212,9 +257,10 @@ const Content = () => {
     }
 
     const renderSingleBoardList = (index) => {
-        let taskHolder = getElementByBoardIndex(index, "taskHolders");
+        let taskList = getElementByBoardIndex(index, "taskLists");
+
        // console.log(taskHolder, "the task holder")
-        taskHolder.innerHTML = "";
+        taskList.innerHTML = "";
  //       console.log(index, "the index");
 //        console.log(staticListTasks[index], "static list current index");
         console.log(staticListTasks[index], "static list tasks indexes")
@@ -222,9 +268,12 @@ const Content = () => {
         staticListTasks[index].changedBoardLists.forEach(task => {
             if (task.editBoard){
                 let boardText = createBoardEditor(task);
-                taskHolder.innerHTML += boardText;
+                taskList.innerHTML += boardText;
                 addBoardOverlay(index);
-            } else if (){
+            } else if (task.listEditor){
+                let listText= createListEditor(task.text);
+                taskList.innerHTML += listText;
+
                 
             }
         })
@@ -267,6 +316,8 @@ const Content = () => {
         if (typeof tasks != "undefined") currentTasks = tasks; 
 
         let board = {board: true, text:currentText, tasks: currentTasks, changedBoardLists: []};
+
+
         return board;
     }
 
@@ -325,7 +376,7 @@ const Content = () => {
                                                     
                                                     <h2 class = "exampleBoardText">${text}</h2>
 
-                                                    <div class = "taskHolder"></div>
+                                                    <div class = "taskLists"></div>
 
                                                     <div class = "taskAdder">
                                                         <p>+ Add Task</p>
@@ -334,6 +385,11 @@ const Content = () => {
                                                     </div>`
         return boardText;
     }
+
+
+
+
+
 
     const createAddBoard = () => {
         let addBoardText = `<div class = "boardContent">
@@ -348,6 +404,39 @@ const Content = () => {
         return addBoardText;
     }
 
+
+    const createListEditor = (text) => {
+        let listText = `<div class = "taskEditor">
+                            <div class = "taskHolder">
+                                <p class = "taskHolderText">Title:</p>
+                                <input class = "taskTextBox" type="text" value = "${text}" >
+                            </div>
+                        
+                                <div class = "dateTool">
+                                    <p class = "dateText">Date: </p>
+                                    <input class = "datePicker" type="date" >
+                                </div>
+                                <div class = "editToolHolder">
+                                    <div class = "priority">
+                                        <p class = "buttonText">Priority:</p>
+                                        <div class = "buttons">
+                                            <div class = "button high">
+                                                <p class = "highText">High</p>
+                                            </div>
+                                            <div class = "button medium">
+                                                <p class = "mediumText">Medium</p>
+                                            </div>
+                                            <div class = "button low">
+                                                <p class = "lowText">Low</p>
+                                            </div>
+
+                                        </div>
+
+                                        </div>`
+    return listText;
+
+        
+    }
     
 
     const assignBoardIcons = (element, currentIndex) =>  {
@@ -361,11 +450,19 @@ const Content = () => {
                 })
 
             }
+
+            if (childElement.getAttribute("class") == "taskAdder"){
+                let taskParagraph = Array.from(childElement.children)[0];
+                console.log(taskParagraph, "the task paragraph")
+                taskParagraph.boardIndex = currentIndex;
+            }
           //  console.log(childElement, "the child element")
             childElement.boardIndex = currentIndex;
            // console.log(childElement.boardIndex, "child element board index")
         })
     }
+
+
 
 
     const assignBoardElements = () => {
@@ -383,7 +480,9 @@ const Content = () => {
                 let boardContent = Array.from(element.children);
                 boardContent.forEach(childElement => {
                     childElement.boardIndex = currentIndex;
+                    console.log(childElement.getAttribute("class"), "the current child element calss")
                     if (childElement.getAttribute("class") == "board") assignBoardIcons(childElement,currentIndex)
+                 
                 })
             }
             currentIndex ++;
