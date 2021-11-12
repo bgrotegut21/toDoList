@@ -1,5 +1,8 @@
+import format from 'date-fns/format'
+
 import trashImage from "../images/trash.svg";
 import editIcon from "../images/editOff.svg";
+import checkMarkIcon from "../images/finished.svg";
 
 
 
@@ -8,6 +11,7 @@ import {send} from "./send.js"
 import { getInitialElements, getUpdatedElements } from "./pageLayout.js";
 
 
+import format from 'date-fns/format'
 
 
 const Content = () => {
@@ -18,7 +22,7 @@ const Content = () => {
     let staticBoardLists = [];
     let changedBoardLists = [];
 
-    let currentPriorityText = "N/A";
+    let currentPriorityText = "High";
 
     let index;
     let currentIndex;
@@ -41,24 +45,43 @@ const Content = () => {
         removeBindings(elements.boarderButton, addBoardTasks,"click");
         removeBindings(elements.deleteBoard,deleteBoard, "click");
         removeBindings(elements.editBoard,editBoard,"click");
-        removeBindings(elements.changeBoardTitleButtons,changeName, "click");
+       
         removeBindings(elements.taskAdders, addListEditor, "click")
-        removeBindings(elements.button, shadeButtonColor, "click")
         
 
 
     }
 
     const addContentBindings = () => {
+        console.log("adding the content bindings")
         let elements = getUpdatedElements();
+        console.log(elements.boarderButton, "elements boarder button")
         addBindings(elements.boarderButton, addBoardTasks,"click");
         addBindings(elements.deleteBoard,deleteBoard, "click");
         addBindings(elements.editBoard,editBoard,"click");
-        addBindings(elements.changeBoardTitleButtons, changeName, "click");
+
         addBindings(elements.taskAdders, addListEditor, "click");
-        addBindings(elements.button, shadeButtonColor, "click")
+
 
         
+    }
+
+
+    const addListBindings = () => {
+        let elements = getUpdatedElements();
+        addBindings(elements.changeBoardTitleButtons, changeName, "click");
+        addBindings(elements.button, shadeButtonColor, "click")
+        addBindings(elements.trashIt,deleteTask, "click");
+        addBindings(elements.finished,addTask, "click");
+
+    }
+
+    const removeListBindings = () => {
+        let elements = getUpdatedElements();
+        removeBindings(elements.changeBoardTitleButtons,changeName, "click");
+        removeBindings(elements.button, shadeButtonColor, "click")
+        removeBindings(elements.trashIt,deleteTask, "click");
+        removeBindings(elements.finished,addTask, "click");
     }
 
 
@@ -69,25 +92,108 @@ const Content = () => {
             let elementChildren = Array.from(element.children);
             elementChildren.forEach(childElement => {
                 childElement.style.background = "none";
+                console.log(childElement, "the current child element")
             })
         })
     }
 
 
+    const deleteTask =  () => {
+        return;
+    }
+
+
+
+
+
+    const removeListEditor = () => {
+        staticListTasks.forEach(task => {
+            let newTasks = task.changedListTasks;
+            newTasks = newTasks.filter(task => task.listEditor -= true );
+            task.changedListTasks = newTasks;
+        })
+        renderBoardLists();
+
+    }
+
+    const findListEditorBoardIndex = () => {
+        let newTasks = staticListTasks;
+        let boardIndex = 0;
+        let stopLoop = false;
+
+        newTasks.forEach(board => {
+            board.changedListTasks.forEach(task => {
+                if (task.listEditor == true){
+                    stopLoop = true;
+                    return
+                }
+            })
+            if (stopLoop) return;
+            boardIndex ++;
+            
+        })
+        return boardIndex;
+    }
+
+    const addTask =  () => {
+        let elements = getUpdatedElements();
+        let currentDate = elements.datePicker[0].value
+        let taskText = elements.taskTextBox[0].value;
+        let task = createTaskTemplate(taskText,currentDate, currentPriorityText);
+        let boardIndex = findListEditorBoardIndex();
+        staticListTasks[boardIndex].changedListTasks.push(task);
+        removeListEditor();
+        renderBoardLists();
+    }
+
+    const createTaskTemplate = (text,date,pritority) => {
+        let task = {}
+        task.isTask = true;
+        task.text = text,
+        task.date = date;
+        task.dateText = format(task.date,"MMM d y")
+        task.pritority = pritority;
+        return task;
+    
+        
+    }
+
+
+
+
 
     const shadeButtonColor = (event) => {
         unshadeButtons();
-        console.log(event.target.getAttribute("class"), "event target class")
+        let paragraph;
+        if (event.target.getAttribute("class") == "button high" ||
+            event.target.getAttribute("class") == "button medium" ||
+            event.target.getAttribute("class") == "button low"
+        ) paragraph = Array.from(event.target.children)[0];
+        
+        console.log(paragraph, "the current paragraph")
+
         if (event.target.getAttribute("class") == "highText") {
-            event.target.style.background = "red"
+            event.target.style.background = "red";
+            currentPriorityText = "High";
         } else if (event.target.getAttribute("class") == "mediumText"){
             event.target.style.background = "rgb(255,202,10)";
+            currentPriorityText = "Medium";
         } else if (event.target.getAttribute("class") == "lowText"){
             event.target.style.background = "green";
+            currentPriorityText = "Low";
+        } else if (event.target.getAttribute("class") == "button high"){
+            paragraph.style.background = "red";
+            currentPriorityText = "High";
+        } else if (event.target.getAttribute("class") == "button medium"){
+            paragraph.style.background = "rgb(255,202,10)";
+            currentPriorityText = "Medium";
+        } else if (event.target.getAttribute("class") == "button low"){
+            paragraph.style.background = "green";
+            currentPriorityText = "Low";
         }
-
-        
     }
+
+
 
     const deleteBoard = (event) => {
         console.log(staticListTasks, " the static list tasks");
@@ -113,11 +219,14 @@ const Content = () => {
     }
 
 
+    
+
 
 
     const editBoard = (event) => {
         let index = event.target.boardIndex;
- 
+
+
         removeEditTitleMenu();
         
 
@@ -152,7 +261,7 @@ const Content = () => {
         console.log(event.target, "event target")
         console.log(index, "the current new index")
 
-        let listEditorTemplate = {listEditor: true, text:currentText};
+        let listEditorTemplate = {listEditor: true, text:currentText, boardIndex:index};
         let listBoardArray = [listEditorTemplate];
         let newTasks = staticListTasks[index].changedBoardLists;
         let finalArray = newTasks.concat(listBoardArray);
@@ -164,18 +273,20 @@ const Content = () => {
     const changeName = (event) => {
         let elements = getUpdatedElements();
         let boardText = elements.boardContentTextBox[0].value;
-        let exampleText = getElementByBoardIndex(currentIndex, "exampleBoardText");
  //       console.log(exampleText, "the example text")
 
         
-        exampleText.textContent = boardText;
       //  console.log(boardText, " current board text")
-     //   console.log(exampleText, "the example text content")
+     //   console.frendlog(exampleText, "the example text content")
         let newTasks = staticListTasks[currentIndex].changedBoardLists;
-
         newTasks = newTasks.filter(task => task.editBoard != true)
+        
         staticListTasks[currentIndex].changedBoardLists = newTasks;
-        renderBoardLists()
+        staticListTasks[currentIndex].text = boardText;
+
+        console.log(staticListTasks, "the static list tasks")
+
+        renderListTasks();
     
 
     }
@@ -229,16 +340,18 @@ const Content = () => {
     }
 
     const renderBoardLists = () => {
-        currentPriorityText = "N/A"
+        removeListBindings();
         removeBoardOverlay();
+        currentPriorityText = "High"
         let indexesLength = staticListTasks.length;
-        removeContentBindings();
         console.log(staticListTasks, "the static list task")
         for (let i = 0; i < indexesLength; i++) {
             console.log(i, "the index")
             if (staticListTasks.length != 0)renderSingleBoardList(i);
+
         }
-        addContentBindings();
+
+        addListBindings();
 
     }
 
@@ -273,9 +386,7 @@ const Content = () => {
             } else if (task.listEditor){
                 let listText= createListEditor(task.text);
                 taskList.innerHTML += listText;
-
-                
-            }
+            } else if (task){}
         })
 
     }
@@ -291,7 +402,7 @@ const Content = () => {
 
 
     const addBoardTasks = () => {
-
+        console.log("adding board tasks")
         let elements = getUpdatedElements();
         let text = elements.boardTextBox[0].value;
         if(text.length == 0) return;
@@ -408,8 +519,11 @@ const Content = () => {
     const createListEditor = (text) => {
         let listText = `<div class = "taskEditor">
                             <div class = "taskHolder">
+
                                 <p class = "taskHolderText">Title:</p>
                                 <input class = "taskTextBox" type="text" value = "${text}" >
+
+
                             </div>
                         
                                 <div class = "dateTool">
@@ -432,7 +546,18 @@ const Content = () => {
 
                                         </div>
 
-                                        </div>`
+                                        </div>
+                                    
+
+
+                                </div>
+                                <div class = "editTools">
+                                    <img class = "trashIt" src="${trashImage}" alt="">
+                                    <img class = "finished" src="${checkMarkIcon}" alt="">
+                                </div>
+
+                            </div>`
+                                        
     return listText;
 
         
@@ -490,10 +615,17 @@ const Content = () => {
     }
 
     const renderListTasks = (bool) => {
+        console.log("rendering list tasks")
         renderEditBoardTextValues();
         removeContentBindings();
+        removeListBindings();
+
+        let newTasks = changedListTasks.filter(task => task.addBoard != true);
+        changedListTasks = newTasks;
+        changedListTasks.push({addBoard: true});
+        
         dom.pageContent.innerHTML = "";
-        if (!bool)changedListTasks.push({addBoard:true});
+
         changedListTasks.forEach(task => {
             if (task.board){
                 let board = createBoard(task);
@@ -529,7 +661,7 @@ const Content = () => {
             staticListTasks = [];
             index = null;
             if (currentIndex < 0) {
-                renderListTasks(true);
+                renderListTasks();
                 return;
             }
         }

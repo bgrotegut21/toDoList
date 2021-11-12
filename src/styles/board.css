@@ -236,6 +236,9 @@ input {
 
 }
 
+.highText {
+    background:red;
+}
 
 
 
@@ -251,6 +254,17 @@ input {
 .medium {
     border: 5px solid rgb(255,202,10);
 }
+
+
+/* .task {
+    text-decoration: line-through;
+    color:grey;
+}
+
+.edit {
+    filter: invert(20%) sepia(10%) saturate(2076%) hue-rotate(86deg) brightness(118%) contrast(10%);
+}
+ */
 
 
 .low {
@@ -413,7 +427,9 @@ input {
 
 
  
+
 }
+
 
 .changeBoardTitleButton {
     cursor: pointer;
