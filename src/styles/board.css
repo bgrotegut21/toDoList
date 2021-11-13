@@ -36,6 +36,7 @@
 
 
 
+
 input {
     outline: none;
 }
@@ -100,7 +101,7 @@ input {
 
 .task {
     background:rgb(237, 230, 230);
-    border-left: 8px solid red;
+    border-left: 8px solid;
     margin:10px;
 }
 
@@ -225,8 +226,10 @@ input {
     align-items: center;
     border-left: 8px blue solid;
     flex-direction: column;
+}
 
-
+.error {
+    color:rgb(197, 63, 63);
 }
 
 
@@ -436,11 +439,6 @@ input {
 }
 
 
-
-
-
-
-
 @media only screen and (max-width: 300px){
 
     .editExampleIcons {
@@ -560,7 +558,8 @@ input {
     }
 
     .task {
-        border-left: 4px solid red;
+        border-left: 4px solid;
+       
     }
 
     .taskEditor {
@@ -593,4 +592,8 @@ input {
 
 
 
+}
+
+.task {
+    border-color: red;
 }

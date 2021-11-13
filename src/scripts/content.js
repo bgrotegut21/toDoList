@@ -11,7 +11,6 @@ import {send} from "./send.js"
 import { getInitialElements, getUpdatedElements } from "./pageLayout.js";
 
 
-import format from 'date-fns/format'
 
 
 const Content = () => {
@@ -26,6 +25,8 @@ const Content = () => {
 
     let index;
     let currentIndex;
+
+    let newIndex = false;
 
     let dom = getInitialElements();
 
@@ -46,7 +47,7 @@ const Content = () => {
         removeBindings(elements.deleteBoard,deleteBoard, "click");
         removeBindings(elements.editBoard,editBoard,"click");
        
-        removeBindings(elements.taskAdders, addListEditor, "click")
+        removeBindings(elements.taskAdders, addListEditorClick, "click")
         
 
 
@@ -60,7 +61,7 @@ const Content = () => {
         addBindings(elements.deleteBoard,deleteBoard, "click");
         addBindings(elements.editBoard,editBoard,"click");
 
-        addBindings(elements.taskAdders, addListEditor, "click");
+        addBindings(elements.taskAdders, addListEditorClick, "click");
 
 
         
@@ -72,8 +73,15 @@ const Content = () => {
         addBindings(elements.changeBoardTitleButtons, changeName, "click");
         addBindings(elements.button, shadeButtonColor, "click")
         addBindings(elements.trashIt,deleteTask, "click");
-        addBindings(elements.finished,addTask, "click");
+        addBindings(elements.finished,addTaskClick, "click");
+        addBindings(elements.edit, editTask, "click");
+        addBindings(elements.circleIcon, crossOutTask, "click");
 
+    }
+
+    const addChangeNameBinding = () => {
+        let elements = getUpdatedElements();
+        addBindings(elements.changeBoardTitleButtons, changeName, "click");
     }
 
     const removeListBindings = () => {
@@ -81,7 +89,9 @@ const Content = () => {
         removeBindings(elements.changeBoardTitleButtons,changeName, "click");
         removeBindings(elements.button, shadeButtonColor, "click")
         removeBindings(elements.trashIt,deleteTask, "click");
-        removeBindings(elements.finished,addTask, "click");
+        removeBindings(elements.finished,addTaskClick, "click");
+        removeBindings(elements.edit, editTask, "click");
+        removeBindings(elements.circleIcon, crossOutTask, "click");
     }
 
 
@@ -92,7 +102,7 @@ const Content = () => {
             let elementChildren = Array.from(element.children);
             elementChildren.forEach(childElement => {
                 childElement.style.background = "none";
-                console.log(childElement, "the current child element")
+                // console.log(childElement, "the current child element")
             })
         })
     }
@@ -103,16 +113,31 @@ const Content = () => {
     }
 
 
+    const editTask = (event) => {
+        console.log([event.target])
+        let boardIndex = event.target.boardIndex;
+        let taskIndex = event.target.taskIndex;
+
+        addListEditor(boardIndex,taskIndex)
+        
+
+        
+    }
+
+    const crossOutTask = () => {
+        return;
+    }
+
+
 
 
 
     const removeListEditor = () => {
         staticListTasks.forEach(task => {
-            let newTasks = task.changedListTasks;
-            newTasks = newTasks.filter(task => task.listEditor -= true );
-            task.changedListTasks = newTasks;
+            let newTasks = task.changedBoardLists;
+            newTasks = newTasks.filter(task => task.listEditor != true );
+            task.changedBoardLists = newTasks;
         })
-        renderBoardLists();
 
     }
 
@@ -122,7 +147,8 @@ const Content = () => {
         let stopLoop = false;
 
         newTasks.forEach(board => {
-            board.changedListTasks.forEach(task => {
+            console.log(board, "the current board")
+            board.changedBoardLists.forEach(task => {
                 if (task.listEditor == true){
                     stopLoop = true;
                     return
@@ -135,28 +161,78 @@ const Content = () => {
         return boardIndex;
     }
 
-    const addTask =  () => {
+
+    const changeValueToDate = (value) => {
+        let newValue = value.split("-");
+        let year = newValue[0];
+        let monthIndex = newValue[1] -1;
+        let day = newValue[2];
+
+
+        let date = new Date(year,monthIndex,day);
+        return date;
+
+
+
+    }
+
+    const addTaskClick = () => {
+        addTask();
+    }
+
+    const addTask =  (index) => {
+    
+
+    
+
         let elements = getUpdatedElements();
-        let currentDate = elements.datePicker[0].value
+        let dateValue = elements.datePicker[0].value
+        let currentDate;
+    
+        if (dateValue.length == 0) currentDate = new Date();
+        else currentDate = changeValueToDate(dateValue);
+        console.log(currentDate, "the current date")
         let taskText = elements.taskTextBox[0].value;
+        if (taskText.length == 0) taskText = "New Task";
+
         let task = createTaskTemplate(taskText,currentDate, currentPriorityText);
         let boardIndex = findListEditorBoardIndex();
-        staticListTasks[boardIndex].changedListTasks.push(task);
-        removeListEditor();
+        console.log(boardIndex);
+        console.log(task,"the current task")
+
+        console.log(index, "the current value of index")
+
+         if (index) {
+            staticListTasks[boardIndex].tasks[index] = task;
+            let tasks = staticListTasks[boardIndex].tasks;
+            staticListTasks[boardIndex].changedBoardLists = tasks;
+
+         } else {
+             staticListTasks[boardIndex].tasks.push(task);
+             let tasks = staticListTasks[boardIndex].tasks;
+             console.log(tasks, "the current tasks")
+             staticListTasks[boardIndex].changedBoardLists = tasks;
+         }
+         console.log(staticListTasks[boardIndex].changedBoardLists, "static change board lists");
+         console.log(staticListTasks[boardIndex].tasks, "taskos")
+
         renderBoardLists();
     }
 
     const createTaskTemplate = (text,date,pritority) => {
         let task = {}
-        task.isTask = true;
+        task.listTask = true;
         task.text = text,
         task.date = date;
         task.dateText = format(task.date,"MMM d y")
         task.pritority = pritority;
+        task.checked = false;
         return task;
     
         
     }
+
+
 
 
 
@@ -246,33 +322,67 @@ const Content = () => {
 
         console.log(staticListTasks[index].changedBoardLists, "changed boar list")
         currentIndex = index;
-        renderBoardLists();
+        renderBoardLists(true);
         
     }
 
+    const addListEditorClick = (event) => {
+        let boardIndex = event.target.boardIndex;
+        addListEditor(boardIndex)
 
-    const addListEditor = (event) => {
+
+    }
+
     
-        console.log("adding list editor")
+
+
+    const addListEditor = (boardIndex,index) => {
+        removeListEditor()
+    
+        // console.log("adding list editor")
+        // console.log(index, "the current index");
+        // console.log(boardIndex, "the current board index")
+
+        
         
         let currentText = "";
+        let finalArray;
+        let listEditorTemplate;
 
-        let index = event.target.boardIndex;
-        console.log(event.target, "event target")
-        console.log(index, "the current new index")
+        if (!index) listEditorTemplate = {listEditor: true, text:currentText, boardIndex:boardIndex};
+        else listEditorTemplate = {listEditor: true, text:currentText, boardIndex:boardIndex, index: index,};
+         
 
-        let listEditorTemplate = {listEditor: true, text:currentText, boardIndex:index};
-        let listBoardArray = [listEditorTemplate];
-        let newTasks = staticListTasks[index].changedBoardLists;
-        let finalArray = newTasks.concat(listBoardArray);
-        staticListTasks[index].changedBoardLists = finalArray;
-        renderBoardLists()
+        if (typeof index != 'undefined') {
+        
+            let newTasks = staticListTasks[boardIndex].changedBoardLists;
+            newTasks.splice(index,0,listEditorTemplate);
+            finalArray = newTasks
+            
+
+        } else {
+            let listBoardArray = [listEditorTemplate];
+            let newTasks = staticListTasks[boardIndex].changedBoardLists;
+            finalArray = newTasks.concat(listBoardArray);
+
+        }
+
+
+
+        staticListTasks[boardIndex].changedBoardLists = finalArray;
+
+        renderBoardLists();
     }
 
 
     const changeName = (event) => {
         let elements = getUpdatedElements();
         let boardText = elements.boardContentTextBox[0].value;
+        if (boardText.length == 0 ){
+            removeEditTitleMenu();
+            renderBoardLists();
+            return;
+        }   
  //       console.log(exampleText, "the example text")
 
         
@@ -339,21 +449,24 @@ const Content = () => {
         return buttonText;
     }
 
-    const renderBoardLists = () => {
+    const renderBoardLists = (isChangedName) => {
         removeListBindings();
         removeBoardOverlay();
         currentPriorityText = "High"
         let indexesLength = staticListTasks.length;
-        console.log(staticListTasks, "the static list task")
+        // console.log(staticListTasks, "the static list task")
         for (let i = 0; i < indexesLength; i++) {
-            console.log(i, "the index")
+            // console.log(i, "the index")
             if (staticListTasks.length != 0)renderSingleBoardList(i);
 
         }
 
-        addListBindings();
-
+        if (!isChangedName)addListBindings();
+        else addChangeNameBinding();
     }
+
+
+
 
     const removeBoardOverlay = () => {
         let elements = getUpdatedElements();
@@ -376,19 +489,72 @@ const Content = () => {
         taskList.innerHTML = "";
  //       console.log(index, "the index");
 //        console.log(staticListTasks[index], "static list current index");
-        console.log(staticListTasks[index], "static list tasks indexes")
+        // console.log(staticListTasks[index], "static list tasks indexes")
+        // console.log(staticListTasks[index].changedBoardLists, "static change board lists")
 
         staticListTasks[index].changedBoardLists.forEach(task => {
+            // console.log(task, "each individual task")
             if (task.editBoard){
                 let boardText = createBoardEditor(task);
                 taskList.innerHTML += boardText;
                 addBoardOverlay(index);
             } else if (task.listEditor){
-                let listText= createListEditor(task.text);
+                let listText= createListEditor(task);
                 taskList.innerHTML += listText;
-            } else if (task){}
+            } else if (task.listTask){
+                // console.log(task, "the current task")
+                let taskText = createTask(task);
+                taskList.innerHTML += taskText;
+
+
+            }
+        })
+        
+        let taskListChildren = Array.from(taskList.children)
+        // console.log(taskList, "current task list")
+        let boardIndex = taskList.boardIndex;
+        assignTaskIndex(taskListChildren,boardIndex);
+
+
+
+    }
+
+    const assignTools = (elements,index,boardIndex) => {
+        elements.forEach(childElement => {
+            if (childElement.getAttribute("class") == "tools"){
+                let toolsChildren = Array.from(childElement.children);
+                toolsChildren.forEach(toolElement => 
+                    {
+                    // console.log(toolElement, "current tool element")
+                    toolElement.taskIndex = index;
+                    toolElement.boardIndex = boardIndex;
+                })
+            }
         })
 
+
+    }
+
+    const assignTaskIndex = (element,boardIndex) => {
+    
+        let taskIndex =0;
+        // console.log(boardIndex, "the current boardIndex")
+
+        element.forEach(childElement => {
+            // console.log(childElement, "the child element")
+            if (childElement.getAttribute("class") == "task"){
+                let taskChildren = Array.from(childElement.children);
+                taskChildren.forEach(taskChild => {
+                    if (taskChild.getAttribute("class") == "taskTools"){
+                        let taskToolsChildren = Array.from(taskChild.children);
+                        assignTools(taskToolsChildren,taskIndex,boardIndex);
+                    }
+                })
+                taskIndex++
+            }
+
+        })
+        
     }
 
 
@@ -405,7 +571,7 @@ const Content = () => {
         console.log("adding board tasks")
         let elements = getUpdatedElements();
         let text = elements.boardTextBox[0].value;
-        if(text.length == 0) return;
+        if(text.length == 0) text = "New Board";
         let task = createBoardTemplate(text);
         staticListTasks.push(task);
         changedListTasks = setArray(staticListTasks)
@@ -416,7 +582,7 @@ const Content = () => {
     }
 
     const addToDoTasks = (currentIndex) => {
-        return;
+        
 
     }
 
@@ -431,33 +597,31 @@ const Content = () => {
 
         return board;
     }
-
-
-    const createToDoTaskTemplate = (taskText,taskDate,taskPriority) => {
-        let task = {task:true,text: taskText, date: taskDate, priority: taskPriority };
-        return task;
-    }
-    
-
     
 
     
 
     const createTask = (task) => {
-        let taskText = `<div class = "task">
-                            <p class = "taskLabel">Doing Laundary</p>
+        let color;
+        if (task.pritority == "High") color = "red";
+        if (task.pritority == "Low") color = "green";
+        if (task.pritority == "Medium") color = "#ff9800"
+
+        let taskText = `<div class = "task" style = "border-color:${color}">
+                            <p class = "taskLabel">${task.text}</p>
                             <div class = "taskTools">
                                 <div class = "generalTextHolder">
-                                    <p class = "generalText dateText">Due Nov 15 2021</p>
-                                    <p class = "generalText priorityText">Priority: High</p>
+                                    <p class = "generalText dateText">Due: ${task.dateText}</p>
+                                    <p class = "generalText priorityText">Priority: ${task.pritority}</p>
 
                                 </div>
 
                                 <div class = "tools">
-                                    <img class = "edit" src="src/images/editOff.svg" alt="">
+                                    <img class = "edit" src="${editIcon}" alt="">
                                     <div class = "circleIcon"></div>
                                 </div>
                             </div>`
+        return taskText;
         
     }
 
@@ -516,7 +680,8 @@ const Content = () => {
     }
 
 
-    const createListEditor = (text) => {
+    const createListEditor = (task) => {
+        let text = task.text;
         let listText = `<div class = "taskEditor">
                             <div class = "taskHolder">
 
@@ -650,6 +815,11 @@ const Content = () => {
         })
     }
 
+    const setChangedToDoLists = () => {
+        staticListTasks.forEach(task => {
+            task.changedBoardLists =  task.tasks;
+        })
+    }
 
 
     
@@ -679,7 +849,9 @@ const Content = () => {
         }
         staticListTasks = newTasks;
         console.log(staticListTasks, "the static list tasks")
-        changedListTasks = setArray(staticListTasks);
+        changedListTasks = staticListTasks;
+        setChangedToDoLists();
+
         renderListTasks();
     
     
