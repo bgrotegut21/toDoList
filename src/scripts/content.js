@@ -113,12 +113,25 @@ const Content = () => {
     }
 
 
+
+
     const editTask = (event) => {
+
         console.log([event.target])
         let boardIndex = event.target.boardIndex;
         let taskIndex = event.target.taskIndex;
+        let task = staticListTasks[boardIndex].changedBoardLists[taskIndex];
+        let text = task.text;
+        let date = task.date;
+        currentPriority = task.pritority;
 
-        addListEditor(boardIndex,taskIndex)
+        console.log(taskIndex);
+        console.log(text);
+        console.log(boardIndex);
+
+        
+
+        addListEditor(boardIndex, taskIndex, text, date)
         
 
         
@@ -176,8 +189,31 @@ const Content = () => {
 
     }
 
+    const getIndexes = () => {
+        let breakLoop = false;
+        let indexes;
+        staticListTasks.forEach(task => {
+            task.changedBoardLists.forEach(listTask => {
+                if (listTask.listEditor){
+                    if (typeof listTask.index != "undefined") indexes = listTask.index;        
+                    else indexes = false;
+                    breakLoop = true;
+                }
+            })
+            if (breakLoop) return;
+        })
+        return indexes;
+    }
+
+
+
     const addTaskClick = () => {
-        addTask();
+        let indexes = getIndexes();
+        if (indexes !== false){
+            addTask(indexes);
+        } else {
+            addTask();
+        }
     }
 
     const addTask =  (index) => {
@@ -235,6 +271,24 @@ const Content = () => {
 
 
 
+    const shadeButtonByClass = (className,color) => {
+        let elements = getUpdatedElements();
+        let buttons = elements.button;
+        let buttonChildren = buttons.filter(button => button.getAttribute("class") == className)[0];
+        console.log(buttonChildren, "the current button children")
+        let buttonParagraph = buttonChildren[0];
+        buttonParagraph.style.background = color;
+
+    }
+
+    const shadeButtonByPriority = () => {
+
+
+        if (currentPriorityText == "High") shadeButtonByClass("button high","red");
+        else if (currentPriorityText == "Medium") shadeButtonByClass("button medium", "#ff9800");
+        else if (currentPriorityText == "Low") shadeButtonByClass("button low", "green");
+
+    }
 
 
 
@@ -252,7 +306,7 @@ const Content = () => {
             event.target.style.background = "red";
             currentPriorityText = "High";
         } else if (event.target.getAttribute("class") == "mediumText"){
-            event.target.style.background = "rgb(255,202,10)";
+            event.target.style.background = "#ff9800";
             currentPriorityText = "Medium";
         } else if (event.target.getAttribute("class") == "lowText"){
             event.target.style.background = "green";
@@ -261,7 +315,7 @@ const Content = () => {
             paragraph.style.background = "red";
             currentPriorityText = "High";
         } else if (event.target.getAttribute("class") == "button medium"){
-            paragraph.style.background = "rgb(255,202,10)";
+            paragraph.style.background = "#ff9800";
             currentPriorityText = "Medium";
         } else if (event.target.getAttribute("class") == "button low"){
             paragraph.style.background = "green";
@@ -336,28 +390,35 @@ const Content = () => {
     
 
 
-    const addListEditor = (boardIndex,index) => {
+    const addListEditor = (boardIndex,index,text,date) => {
+
+
         removeListEditor()
     
         // console.log("adding list editor")
-        // console.log(index, "the current index");
+         console.log(index, "the current index");
         // console.log(boardIndex, "the current board index")
 
-        
-        
-        let currentText = "";
+    
         let finalArray;
         let listEditorTemplate;
+        let currentDate = new 
 
-        if (!index) listEditorTemplate = {listEditor: true, text:currentText, boardIndex:boardIndex};
-        else listEditorTemplate = {listEditor: true, text:currentText, boardIndex:boardIndex, index: index,};
+        
+        if (typeof index != "undefined")  listEditorTemplate = {listEditor: true, text:text,date: date, boardIndex:boardIndex, index: index,};
+        else listEditorTemplate = {listEditor: true, text:"",date boardIndex:boardIndex};
+        
+       
          
+
+    
 
         if (typeof index != 'undefined') {
         
             let newTasks = staticListTasks[boardIndex].changedBoardLists;
-            newTasks.splice(index,0,listEditorTemplate);
+            newTasks.splice(index +1,0,listEditorTemplate);
             finalArray = newTasks
+
             
 
         } else {
@@ -501,10 +562,14 @@ const Content = () => {
             } else if (task.listEditor){
                 let listText= createListEditor(task);
                 taskList.innerHTML += listText;
+                if(task.listTask.date != "undefined") setTaskDate(task.listTask.date);
+                shadeButtonByPriority();
             } else if (task.listTask){
                 // console.log(task, "the current task")
                 let taskText = createTask(task);
                 taskList.innerHTML += taskText;
+
+
 
 
             }
@@ -516,6 +581,12 @@ const Content = () => {
         assignTaskIndex(taskListChildren,boardIndex);
 
 
+
+    }
+
+    const setTaskDate = (date) => {
+        let elements = getUpdatedElements();
+        elements.datePicker.valueAsDate = date;
 
     }
 

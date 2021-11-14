@@ -167,7 +167,7 @@ input {
 
 .taskAdder:hover {
    cursor:pointer;
-   background:rgb(178, 178, 178)
+   background:rgb(178, 178, 178);
 }
 
 
@@ -284,7 +284,7 @@ input {
 }
 
 .medium:hover {
-    background: rgb(255,202,10);
+    background: #ff9800;
 }
 
 .button {
