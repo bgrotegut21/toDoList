@@ -124,13 +124,14 @@ const getInitialElements = () => {
 
         let circleIcon = Array.from(document.getElementsByClassName("circleIcon"));
         let edit = Array.from(document.getElementsByClassName("edit"))
+        let dateTools = Array.from(document.getElementsByClassName("dateTool"))
 
 
         return {editItems, deleteItems, addProjectLabels, projectButton,
             projectTaskHolderChildren, projectContainerText, boardTextBox, boarderButton, 
             deleteBoard, editBoard, pageContent, pageContentChildren, taskHolders, exampleBoardText,
             changeBoardTitleButtons, boardContentTextBox, boardOverlay, taskLists, taskAdders, button,
-            trashIt, finished, taskTextBox, datePicker, circleIcon, edit
+            trashIt, finished, taskTextBox, datePicker, circleIcon, edit, dateTools
         };
     
     }
