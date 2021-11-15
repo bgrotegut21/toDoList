@@ -603,10 +603,10 @@ const Content = () => {
 //        console.log(staticListTasks[index], "static list current index");
         // console.log(staticListTasks[index], "static list tasks indexes")
         // console.log(staticListTasks[index].changedBoardLists, "static change board lists")
-        let taskDate;
+
         staticListTasks[index].changedBoardLists.forEach(task => {
             // console.log(task, "each individual task")
-
+            let taskDate;
             if (task.editBoard){
                 let boardText = createBoardEditor(task);
                 taskList.innerHTML += boardText;
@@ -618,7 +618,7 @@ const Content = () => {
                 // console.log(task.priority, "task priority")
                 shadeButtonByPriority(task.priority);
                 taskDate = task.date;
-  
+                setTaskDate(task.date);
 
             } else if (task.listTask){
                 // console.log(task, "the current task")
@@ -631,7 +631,7 @@ const Content = () => {
 
             }
         })
-        setTaskDate(taskDate);
+        
         let taskListChildren = Array.from(taskList.children)
         // console.log(taskList, "current task list")
         let boardIndex = taskList.boardIndex;
