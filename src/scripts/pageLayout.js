@@ -126,12 +126,14 @@ const getInitialElements = () => {
         let edit = Array.from(document.getElementsByClassName("edit"))
         let dateTools = Array.from(document.getElementsByClassName("dateTool"))
 
+        let exitEditor = Array.from(document.getElementsByClassName("exitEditor"));
+
 
         return {editItems, deleteItems, addProjectLabels, projectButton,
             projectTaskHolderChildren, projectContainerText, boardTextBox, boarderButton, 
             deleteBoard, editBoard, pageContent, pageContentChildren, taskHolders, exampleBoardText,
             changeBoardTitleButtons, boardContentTextBox, boardOverlay, taskLists, taskAdders, button,
-            trashIt, finished, taskTextBox, datePicker, circleIcon, edit, dateTools
+            trashIt, finished, taskTextBox, datePicker, circleIcon, edit, dateTools, exitEditor
         };
     
     }

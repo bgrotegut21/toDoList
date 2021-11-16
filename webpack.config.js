@@ -12,6 +12,7 @@ module.exports = {
         elementEvent: "./src/scripts/elementEvents.js",
         content: "./src/scripts/content.js",
         send: "./src/scripts/send.js",
+        template: "./src/scripts/template.js",
 
     },
     output: {

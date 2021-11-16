@@ -108,6 +108,7 @@ const nav = () => {
 
     const getCurrentIndex = ()=> {
         let updatedItems = getUpdatedElements()
+        console.log(updatedItems.projectLabel, "updated item project lable")
         let projectLabel = updatedItems.addProjectLabels[0];
         let currentIndex = projectLabel.currentIndex;
         return currentIndex

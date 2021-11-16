@@ -224,7 +224,7 @@ input {
     margin-left:20px;
     display:flex;
     align-items: center;
-    border-left: 8px blue solid;
+    border-left: 8px solid;
     flex-direction: column;
 }
 
@@ -303,7 +303,7 @@ input {
 
 }
 
-.trashIt, .finished {
+.trashIt, .finished, .exitEditor{
     cursor: pointer;
 }
 
@@ -560,7 +560,7 @@ input {
     }
 
     .taskEditor {
-        border-left:  4px solid blue;
+        border-left:  4px solid;
     }
 
 
@@ -578,7 +578,7 @@ input {
         margin-left: 30px;
     }
 
-    .trashIt, .finished {
+    .trashIt, .finished, .exitEditor {
         width:15px;
 
     }
