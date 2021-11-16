@@ -13,6 +13,8 @@ module.exports = {
         content: "./src/scripts/content.js",
         send: "./src/scripts/send.js",
         template: "./src/scripts/template.js",
+        assign:"./src/script",
+        utilities: "./src/scripts/utilities.js",
 
     },
     output: {
