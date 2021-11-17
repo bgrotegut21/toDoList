@@ -9,11 +9,24 @@ import exitIcon from "../images/exit.svg";
    
    const createTask = (task) => {
         let color;
+        let taskClass = "task";
+        let editClass = "edit";
+        let circleIconBackground = "none";
+
         if (task.priority == "High") color = "red";
         if (task.priority == "Low") color = "green";
         if (task.priority == "Medium") color = "#ff9800"
 
-        let taskText = `<div class = "task" style = "border-color:${color}">
+
+
+
+        if (task.checked) {
+            taskClass = "notTask";
+            editClass = "notEdit"
+            circleIconBackground = "black";
+        }
+
+        let taskText = `<div class = "${taskClass}" style = "border-color:${color}">
                             <p class = "taskLabel">${task.text}</p>
                             <div class = "taskTools">
                                 <div class = "generalTextHolder">
@@ -23,8 +36,8 @@ import exitIcon from "../images/exit.svg";
                                 </div>
 
                                 <div class = "tools">
-                                    <img class = "edit" src="${editIcon}" alt="">
-                                    <div class = "circleIcon"></div>
+                                    <img class = "${editClass}" src="${editIcon}" alt="">
+                                    <div class = "circleIcon" style = "background:${circleIconBackground}"></div>
                                 </div>
                             </div>`
         return taskText;

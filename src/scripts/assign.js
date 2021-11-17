@@ -23,7 +23,9 @@ const assignTaskIndex = (element,boardIndex) => {
 
     element.forEach(childElement => {
         // console.log(childElement, "the child element")
-        if (childElement.getAttribute("class") == "task"){
+        if (childElement.getAttribute("class") == "task" ||
+            childElement.getAttribute("class") == "notTask"
+        ){
             let taskChildren = Array.from(childElement.children);
             taskChildren.forEach(taskChild => {
                 if (taskChild.getAttribute("class") == "taskTools"){

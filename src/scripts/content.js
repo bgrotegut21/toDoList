@@ -42,8 +42,8 @@ const Content = () => {
         removeBindings(elements.boarderButton, addBoardTasks,"click");
         removeBindings(elements.deleteBoard,deleteBoard, "click");
         removeBindings(elements.editBoard,editBoard,"click");
-       
         removeBindings(elements.taskAdders, addListEditorClick, "click")
+
         
 
 
@@ -92,6 +92,25 @@ const Content = () => {
     }
 
 
+
+    const crossOutTask= (event) => {
+
+        let taskIndex = event.target.taskIndex;
+        let boardIndex = event.target.boardIndex;
+
+        console.log(taskIndex, "the current taskindex");
+        console.log(boardIndex, "the current board index")
+
+        let task = staticListTasks[boardIndex].tasks[taskIndex];
+        console.log(task, "the current task")
+
+        task.checked ? task.checked = false: task.checked = true;
+
+
+        //removeListEditor();
+        renderBoardLists();
+
+    }
 
 
 
@@ -172,10 +191,6 @@ const Content = () => {
         
 
         
-    }
-
-    const crossOutTask = () => {
-        return;
     }
 
 
@@ -571,6 +586,8 @@ const Content = () => {
         boardOverlay.style.display = "block";
 
     }
+
+
 
     const renderSingleBoardList = (index) => {
         let taskList = getElementByBoardIndex(index, "taskLists");

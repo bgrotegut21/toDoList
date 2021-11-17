@@ -99,7 +99,7 @@ input {
 
 
 
-.task {
+.task, .notTask{
     background:rgb(237, 230, 230);
     border-left: 8px solid;
     margin:10px;
@@ -148,7 +148,7 @@ input {
     border: 3px solid black;
     cursor:pointer;
 }
-.edit {
+.edit, .notEdit{
     width:20px;
     cursor:pointer;
     margin-right:6px;
@@ -256,15 +256,16 @@ input {
 }
 
 
-/* .task {
-    text-decoration: line-through;
-    color:grey;
-}
+.notTask {
+    
+     text-decoration: line-through; 
+     color:grey; 
+ } 
 
-.edit {
+.notEdit {
     filter: invert(20%) sepia(10%) saturate(2076%) hue-rotate(86deg) brightness(118%) contrast(10%);
 }
- */
+
 
 
 .low {
@@ -506,7 +507,7 @@ input {
         font-size: x-small;
     }
 
-    .task {
+    .task, .notTask {
         margin:5px; 
     }
     .circleIcon {
@@ -554,7 +555,7 @@ input {
    
     }
 
-    .task {
+    .task, .notTask {
         border-left: 4px solid;
        
     }
@@ -591,6 +592,6 @@ input {
 
 }
 
-.task {
+.task, .notTask {
     border-color: red;
 }
