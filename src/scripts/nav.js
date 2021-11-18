@@ -150,6 +150,7 @@ const nav = () => {
         renderProjectTasks();
         if (index == changedTasks.length -1) content.activateContent(index);
         renderOverlay();
+        content.addTaskBindings();
 
     }
 
@@ -167,8 +168,10 @@ const nav = () => {
             renderIndex = staticTasks.length - 1;
             if (staticTasks.length == 0) renderIndex = -1;
         }
+
+        
         content.activateContent(renderIndex,"delete");
-        changedTasks = setArray(staticTasks);
+        changedTasks = staticTasks;
         renderProjectTasks();
     }
 
@@ -337,6 +340,7 @@ const nav = () => {
         renderOverlay();
 
         disablePageContentElements();
+        content.removeTaskBindings();
 
     }
 

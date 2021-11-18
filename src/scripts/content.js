@@ -49,7 +49,7 @@ const Content = () => {
 
     }
 
-    const addContentBindings = () => {
+     const addContentBindings = () => {
         // console.log("adding the content bindings")
         let elements = getUpdatedElements();
         // console.log(elements.boarderButton, "elements boarder button")
@@ -74,6 +74,18 @@ const Content = () => {
         addBindings(elements.exitEditor, exitListEditor, "click");
 
     }
+
+    const addTaskBindings = () => {
+        addListBindings();
+        addContentBindings();
+    }
+    
+    const removeTaskBindings = () => {
+        removeListBindings();
+        removeContentBindings();
+    }
+
+
 
     const addChangeNameBinding = () => {
         let elements = getUpdatedElements();
@@ -107,7 +119,23 @@ const Content = () => {
         task.checked ? task.checked = false: task.checked = true;
 
 
-        //removeListEditor();
+        let indexes = getIndexes()
+
+        if (indexes) {
+            let listIndex = indexes.listIndex;
+            let boardIndex2 = indexes.boardIndex;
+
+            console.log(listIndex, "the current list index");
+            console.log(taskIndex,"the current task index")
+
+            if (taskIndex == listIndex && boardIndex == boardIndex2) removeListEditor()
+        }
+
+        console.log(indexes, "the current list index");
+        console.log(taskIndex, "the current task index")
+       
+
+        renderListEditorValue();
         renderBoardLists();
 
     }
@@ -721,15 +749,19 @@ const Content = () => {
 
 
 
-    const renderListTasks = (bool) => {
+    const renderListTasks = (isEmpty) => {
         console.log("rendering list tasks")
         renderEditBoardTextValues();
         removeContentBindings();
         removeListBindings();
 
-        let newTasks = changedListTasks.filter(task => task.addBoard != true);
-        changedListTasks = newTasks;
-        changedListTasks.push({addBoard: true});
+        if (!isEmpty){
+            let newTasks = changedListTasks.filter(task => task.addBoard != true);
+            changedListTasks = newTasks;
+            changedListTasks.push({addBoard: true});
+
+        }
+
         
         dom.pageContent.innerHTML = "";
 
@@ -772,7 +804,7 @@ const Content = () => {
             staticListTasks = [];
             index = null;
             if (currentIndex < 0) {
-                renderListTasks();
+                renderListTasks(true);
                 return;
             }
         }
@@ -798,7 +830,7 @@ const Content = () => {
     
     }
 
-    return {activateContent};
+    return {activateContent,removeTaskBindings, addTaskBindings };
     
 
 
