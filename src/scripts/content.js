@@ -7,6 +7,8 @@ import { getInitialElements, getUpdatedElements } from "./pageLayout.js";
 import {findBoardTextBox, getElementByBoardIndex, getObjectValue, changeValueToDate, unshadeButtons, createTaskTemplate, findObjectByName } from "./utilities.js";
 import {createTask,createBoard, createAddBoard, createBoardEditor, createListEditor} from "./template.js";
 
+import isToday from 'date-fns/isToday'
+
 import {assignTools, assignTaskIndex, assignBoardElements} from "./assign.js";
 
 
@@ -21,6 +23,7 @@ const Content = () => {
 
     let index;
     let currentIndex;
+    let isUpComing = false;
 
     let newIndex = false;
 
@@ -737,16 +740,55 @@ const Content = () => {
         let currentTasks = [];
         if (typeof tasks != "undefined") currentTasks = tasks; 
 
-        let board = {board: true, text:currentText, tasks: currentTasks, changedBoardLists: []};
+        let board = {board: true, text:currentText, tasks: currentTasks, changedBoardLists: [], };
 
 
         return board;
     }
     
 
+    const createUpComingTemplate = (currentText, tasks) => {
+        let currentTasks = [];
+        if (typeof tasks != "undefined") currentTasks = tasks; 
+
+        let board = {isUpComingBoard: true,text:currentText, tasks: currentTasks, changedBoardLists: [], };
+        return board;
+
+
+    }
+
+
+    const getTodayValues = () => {
+        let boar
+        let tasksKeys = Object.keys(tasks);
+
+        let todayTasks = [];
+        tasks.forEach(task => {
+
+        
+
+
+        
+
+    }
+
+    const getWeekValues = () => {
+        return;
+    }
 
 
 
+
+
+    const addUpComingBoards = () => {
+
+
+
+        let todayBoard = createUpComingTemplate("Today",[])
+        let weekBoard = createUpComingTemplate("Week",[])
+        let timeBoards = [todayBoard,weekBoard];
+        timeBoards.forEach(board => staticListTasks.push(board));
+    }
 
 
     const renderListTasks = (isEmpty) => {
@@ -755,16 +797,20 @@ const Content = () => {
         removeContentBindings();
         removeListBindings();
 
+
+        
+
         if (!isEmpty){
-            let newTasks = changedListTasks.filter(task => task.addBoard != true);
+            let newTasks = currentTasks.filter(task => task.addBoard != true);
             changedListTasks = newTasks;
-            changedListTasks.push({addBoard: true});
+            currentTasks.push({addBoard: true});
 
         }
 
+        if (isUpComing) addUpComingBoards();
+
         
         dom.pageContent.innerHTML = "";
-
         changedListTasks.forEach(task => {
             if (task.board){
                 let board = createBoard(task);
@@ -774,6 +820,8 @@ const Content = () => {
                 dom.pageContent.innerHTML += addBoard;
             }
         })       
+
+        
         addContentBindings();
         assignBoardElements();
         renderBoardLists();
@@ -795,6 +843,10 @@ const Content = () => {
         })
     }
 
+    const addUpComingBoards = () => {
+
+    }
+
 
     const activateContent = (currentIndex, disruptFlow) => {
         changedListTasks = [];
@@ -809,9 +861,10 @@ const Content = () => {
             }
         }
 
-        if (typeof index == "number"){
+        if (typeof index == "number" || index == "upcoming"){
             send.sendData(staticListTasks,index);  
         } 
+
         
         index = currentIndex;
         let newTasks = send.retrieveData(index);
@@ -820,8 +873,9 @@ const Content = () => {
             send.sendData([],index)
             newTasks = send.retrieveData(index);
         }
+
         staticListTasks = newTasks;
-        // console.log(staticListTasks, "the static list tasks")
+        console.log(staticListTasks, "the static list tasks")
         changedListTasks = staticListTasks;
         setChangedToDoLists();
 

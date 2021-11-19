@@ -16,6 +16,7 @@ const nav = () => {
 
     let domElements;
     let changedTasks = [];
+    let upComingTask = {upComingTask: true, highlight:true}
     let staticTasks = [];
     let content = Content();
     let highlightedIndex;
@@ -72,7 +73,7 @@ const nav = () => {
     const unHighlightButton = () => {
         let index = 0;
         changedTasks.forEach(task => {
-            if (task.navTask){
+            if (task.navTask || task.upComingTask) {
                 if (task.highlight){
                     task.highlight = false;
                 }
@@ -133,6 +134,8 @@ const nav = () => {
 
 
 
+
+
     const createProjectTasks = (index) => {
         let taskText = getTextBoxValues()
         let task = {navTask:true,task: taskText, highlight:false};   
@@ -145,7 +148,7 @@ const nav = () => {
 
 
      
-        changedTasks = setArray(staticTasks);
+        changedTasks = staticTasks;
         renderHighlightElements();
         renderProjectTasks();
         if (index == changedTasks.length -1) content.activateContent(index);
@@ -341,7 +344,12 @@ const nav = () => {
 
         disablePageContentElements();
         content.removeTaskBindings();
+    }
 
+
+    const activateUpComingTask = () => {
+        content.activateContent("upcoming")
+        
     }
 
     const activateProjectTask = () => {
@@ -355,6 +363,8 @@ const nav = () => {
         domElements = getInitialElements();
 
         addBindings(domElements.projectAdder,activateProjectTask,"click");
+        addBindings(domElements.upComingButton,activateUpComingTask,"click");
+
     }
     return {activateNavigation};
 }
