@@ -24,9 +24,15 @@ const nav = () => {
 
     const removeNavigationBindings = (notRemoveAddProjectLabel) => {
         let updatedItems = getUpdatedElements();
+        let domElements = getInitialElements();
+
         removeBindings(updatedItems.editItems,editItem,"click");
         removeBindings(updatedItems.deleteItems, deleteItem, "click");
         removeBindings(updatedItems.projectButton, switchPage, "click");
+        removeBindings(domElements.projectAdder,activateProjectTask,"click");
+        removeBindings(domElements.upComingButton,activateUpComingTask,"click");
+
+
        if (!notRemoveAddProjectLabel) removeBindings(updatedItems.addProjectLabels,createProjectTasksClick, "click");
        if (!notRemoveAddProjectLabel && updatedItems.addProjectLabels.length != 0) removeBindings(window, createProjectTasksKeys, "keydown")
 
@@ -41,11 +47,16 @@ const nav = () => {
 
 
     const addNavigationBindings = () => {
-        let updatedItems = getUpdatedElements()
+        let updatedItems = getUpdatedElements();
+        let domElements = getInitialElements();
+
         addBindings(updatedItems.editItems,editItem,"click");
         addBindings(updatedItems.deleteItems, deleteItem, "click");
         addBindings(updatedItems.addProjectLabels,createProjectTasksClick, "click");
         addBindings(updatedItems.projectButton,switchPage, "click")
+        addBindings(domElements.projectAdder,activateProjectTask,"click");
+        addBindings(domElements.upComingButton,activateUpComingTask,"click");
+
         if (updatedItems.addProjectLabels.length != 0) addBindings(window, createProjectTasksKeys, "keydown");
 
     } 
@@ -125,6 +136,7 @@ const nav = () => {
     }
 
     const createProjectTasksClick = () => {
+        console.log("create project tacks click")
         let currentIndex = getCurrentIndex();
         createProjectTasks(currentIndex);
     }
@@ -137,7 +149,11 @@ const nav = () => {
 
 
     const createProjectTasks = (index) => {
+        console.log("create project tasks")
         let taskText = getTextBoxValues()
+        console.log(taskText, "the current task text");
+        console.log(taskText.length, "the current task text length")
+
         let task = {navTask:true,task: taskText, highlight:false};   
 
         if (taskText.length != 0) {
@@ -148,10 +164,14 @@ const nav = () => {
 
 
      
-        changedTasks = staticTasks;
+        changedTasks = setArray(staticTasks);
         renderHighlightElements();
         renderProjectTasks();
-        if (index == changedTasks.length -1) content.activateContent(index);
+
+
+        console.log(index, " the current index")
+        console.log(staticTasks, "the static tasks")
+        if (index == staticTasks.length -1) content.activateContent(index);
         renderOverlay();
         content.addTaskBindings();
 
@@ -322,6 +342,7 @@ const nav = () => {
         console.log(updatedElement.projectButton,"updated element project button")
         if (updatedElement.projectButton.length == 0) return;
         updatedElement.projectButton.forEach( button =>{
+            console.log(button, "the current button")
             button.classList.remove("projectButtonHover")
             button.style.color = "rgb(157,162,175)";
             button.style.cursor = "pointer"
@@ -330,7 +351,12 @@ const nav = () => {
 
     }
 
+
+//make sure disablePageContentElements and renderOverlay methods are below renderProject tasks.
+//This is because renderOverlay will overwrite the changes causing the page to act werid.
     const createEditor = (text,index) => {
+
+        console.log("create")
         let editorText = "";
         if (typeof text != "undefined") editorText = text;
 
@@ -339,11 +365,14 @@ const nav = () => {
         }
    
         renderHighlightElements();
+
         renderProjectTasks();
-        renderOverlay();
 
         disablePageContentElements();
+        renderOverlay();
+
         content.removeTaskBindings();
+
     }
 
 

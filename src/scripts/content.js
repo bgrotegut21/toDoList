@@ -5,9 +5,14 @@ import {removeItem, addItem, addBindings, removeBindings, setArray} from "./elem
 import {send} from "./send.js"
 import { getInitialElements, getUpdatedElements } from "./pageLayout.js";
 import {findBoardTextBox, getElementByBoardIndex, getObjectValue, changeValueToDate, unshadeButtons, createTaskTemplate, findObjectByName } from "./utilities.js";
-import {createTask,createBoard, createAddBoard, createBoardEditor, createListEditor} from "./template.js";
+import {createTask,createBoard, createAddBoard, createBoardEditor, createListEditor, createUpComingBoard} from "./template.js";
 
 import isToday from 'date-fns/isToday'
+import isThisWeek from 'date-fns/isThisWeek'
+import getDayOfYear from 'date-fns/getDayOfYear'
+
+
+
 
 import {assignTools, assignTaskIndex, assignBoardElements} from "./assign.js";
 
@@ -47,15 +52,15 @@ const Content = () => {
         removeBindings(elements.editBoard,editBoard,"click");
         removeBindings(elements.taskAdders, addListEditorClick, "click")
 
-        
-
-
     }
 
+
+
+
      const addContentBindings = () => {
-        // console.log("adding the content bindings")
+        // //console.log("adding the content bindings")
         let elements = getUpdatedElements();
-        // console.log(elements.boarderButton, "elements boarder button")
+        // //console.log(elements.boarderButton, "elements boarder button")
         addBindings(elements.boarderButton, addBoardTasks,"click");
         addBindings(elements.deleteBoard,deleteBoard, "click");
         addBindings(elements.editBoard,editBoard,"click");
@@ -113,11 +118,11 @@ const Content = () => {
         let taskIndex = event.target.taskIndex;
         let boardIndex = event.target.boardIndex;
 
-        console.log(taskIndex, "the current taskindex");
-        console.log(boardIndex, "the current board index")
+        //console.log(taskIndex, "the current taskindex");
+        //console.log(boardIndex, "the current board index")
 
         let task = staticListTasks[boardIndex].tasks[taskIndex];
-        console.log(task, "the current task")
+        //console.log(task, "the current task")
 
         task.checked ? task.checked = false: task.checked = true;
 
@@ -128,14 +133,14 @@ const Content = () => {
             let listIndex = indexes.listIndex;
             let boardIndex2 = indexes.boardIndex;
 
-            console.log(listIndex, "the current list index");
-            console.log(taskIndex,"the current task index")
+            //console.log(listIndex, "the current list index");
+            //console.log(taskIndex,"the current task index")
 
             if (taskIndex == listIndex && boardIndex == boardIndex2) removeListEditor()
         }
 
-        console.log(indexes, "the current list index");
-        console.log(taskIndex, "the current task index")
+        //console.log(indexes, "the current list index");
+        //console.log(taskIndex, "the current task index")
        
 
         renderListEditorValue();
@@ -150,16 +155,16 @@ const Content = () => {
         let taskIndex = indexes.listIndex;
         let boardIndex = indexes.boardIndex;
 
-        console.log(taskIndex, "the current task index");
-        console.log(boardIndex, "the board index")
+        //console.log(taskIndex, "the current task index");
+        //console.log(boardIndex, "the board index")
 
-        console.log(staticListTasks[boardIndex].tasks[taskIndex])
+        //console.log(staticListTasks[boardIndex].tasks[taskIndex])
 
         let task = staticListTasks[boardIndex].tasks[taskIndex];
         task.listTask = false;
 
         let newArray = staticListTasks[boardIndex].tasks;
-        console.log(newArray, "the before new array")
+        //console.log(newArray, "the before new array")
 
         let newerArray = [];
 
@@ -169,7 +174,7 @@ const Content = () => {
             }
         })
 
-        console.log(newerArray, "the newer array")
+        //console.log(newerArray, "the newer array")
 
         staticListTasks[boardIndex].tasks = newerArray
 
@@ -191,30 +196,30 @@ const Content = () => {
 
     const editTask = (event) => {
 
-        // console.log([event.target])
+        // //console.log([event.target])
         let boardIndex = event.target.boardIndex;
         let taskIndex = event.target.taskIndex;
 
-        // console.log("\n")
-        console.log(taskIndex, "the current task index")
+        // //console.log("\n")
+        //console.log(taskIndex, "the current task index")
  
-        // console.log(boardIndex,"the current board index")
-        // console.log(staticListTasks[boardIndex].changedBoardLists, "changed board lists")
+        // //console.log(boardIndex,"the current board index")
+        // //console.log(staticListTasks[boardIndex].changedBoardLists, "changed board lists")
         let task = staticListTasks[boardIndex].tasks[taskIndex];
-        console.log(task.text, "the task text")
+        //console.log(task.text, "the task text")
         let text = task.text;
         let date = task.date;
         let priority = task.priority;
 
-       // console.log(date, "the current date")
-      //  console.log(task, "the current task")
-        // console.log(task.date, "the current date")
+       // //console.log(date, "the current date")
+      //  //console.log(task, "the current task")
+        // //console.log(task.date, "the current date")
 
 
-        // console.log(priority, "the current priotrity")
-        // console.log(taskIndex);
-        // console.log(text);
-        // console.log(boardIndex);
+        // //console.log(priority, "the current priotrity")
+        // //console.log(taskIndex);
+        // //console.log(text);
+        // //console.log(boardIndex);
 
         
 
@@ -247,7 +252,7 @@ const Content = () => {
         let stopLoop = false;
 
         newTasks.forEach(board => {
-            // console.log(board, "the current board")
+            // //console.log(board, "the current board")
             board.changedBoardLists.forEach(task => {
                 if (task.listEditor == true){
                     stopLoop = true;
@@ -302,6 +307,32 @@ const Content = () => {
         }
     }
 
+    const getTaskByListIndex = (index) => {
+        let boardIndex = 0
+        let currentBoardIndex = false;
+        changedListTasks.forEach(board => {
+            if (board[index].listEditor) {
+                currentBoardIndex = boardIndex;
+                return
+            }
+            boardIndex ++;
+        })
+
+        if (!currentBoardIndex) return currentBoardIndex;
+        return staticListTasks[boardIndex].tasks[index];
+
+    }
+
+
+    const updateNavTasks = (navIndex, boardIndex, taskIndex, newTask) => {
+        let allTasks = send.getAllData();
+        allTasks[navIndex][boardIndex].tasks[taskIndex] = newTask;
+        send.overwriteData(allTasks);
+        
+
+
+    }
+
 
 
     const addTask =  (index) => {
@@ -315,20 +346,30 @@ const Content = () => {
     
         if (dateValue.length == 0) currentDate = new Date();
         else currentDate = changeValueToDate(dateValue);
-        // console.log(currentDate, "the current date")
+        // //console.log(currentDate, "the current date")
         let taskText = elements.taskTextBox[0].value;
         if (taskText.length == 0) taskText = "New Task";
 
         let priority = getObjectValue("listEditor","priority",staticListTasks);
 
+
+        
         let task = createTaskTemplate(taskText,currentDate,priority);
         let boardIndex = findListEditorBoardIndex();
-        // console.log(boardIndex);
-        // console.log(task,"the current task")
+        // //console.log(boardIndex);
+        // //console.log(task,"the current task")
 
-        // console.log(index, "the current value of index")
+        // //console.log(index, "the current value of index")
 
          if (typeof index != "undefined") {
+            let currentTask = getTaskByListIndex(index);
+
+             if (isUpComing && currentTask.boardIndex != "undefined") {
+                 let navIndex = currentTask.navIndex;
+                 let boardIndex = currentTask.boardIndex;
+                 let taskIndex = currentTask.taskIndex
+                 updateNavTasks(navIndex,boardIndex,taskIndex,task)
+             }
             staticListTasks[boardIndex].tasks[index] = task;
             let tasks = staticListTasks[boardIndex].tasks;
             staticListTasks[boardIndex].changedBoardLists = tasks;
@@ -336,11 +377,11 @@ const Content = () => {
          } else {
              staticListTasks[boardIndex].tasks.push(task);
              let tasks = staticListTasks[boardIndex].tasks;
-            //  console.log(tasks, "the current tasks")
+            //  //console.log(tasks, "the current tasks")
              staticListTasks[boardIndex].changedBoardLists = tasks;
          }
-        //  console.log(staticListTasks[boardIndex].changedBoardLists, "static change board lists");
-        //  console.log(staticListTasks[boardIndex].tasks, "taskos")
+        //  //console.log(staticListTasks[boardIndex].changedBoardLists, "static change board lists");
+        //  //console.log(staticListTasks[boardIndex].tasks, "taskos")
 
         renderBoardLists();
     }
@@ -354,7 +395,7 @@ const Content = () => {
         let buttons = elements.button;
         let button = buttons.filter(button => button.getAttribute("class") == className)[0];
         let buttonParagraph = Array.from(button.children)[0];
-        // console.log(buttonParagraph,"The current button paragraph")
+        // //console.log(buttonParagraph,"The current button paragraph")
         buttonParagraph.style.background = color;
 
     }
@@ -373,7 +414,7 @@ const Content = () => {
 
     const changeListEditorPriority  = (currentPriority) => {
         let listEditor = findObjectByName("listEditor",staticListTasks);
-        // console.log(listEditor, "current list editor")
+        // //console.log(listEditor, "current list editor")
         listEditor.priority = currentPriority;
         
 
@@ -388,7 +429,7 @@ const Content = () => {
             event.target.getAttribute("class") == "button low"
         ) paragraph = Array.from(event.target.children)[0];
         
-        // console.log(paragraph, "the current paragraph")
+        // //console.log(paragraph, "the current paragraph")
 
         if (event.target.getAttribute("class") == "highText") {
             event.target.style.background = "red";
@@ -417,15 +458,15 @@ const Content = () => {
 
 
     const deleteBoard = (event) => {
-        // console.log(staticListTasks, " the static list tasks");
-        // console.log(send.retrieveData(index), "send retrieve index")
+        // //console.log(staticListTasks, " the static list tasks");
+        // //console.log(send.retrieveData(index), "send retrieve index")
 
         staticListTasks = removeItem(staticListTasks, event.target.boardIndex);
     
 
-        // console.log(staticListTasks, "static list tasks");
+        // //console.log(staticListTasks, "static list tasks");
         changedListTasks = staticListTasks
-        // console.log(changedListTasks, "the changed list tasks");
+        // //console.log(changedListTasks, "the changed list tasks");
         renderListTasks();
 
     }
@@ -451,9 +492,9 @@ const Content = () => {
         removeEditTitleMenu();
         
 
-        // console.log(index, " the index")
+        // //console.log(index, " the index")
         let changedBoardLists = staticListTasks[index].changedBoardLists
-        // console.log(changedBoardLists, " the changed board lists")
+        // //console.log(changedBoardLists, " the changed board lists")
     
         let currentText = getElementByBoardIndex(index,"exampleBoardText").textContent;
 
@@ -465,7 +506,7 @@ const Content = () => {
 
         staticListTasks[index].changedBoardLists = finalArray;
 
-        // console.log(staticListTasks[index].changedBoardLists, "changed boar list")
+        // //console.log(staticListTasks[index].changedBoardLists, "changed boar list")
         currentIndex = index;
         renderBoardLists(true);
         
@@ -486,8 +527,8 @@ const Content = () => {
 
         removeListEditor()
     
-        // console.log("adding list editor")
-        // console.log(boardIndex, "the current board index")
+        // //console.log("adding list editor")
+        // //console.log(boardIndex, "the current board index")
 
 
     
@@ -495,12 +536,12 @@ const Content = () => {
         let listEditorTemplate;
         let currentDate = new Date();
 
-        // console.log(index, "the current index")
-        // console.log(typeof index != "undefined")
-        // console.log(priority, "the current priority")
+        // //console.log(index, "the current index")
+        // //console.log(typeof index != "undefined")
+        // //console.log(priority, "the current priority")
 
-        // console.log(index, "the current index")
-       //  console.log(date, "the current date")
+        // //console.log(index, "the current index")
+       //  //console.log(date, "the current date")
         
         if (typeof index != "undefined")  listEditorTemplate = {listEditor: true, text:text,date: date,
                                                                 priority:priority, boardIndex:boardIndex, index: index};
@@ -508,7 +549,7 @@ const Content = () => {
                                     priority: "High",boardIndex:boardIndex, creatingTask: true};
         
        
-        //  console.log(listEditorTemplate.priority, "list editor priority")
+        //  //console.log(listEditorTemplate.priority, "list editor priority")
 
     
 
@@ -540,10 +581,10 @@ const Content = () => {
             renderBoardLists();
             return;
         }   
- //       console.log(exampleText, "the example text")
+ //       //console.log(exampleText, "the example text")
 
         
-      //  console.log(boardText, " current board text")
+      //  //console.log(boardText, " current board text")
      //   console.frendlog(exampleText, "the example text content")
         let newTasks = staticListTasks[currentIndex].changedBoardLists;
         newTasks = newTasks.filter(task => task.editBoard != true)
@@ -551,7 +592,7 @@ const Content = () => {
         staticListTasks[currentIndex].changedBoardLists = newTasks;
         staticListTasks[currentIndex].text = boardText;
 
-        // console.log(staticListTasks, "the static list tasks")
+        // //console.log(staticListTasks, "the static list tasks")
 
         renderListTasks();
     
@@ -568,10 +609,10 @@ const Content = () => {
         let elements = getUpdatedElements();
         staticListTasks.forEach(task => {
             task.changedBoardLists.forEach(list =>{
-                // console.log(index, " the current index")
+                // //console.log(index, " the current index")
                 if (list.editBoard){
                     let currentText = findBoardTextBox(index);
-                    // console.log(currentText, " the current text")
+                    // //console.log(currentText, " the current text")
                     list.text = currentText;
                 }
 
@@ -590,9 +631,11 @@ const Content = () => {
         removeListBindings();
         removeBoardOverlay();
         let indexesLength = staticListTasks.length;
-        // console.log(staticListTasks, "the static list task")
+        //console.log(staticListTasks, "the static list tasks")
+
+        console.log(staticListTasks, "the static list task")
         for (let i = 0; i < indexesLength; i++) {
-            // console.log(i, "the index")
+             //console.log(i, "the index")
             if (staticListTasks.length != 0)renderSingleBoardList(i);
 
         }
@@ -621,16 +664,18 @@ const Content = () => {
 
 
     const renderSingleBoardList = (index) => {
+        console.log(renderSingleBoardList, "render single board list")
         let taskList = getElementByBoardIndex(index, "taskLists");
         let addDate = false;
         let date;
 
-       // console.log(taskHolder, "the task holder")
+       // //console.log(taskHolder, "the task holder")
         taskList.innerHTML = "";
- //       console.log(index, "the index");
-//        console.log(staticListTasks[index], "static list current index");
-        // console.log(staticListTasks[index], "static list tasks indexes")
-        // console.log(staticListTasks[index].changedBoardLists, "static change board lists")
+  ////      console.log(taskList, "the current task list")
+ //       //console.log(index, "the index");
+//        //console.log(staticListTasks[index], "static list current index");
+        // //console.log(staticListTasks[index], "static list tasks indexes")
+        // //console.log(staticListTasks[index].changedBoardLists, "static change board lists")
 
         staticListTasks[index].changedBoardLists.forEach(task => {
             // console.log(task, "each individual task")
@@ -645,8 +690,8 @@ const Content = () => {
 
                 let listText= createListEditor(task);
                 taskList.innerHTML += listText;
-                // console.log(task.listEditor, "task list editor date")
-                // console.log(task.priority, "task priority")
+                // //console.log(task.listEditor, "task list editor date")
+                // //console.log(task.priority, "task priority")
                 shadeButtonByPriority(task.priority);
                 date = task.date;
                 addDate = true;
@@ -655,19 +700,21 @@ const Content = () => {
             } else if (task.listTask){
                 // console.log(task, "the current task")
                 let taskText = createTask(task);
+                // console.log(taskText, "the current task text");
                 taskList.innerHTML += taskText;
-         
+                // console.log(taskList," the text list")
 
 
 
 
             }
         })
+     
 
 
         if (addDate) setTaskDate(date);
         let taskListChildren = Array.from(taskList.children)
-        // console.log(taskList, "current task list")
+       console.log(taskList, "current task list")
         let boardIndex = taskList.boardIndex;
         assignTaskIndex(taskListChildren,boardIndex);
 
@@ -684,7 +731,7 @@ const Content = () => {
      
 
     const addBoardTaskKeys = (event) => {
-     //   console.log(event.key);
+     //   //console.log(event.key);
         if (event.key == "Enter") {
             addBoardTasks();
         }
@@ -695,17 +742,17 @@ const Content = () => {
         let listEditor = findObjectByName("listEditor",staticListTasks);
         if (!listEditor) return;
 
-        // console.log(listEditor, "the current list editor")
+        // //console.log(listEditor, "the current list editor")
 
 
         let elements = getUpdatedElements();
         let datePicker = elements.datePicker[0];
         let taskTextBox = elements.taskTextBox[0];
 
-        // console.log(datePicker);
-        // console.log(taskTextBox);
-        // if(datePicker) console.log(datePicker.valueAsDate, "date picker current date");
-        // if (taskTextBox)console.log(taskTextBox.value, "textbox")
+        // //console.log(datePicker);
+        // //console.log(taskTextBox);
+        // if(datePicker) //console.log(datePicker.valueAsDate, "date picker current date");
+        // if (taskTextBox)//console.log(taskTextBox.value, "textbox")
         if (datePicker)  listEditor.date = datePicker.valueAsDate;
         if (taskTextBox) listEditor.text = taskTextBox.value;
 
@@ -713,7 +760,7 @@ const Content = () => {
     }
     
     const addBoardTasks = () => {
-        // console.log("adding board tasks")
+        // //console.log("adding board tasks")
 
 
         renderListEditorValue();
@@ -724,7 +771,7 @@ const Content = () => {
         staticListTasks.push(task);
         changedListTasks = setArray(staticListTasks)
 
-    //    console.log(staticListTasks, "the static list tasks")
+    //    //console.log(staticListTasks, "the static list tasks")
 
         renderListTasks();
     }
@@ -758,57 +805,87 @@ const Content = () => {
     }
 
 
-    const getTodayValues = () => {
-        let boar
-        let tasksKeys = Object.keys(tasks);
 
+    const sortDatesByLatestDay = (timeTasks) => {
+        let newTimeTasks = timeTasks;
+        newTimeTasks.sort((timeTask1, timeTask2) => {
+            let days2 = getDayOfYear(timeTask2.date);
+            let days1 = getDayOfYear(timeTask1.date);
+            return days2 - days1;
+        })
+        return newTimeTasks;
+
+    }
+
+
+    const getTaskTimeValues = () => {
+        let navs = send.getAllData();
+        let navKeys = Object.keys(navs);
+
+        //console.log(navs, "the navs");
+        
         let todayTasks = [];
-        tasks.forEach(task => {
-
+        let weekTasks = []
         
 
 
-        
+        navKeys.forEach(key => {
+            let boardIndex = 0;
+            navs[key].forEach(board => {
+                let taskIndex = 0;
+                board.tasks.forEach(task => {
+                    task.taskIndex = taskIndex;
+                    task.boardIndex = boardIndex;
+                    task.navIndex = key;
+                    if (isToday(task.date)) todayTasks.push(task)
+                    if (isThisWeek(task.date)) weekTasks.push(task);
+                    taskIndex++;
+   
+                })
+                boardIndex++;
+            })
+        })
 
+        todayTasks = sortDatesByLatestDay(todayTasks);
+        weekTasks = sortDatesByLatestDay(weekTasks);
+
+        return {todayTasks, weekTasks};
     }
 
-    const getWeekValues = () => {
-        return;
-    }
 
 
 
 
 
-    const addUpComingBoards = () => {
-
-
-
-        let todayBoard = createUpComingTemplate("Today",[])
-        let weekBoard = createUpComingTemplate("Week",[])
+    const addUpComingBoards = (array) => {
+        let newArray = array;
+        let todayBoard = createUpComingTemplate("Today", []);
+        let weekBoard = createUpComingTemplate("Week",[]);
         let timeBoards = [todayBoard,weekBoard];
-        timeBoards.forEach(board => staticListTasks.push(board));
+        timeBoards.forEach(board => newArray.push(board));
+        return newArray;
+
+
+
     }
 
 
     const renderListTasks = (isEmpty) => {
-        console.log("rendering list tasks")
+        //console.log("rendering list tasks")
         renderEditBoardTextValues();
         removeContentBindings();
-        removeListBindings();
+        removeListBindings(); 
 
 
         
 
-        if (!isEmpty){
-            let newTasks = currentTasks.filter(task => task.addBoard != true);
+        if (!isEmpty &&  !isUpComing){
+            let newTasks = changedListTasks.filter(task => task.addBoard != true);
             changedListTasks = newTasks;
-            currentTasks.push({addBoard: true});
+           changedListTasks.push({addBoard: true});
 
         }
-
-        if (isUpComing) addUpComingBoards();
-
+        
         
         dom.pageContent.innerHTML = "";
         changedListTasks.forEach(task => {
@@ -818,6 +895,9 @@ const Content = () => {
             } else if (task.addBoard){
                 let addBoard = createAddBoard();
                 dom.pageContent.innerHTML += addBoard;
+            } else if (task.isUpComingBoard){
+                let upComingBoard = createUpComingBoard(task);
+                dom.pageContent.innerHTML += upComingBoard;
             }
         })       
 
@@ -843,14 +923,23 @@ const Content = () => {
         })
     }
 
-    const addUpComingBoards = () => {
+    const renderTimeTasks = () => {
+        let times = getTaskTimeValues();
+        staticListTasks.forEach(board=> {
+            if (board.text == "Today") board.tasks = times.todayTasks;
+            if (board.text == "Week") board.tasks = times.weekTasks;
+        })
+
+        console.log(staticListTasks, "the static list tasks")
 
     }
+
 
 
     const activateContent = (currentIndex, disruptFlow) => {
         changedListTasks = [];
         setChangedToDoListsEmpty();
+        isUpComing = false;
 
         if (disruptFlow == "delete"){
             staticListTasks = [];
@@ -861,24 +950,40 @@ const Content = () => {
             }
         }
 
+
         if (typeof index == "number" || index == "upcoming"){
             send.sendData(staticListTasks,index);  
         } 
 
         
         index = currentIndex;
+
+
         let newTasks = send.retrieveData(index);
-        // console.log(newTasks, " the new task")
+        // //console.log(newTasks, " the new task")
+        //console.log(newTasks,"current new task")
         if (!newTasks){
             send.sendData([],index)
             newTasks = send.retrieveData(index);
         }
 
+        if (index == "upcoming"){
+            isUpComing = true;
+            if (newTasks.length == 0){
+                newTasks = addUpComingBoards(newTasks);
+            } 
+        }
+        //console.log(newTasks, "current new task")
+
         staticListTasks = newTasks;
-        console.log(staticListTasks, "the static list tasks")
+        //console.log(staticListTasks, "the static list tasks")
         changedListTasks = staticListTasks;
         setChangedToDoLists();
+        if (index == "upcoming"){
+            renderTimeTasks()
+        }
 
+        console.log(staticListTasks, "new times")
         renderListTasks();
     
     

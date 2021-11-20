@@ -90,7 +90,7 @@ const unshadeButtons = ()=> {
 }
 
 
-const createTaskTemplate = (text,date,priority) => {
+const createTaskTemplate = (text,date,priority,projectTypeText) => {
     let task = {}
     task.listTask = true;
     task.text = text,
@@ -98,9 +98,11 @@ const createTaskTemplate = (text,date,priority) => {
     task.dateText = format(task.date,"MMM d y")
     task.priority = priority;
     task.checked = false;
+    if (typeof projectTypeText != "undefined")  task.projectTypeText = projectTypeText;
     return task;
 
-    
 }
+
+
 
 export {findBoardTextBox, getElementByBoardIndex, getObjectValue, changeValueToDate, unshadeButtons, createTaskTemplate,findObjectByName};

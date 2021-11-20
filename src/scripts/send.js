@@ -3,18 +3,31 @@
 const send = (
     () => {
         let items = {};
-        items.upcoming = {isUpComing: true, tasks:[], changeBoardLists:[]}
+        items.upcoming = []
+
+        
         const sendData = (data,index) => {
             items[index] = data;
 
         }
     
         const retrieveData = (index) => {
+            console.log(items, "items retrieve data")
             if (items[index]){
                 return items[index]
             } else {
                 return false;
             }
+        }
+
+
+        const overwriteData = (data) => {
+            items = data;
+
+        }
+
+        const getAllData = () => {
+            return items;
         }
 
         const deleteData = (index) => {
@@ -35,10 +48,10 @@ const send = (
             };
         //    console.log(newerItems, "the newer items");
             items = newerItems;
-            
+        
         }
         
-        return {sendData, retrieveData, deleteData};
+        return {sendData, retrieveData, deleteData, getAllData, overwriteData};
 
     }
 )()

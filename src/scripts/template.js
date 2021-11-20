@@ -12,10 +12,16 @@ import exitIcon from "../images/exit.svg";
         let taskClass = "task";
         let editClass = "edit";
         let circleIconBackground = "none";
+        let projectTypeText = ""
+
 
         if (task.priority == "High") color = "red";
         if (task.priority == "Low") color = "green";
         if (task.priority == "Medium") color = "#ff9800"
+        if (task.projectBoardText) {
+            projectTypeText = `<p class = "generalText projectTypeText">${task.projectBoardText}</p>`
+
+        }
 
 
 
@@ -39,6 +45,7 @@ import exitIcon from "../images/exit.svg";
                                     <img class = "${editClass}" src="${editIcon}" alt="">
                                     <div class = "circleIcon" style = "background:${circleIconBackground}"></div>
                                 </div>
+                                ${projectTypeText}
                             </div>`
         return taskText;
     }
@@ -59,6 +66,25 @@ import exitIcon from "../images/exit.svg";
                                                     </div>
                                                 </div> 
                                                     </div>`
+        return boardText;
+    }
+
+    const createUpComingBoard = (task) => {
+
+
+        let boardText = `<div class = "boardContent">
+                            <div class = "board">
+                                <div class = "boardOverlay"></div>                          
+                                    <h2 class = "exampleBoardText">${task.text}</h2>   
+                                    <div class = "taskLists"></div>     
+                                    <div class = "taskAdder">
+                                        <p>+ Add Task</p>
+                                    </div>
+                                
+                                    
+                                </div>  
+                                
+                                </div>`
         return boardText;
     }
 
@@ -140,4 +166,4 @@ import exitIcon from "../images/exit.svg";
     return listText;
     }
 
-export {createTask,createBoard, createAddBoard, createBoardEditor, createListEditor}
+export {createTask,createBoard, createAddBoard, createBoardEditor, createListEditor, createUpComingBoard}
