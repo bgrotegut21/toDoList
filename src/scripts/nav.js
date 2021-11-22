@@ -28,7 +28,7 @@ const nav = () => {
 
         removeBindings(updatedItems.editItems,editItem,"click");
         removeBindings(updatedItems.deleteItems, deleteItem, "click");
-        removeBindings(updatedItems.projectButton, switchPage, "click");
+        removeBindings(updatedItems.projectContainer, switchPage, "click");
         removeBindings(domElements.projectAdder,activateProjectTask,"click");
         removeBindings(domElements.upComingButton,activateUpComingTask,"click");
 
@@ -53,7 +53,7 @@ const nav = () => {
         addBindings(updatedItems.editItems,editItem,"click");
         addBindings(updatedItems.deleteItems, deleteItem, "click");
         addBindings(updatedItems.addProjectLabels,createProjectTasksClick, "click");
-        addBindings(updatedItems.projectButton,switchPage, "click")
+        addBindings(updatedItems.projectContainer,switchPage, "click")
         addBindings(domElements.projectAdder,activateProjectTask,"click");
         addBindings(domElements.upComingButton,activateUpComingTask,"click");
 
@@ -75,7 +75,8 @@ const nav = () => {
     const switchPage = (event) => {
     //    console.log("switching page")
    //     console.log(event.target.currentIndex, "event tageet current index")
-        content.activateContent(event.target.currentIndex);
+        let title = staticTasks[event.target.currentIndex].task;
+        content.activateContent(event.target.currentIndex, false, title);
         highlightedIndex = event.target.currentIndex;
         renderHighlightElements();
         renderProjectTasks();
@@ -98,7 +99,7 @@ const nav = () => {
     const renderHighlightElements = () => {
         if (staticTasks.length == 0) return;
         
-        
+        console.log(highlightedIndex, "the highlighted index")
 
         let isEdit = changedTasks.filter(task => task.edit);
         console.log(isEdit, "is edit array")
@@ -112,6 +113,7 @@ const nav = () => {
 
     const highlightButton = (index) => {
         unHighlightButton();
+
         changedTasks[index].highlight = true;
         console.log("high lighting button", index)
     }
@@ -149,10 +151,10 @@ const nav = () => {
 
 
     const createProjectTasks = (index) => {
-        console.log("create project tasks")
+        // console.log("create project tasks")
         let taskText = getTextBoxValues()
-        console.log(taskText, "the current task text");
-        console.log(taskText.length, "the current task text length")
+        // console.log(taskText, "the current task text");
+        // console.log(taskText.length, "the current task text length")
 
         let task = {navTask:true,task: taskText, highlight:false};   
 
@@ -162,16 +164,18 @@ const nav = () => {
             highlightedIndex = index;
         }
 
-
-     
+        console.log(staticTasks,"the static tasks") 
         changedTasks = setArray(staticTasks);
+        console.log(changedTasks, "the changed tasks")
+
         renderHighlightElements();
         renderProjectTasks();
 
 
-        console.log(index, " the current index")
-        console.log(staticTasks, "the static tasks")
-        if (index == staticTasks.length -1) content.activateContent(index);
+        // console.log(index, " the current index")
+        // console.log(staticTasks, "the static tasks")
+        let title = staticTasks[index].task;
+        if (index == staticTasks.length -1) content.activateContent(index,false,title );
         renderOverlay();
         content.addTaskBindings();
 
@@ -182,7 +186,9 @@ const nav = () => {
     
 
     const deleteItem = (event) => {
+
         let index = event.target.currentIndex;
+
         staticTasks = removeItem(staticTasks,index);
         send.deleteData(index);
 
@@ -192,11 +198,17 @@ const nav = () => {
             if (staticTasks.length == 0) renderIndex = -1;
         }
 
-        
-        content.activateContent(renderIndex,"delete");
-        changedTasks = staticTasks;
+
+        let title = staticTasks[renderIndex].task;
+        content.activateContent(renderIndex,true,title);
+        changedTasks = setArray(staticTasks)
+        highlightedIndex = renderIndex;
+        renderHighlightElements();
+        //console.log("no rendering project tasks")
         renderProjectTasks();
+        console.log("delete item")
     }
+
 
     const editItem = (event) => {
         let projectTask = lookUpTask(event.target.currentIndex);

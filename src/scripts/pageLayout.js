@@ -94,6 +94,7 @@ const getInitialElements = () => {
         let editItems = Array.from(document.getElementsByClassName("editProject"));
         let deleteItems = Array.from(document.getElementsByClassName("deleteItem"));
         let projectContainerText = Array.from(document.getElementsByClassName("projectContainerText"));
+        let projectContainer = Array.from(document.getElementsByClassName("projectContainer"))
         let addProjectLabels = Array.from(document.getElementsByClassName("addProjectLabel"));
         let projectButton = Array.from(document.getElementsByClassName("projectButton"));
 
@@ -133,7 +134,7 @@ const getInitialElements = () => {
             projectTaskHolderChildren, projectContainerText, boardTextBox, boarderButton, 
             deleteBoard, editBoard, pageContent, pageContentChildren, taskHolders, exampleBoardText,
             changeBoardTitleButtons, boardContentTextBox, boardOverlay, taskLists, taskAdders, button,
-            trashIt, finished, taskTextBox, datePicker, circleIcon, edit, dateTools, exitEditor
+            trashIt, finished, taskTextBox, datePicker, circleIcon, edit, dateTools, exitEditor, projectContainer
         };
     
     }

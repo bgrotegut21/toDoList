@@ -18,8 +18,8 @@ import exitIcon from "../images/exit.svg";
         if (task.priority == "High") color = "red";
         if (task.priority == "Low") color = "green";
         if (task.priority == "Medium") color = "#ff9800"
-        if (task.projectBoardText) {
-            projectTypeText = `<p class = "generalText projectTypeText">${task.projectBoardText}</p>`
+        if (task.navName) {
+            projectTypeText = `<p class = "generalText projectTypeText">Project: ${task.navName}</p>`
 
         }
 
@@ -45,6 +45,8 @@ import exitIcon from "../images/exit.svg";
                                     <img class = "${editClass}" src="${editIcon}" alt="">
                                     <div class = "circleIcon" style = "background:${circleIconBackground}"></div>
                                 </div>
+
+                                
                                 ${projectTypeText}
                             </div>`
         return taskText;

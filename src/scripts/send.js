@@ -3,11 +3,13 @@
 const send = (
     () => {
         let items = {};
+        let titleItems = {}
         items.upcoming = []
 
         
-        const sendData = (data,index) => {
+        const sendData = (data,index,title) => {
             items[index] = data;
+            titleItems[index] = title;
 
         }
     
@@ -20,6 +22,15 @@ const send = (
             }
         }
 
+
+        const retrieveTitle = (index) => {
+            if (titleItems[index]){
+                return titleItems[index]
+            } else {
+                return false;
+            }
+
+        }
 
         const overwriteData = (data) => {
             items = data;
@@ -51,7 +62,7 @@ const send = (
         
         }
         
-        return {sendData, retrieveData, deleteData, getAllData, overwriteData};
+        return {sendData, retrieveData,retrieveTitle, deleteData, getAllData, overwriteData};
 
     }
 )()

@@ -1,5 +1,14 @@
 
 
+// do not forget to fix spaces problem
+// do not forget to fix spaces problem
+// do not forget to fix spaces problem
+// do not forget to fix spaces problem
+// do not forget to fix spaces problem
+
+// do not forget to fix spaces problem
+// do not forget to fix spaces problem
+
 
 import {removeItem, addItem, addBindings, removeBindings, setArray} from "./elementEvents.js"
 import {send} from "./send.js"
@@ -31,6 +40,11 @@ const Content = () => {
     let isUpComing = false;
 
     let newIndex = false;
+    let canDisrupt = false
+    let name;
+
+
+
 
     let dom = getInitialElements();
 
@@ -668,6 +682,7 @@ const Content = () => {
         let taskList = getElementByBoardIndex(index, "taskLists");
         let addDate = false;
         let date;
+        console.log(taskList, "the current task list")
 
        // //console.log(taskHolder, "the task holder")
         taskList.innerHTML = "";
@@ -822,6 +837,7 @@ const Content = () => {
         let navs = send.getAllData();
         let navKeys = Object.keys(navs);
 
+
         //console.log(navs, "the navs");
         
         let todayTasks = [];
@@ -837,6 +853,8 @@ const Content = () => {
                     task.taskIndex = taskIndex;
                     task.boardIndex = boardIndex;
                     task.navIndex = key;
+                    task.navName = send.retrieveTitle(task.taskIndex);
+                    console.log(task.navName,"current nav name")
                     if (isToday(task.date)) todayTasks.push(task)
                     if (isThisWeek(task.date)) weekTasks.push(task);
                     taskIndex++;
@@ -923,70 +941,101 @@ const Content = () => {
         })
     }
 
-    const renderTimeTasks = () => {
+    const renderTimeTasks = (array) => {
+        let newArray = addUpComingBoards(array);
         let times = getTaskTimeValues();
-        staticListTasks.forEach(board=> {
-            if (board.text == "Today") board.tasks = times.todayTasks;
-            if (board.text == "Week") board.tasks = times.weekTasks;
-        })
+        newArray.forEach(board=> {
+            if (board.text == "Today"){
+                board.tasks = times.todayTasks;
+                board.changedBoardLists = board.tasks;
 
-        console.log(staticListTasks, "the static list tasks")
+            } 
+            if (board.text == "Week"){
+                board.tasks = times.weekTasks;
+                board.changedBoardLists = board.tasks;
+
+            } 
+
+        })
+        return newArray;
 
     }
 
-
-
-    const activateContent = (currentIndex, disruptFlow) => {
-        changedListTasks = [];
-        setChangedToDoListsEmpty();
-        isUpComing = false;
-
-        if (disruptFlow == "delete"){
-            staticListTasks = [];
-            index = null;
-            if (currentIndex < 0) {
-                renderListTasks(true);
-                return;
-            }
-        }
-
-
-        if (typeof index == "number" || index == "upcoming"){
-            send.sendData(staticListTasks,index);  
-        } 
-
-        
-        index = currentIndex;
-
-
+    const activateNavContent = () => {
         let newTasks = send.retrieveData(index);
         // //console.log(newTasks, " the new task")
         //console.log(newTasks,"current new task")
         if (!newTasks){
-            send.sendData([],index)
+            send.sendData([],index,name)
             newTasks = send.retrieveData(index);
         }
 
-        if (index == "upcoming"){
-            isUpComing = true;
-            if (newTasks.length == 0){
-                newTasks = addUpComingBoards(newTasks);
-            } 
-        }
+
         //console.log(newTasks, "current new task")
 
         staticListTasks = newTasks;
+
+
         //console.log(staticListTasks, "the static list tasks")
-        changedListTasks = staticListTasks;
+        changedListTasks = setArray(staticListTasks)
         setChangedToDoLists();
-        if (index == "upcoming"){
-            renderTimeTasks()
+
+    }
+
+    const activateUpComingContent = () => {
+        staticListTasks = [];
+        staticListTasks = renderTimeTasks(staticListTasks);
+        console.log(staticListTasks, "the static list tasks");
+
+        isUpComing = true;
+        changedListTasks = setArray(staticListTasks)
+      
+    }
+
+
+
+
+    const disruptContent = (objectIndex) => {
+            staticListTasks = [];
+            index = null;
+            if (objectIndex < 0) {
+                renderListTasks(true);
+                canDisrupt = true;
+            } 
+
         }
+
+
+    const activateContent = (objectIndex, disruptFlow,objectName) => {
+        changedListTasks = [];
+        setChangedToDoListsEmpty();
+        isUpComing = false;
+        canDisrupt = false;
+
+        if (disruptFlow) {
+            disruptContent(objectIndex)
+            if (canDisrupt) return;
+        }
+
+        if (typeof index == "number"){
+            send.sendData(staticListTasks,index,name);  
+        } 
+        index = objectIndex;
+        name = objectName;
+
+        if (index == "upcoming"){
+            activateUpComingContent();
+        } else {
+            activateNavContent();
+
+
+        }
+
+
+
 
         console.log(staticListTasks, "new times")
         renderListTasks();
-    
-    
     }
 
     return {activateContent,removeTaskBindings, addTaskBindings };
