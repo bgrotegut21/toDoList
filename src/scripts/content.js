@@ -838,7 +838,7 @@ const Content = () => {
         let navKeys = Object.keys(navs);
 
 
-        //console.log(navs, "the navs");
+        console.log(navs, "the navs");
         
         let todayTasks = [];
         let weekTasks = []
@@ -853,7 +853,7 @@ const Content = () => {
                     task.taskIndex = taskIndex;
                     task.boardIndex = boardIndex;
                     task.navIndex = key;
-                    task.navName = send.retrieveTitle(task.taskIndex);
+                    task.navName = send.retrieveTitle(key);
                     console.log(task.navName,"current nav name")
                     if (isToday(task.date)) todayTasks.push(task)
                     if (isThisWeek(task.date)) weekTasks.push(task);
@@ -863,6 +863,11 @@ const Content = () => {
                 boardIndex++;
             })
         })
+
+
+
+        console.log(navs, "the after navs")
+
 
         todayTasks = sortDatesByLatestDay(todayTasks);
         weekTasks = sortDatesByLatestDay(weekTasks);

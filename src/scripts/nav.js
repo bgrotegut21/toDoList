@@ -124,6 +124,8 @@ const nav = () => {
         let updatedItems = getUpdatedElements()
         console.log(updatedItems.projectLabel, "updated item project lable")
         let projectLabel = updatedItems.addProjectLabels[0];
+        console.log([projectLabel], "the current project label")
+
         let currentIndex = projectLabel.currentIndex;
         return currentIndex
         
@@ -174,8 +176,12 @@ const nav = () => {
 
         // console.log(index, " the current index")
         // console.log(staticTasks, "the static tasks")
-        let title = staticTasks[index].task;
-        if (index == staticTasks.length -1) content.activateContent(index,false,title );
+
+        if (index == staticTasks.length -1){
+            let title = staticTasks[index].task;
+            content.activateContent(index,false,title );
+
+        } 
         renderOverlay();
         content.addTaskBindings();
 

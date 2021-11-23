@@ -19,7 +19,7 @@ import exitIcon from "../images/exit.svg";
         if (task.priority == "Low") color = "green";
         if (task.priority == "Medium") color = "#ff9800"
         if (task.navName) {
-            projectTypeText = `<p class = "generalText projectTypeText">Project: ${task.navName}</p>`
+            projectTypeText = ` <p class="generalText projectTypeText"> Project: ${task.navName}</p>`
 
         }
 
@@ -32,24 +32,28 @@ import exitIcon from "../images/exit.svg";
             circleIconBackground = "black";
         }
 
-        let taskText = `<div class = "${taskClass}" style = "border-color:${color}">
-                            <p class = "taskLabel">${task.text}</p>
-                            <div class = "taskTools">
-                                <div class = "generalTextHolder">
-                                    <p class = "generalText dateText">Due: ${task.dateText}</p>
-                                    <p class = "generalText priorityText">Priority: ${task.priority}</p>
+
+        let newTaskText = `<div class="${taskClass}" style = "border-color:${color}">
+                            <p class="taskLabel">${task.text}</p>
+                            <div class="taskTools">
+                                <div class="generalTextHolder">
+                                    <p class="generalText">Due: ${task.dateText}</p>
+                                    <p class="generalText">Priority: ${task.priority}</p>
 
                                 </div>
 
-                                <div class = "tools">
-                                    <img class = "${editClass}" src="${editIcon}" alt="">
-                                    <div class = "circleIcon" style = "background:${circleIconBackground}"></div>
+                                <div class="tools">
+                                    <img class="${editClass}" src="${editIcon}" alt="">
+                                    <div class="circleIcon" style = "background:${circleIconBackground}"></div>
                                 </div>
+                            </div>
 
-                                
-                                ${projectTypeText}
-                            </div>`
-        return taskText;
+                            ${projectTypeText}
+                           
+
+                            
+                        </div>`
+        return newTaskText;
     }
 
     const createBoard = (template) => {
