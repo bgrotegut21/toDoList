@@ -1,4 +1,4 @@
-
+import {setArray, setObject} from "./elementEvents.js";
 
 const send = (
     () => {
@@ -16,7 +16,8 @@ const send = (
         const retrieveData = (index) => {
             console.log(items, "items retrieve data")
             if (items[index]){
-                return items[index]
+
+                return items[index];
             } else {
                 return false;
             }
@@ -24,8 +25,11 @@ const send = (
 
 
         const retrieveTitle = (index) => {
+            
             if (titleItems[index]){
-                return titleItems[index]
+
+
+                return titleItems[index];
             } else {
                 return false;
             }
@@ -37,8 +41,9 @@ const send = (
 
         }
 
+
         const getAllData = () => {
-            return items;
+            return setObject(items);
         }
 
         const deleteData = (index) => {

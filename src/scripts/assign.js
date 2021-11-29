@@ -83,7 +83,7 @@ const assignBoardElements = () => {
             let boardContent = Array.from(element.children);
             boardContent.forEach(childElement => {
                 childElement.boardIndex = currentIndex;
-                console.log(childElement.getAttribute("class"), "the current child element calss")
+             //   console.log(childElement.getAttribute("class"), "the current child element calss")
                 if (childElement.getAttribute("class") == "board") assignBoardIcons(childElement,currentIndex)
              
             })

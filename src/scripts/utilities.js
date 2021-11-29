@@ -90,14 +90,14 @@ const unshadeButtons = ()=> {
 }
 
 
-const createTaskTemplate = (text,date,priority,projectTypeText) => {
+const createTaskTemplate = (text,date,priority,projectTypeText,checked) => {
     let task = {}
     task.listTask = true;
     task.text = text,
     task.date = date;
     task.dateText = format(task.date,"MMM d y")
     task.priority = priority;
-    task.checked = false;
+    !checked? task.checked = false: task.checked = true;
     if (typeof projectTypeText != "undefined")  task.projectTypeText = projectTypeText;
     return task;
 

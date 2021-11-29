@@ -10,7 +10,7 @@
 // do not forget to fix spaces problem
 
 
-import {removeItem, addItem, addBindings, removeBindings, setArray} from "./elementEvents.js"
+import {removeItem, addItem, addBindings, removeBindings, setArray, setObject} from "./elementEvents.js"
 import {send} from "./send.js"
 import { getInitialElements, getUpdatedElements } from "./pageLayout.js";
 import {findBoardTextBox, getElementByBoardIndex, getObjectValue, changeValueToDate, unshadeButtons, createTaskTemplate, findObjectByName } from "./utilities.js";
@@ -32,8 +32,9 @@ const Content = () => {
     let staticListTasks = [];
     let changedListTasks = []; 
 
-    let staticBoardLists = [];
-    let changedBoardLists = [];
+    let upcomingTasks = []
+
+    let deletedUpComingItems = [];
 
     let index;
     let currentIndex;
@@ -163,19 +164,29 @@ const Content = () => {
     }
 
 
+    
 
     const deleteTask =  () => {
         let indexes = getIndexes();
         let taskIndex = indexes.listIndex;
         let boardIndex = indexes.boardIndex;
 
+
+
+
         //console.log(taskIndex, "the current task index");
         //console.log(boardIndex, "the board index")
 
         //console.log(staticListTasks[boardIndex].tasks[taskIndex])
 
+
+
         let task = staticListTasks[boardIndex].tasks[taskIndex];
         task.listTask = false;
+
+        
+
+
 
         let newArray = staticListTasks[boardIndex].tasks;
         //console.log(newArray, "the before new array")
@@ -183,14 +194,25 @@ const Content = () => {
         let newerArray = [];
 
         newArray.forEach(task => {
-            if (task.listTask != false){
+            if (task.listTask){
                 newerArray.push(task)
+            } else {
+                if (isUpComing) deletedUpComingItems.push(task);
             }
         })
 
         //console.log(newerArray, "the newer array")
 
         staticListTasks[boardIndex].tasks = newerArray
+
+
+
+        let tasks =   staticListTasks[boardIndex].tasks
+        removeListEditor();
+        staticListTasks[boardIndex].changedBoardLists = tasks;
+            
+
+
 
 
 
@@ -235,7 +257,7 @@ const Content = () => {
         // //console.log(text);
         // //console.log(boardIndex);
 
-        
+       //console.log(taskIndex, "the current task index");
 
         addListEditor(boardIndex, taskIndex, text, date,priority)
         
@@ -321,39 +343,109 @@ const Content = () => {
         }
     }
 
-    const getTaskByListIndex = (index) => {
-        let boardIndex = 0
-        let currentBoardIndex = false;
-        changedListTasks.forEach(board => {
-            if (board[index].listEditor) {
-                currentBoardIndex = boardIndex;
-                return
-            }
-            boardIndex ++;
-        })
+    // const getTaskByListIndex = (index) => {
+    //     let boardIndex = 0
+    //     let currentTaskIndex = false;
+    //    //console.log(changedListTasks, "the changed")
+    //     let breakLoop = false;
 
-        if (!currentBoardIndex) return currentBoardIndex;
-        return staticListTasks[boardIndex].tasks[index];
+    //     changedListTasks.forEach(board => {
+    //         if (board.board || board.isUpComing){
+    //             let taskIndex = 0;
+    //             board.changedBoardLists.forEach(task => {
+    //                 if (task.listEditor){
+    //                     currentTaskIndex = taskIndex;
+    //                     breakLoop = true;
+    //                     return;
+    //                 }
+    //                 taskIndex ++;
+    
+    //             })
+    //         }
+    //         if (breakLoop) return;
+    //         boardIndex ++;
+    //     })
 
-    }
+    //     if (!currentTaskIndex) return false;
+    //     return staticListTasks[boardIndex].tasks[currentTaskIndex];
 
+    // }
 
-    const updateNavTasks = (navIndex, boardIndex, taskIndex, newTask) => {
-        let allTasks = send.getAllData();
-        allTasks[navIndex][boardIndex].tasks[taskIndex] = newTask;
-        send.overwriteData(allTasks);
+ 
+    // const updateNavTasks = (navIndex, boardIndex, taskIndex, newTask) => {
+    //     let allTasks = send.getAllData();
+    //     allTasks[navIndex][boardIndex].tasks[taskIndex] = newTask;
+    //     send.overwriteData(allTasks);
         
 
 
+    // }
+
+
+
+
+
+
+    const changeDuplicateTasks = (navIndex,boardIndex,taskIndex, newTask) => {
+
+       //console.log(staticListTasks, "the current static list tasks")
+
+
+        let currentBoardIndex =0;
+
+        staticListTasks.forEach(board => {
+            let currentTaskIndex = 0
+
+
+            board.tasks.forEach(task => {
+                if (task.navIndex == navIndex) {
+                    if (task.boardIndex){
+                        if (task.boardIndex == boardIndex){
+                            if (task.taskIndex == taskIndex){
+                                //console.log(task);
+                                //console.log(taskIndex, "current task index");
+                                //console.log(newTask, "zee current new task")
+         
+                                 staticListTasks[currentBoardIndex].tasks[currentTaskIndex] = newTask;
+                                 let tasks = staticListTasks[currentBoardIndex].tasks;
+                                 staticListTasks[currentBoardIndex].changedBoardLists = tasks;
+                             }
+
+                        }
+                    } else {
+                        if (task.taskIndex == taskIndex){
+                            //console.log(task);
+                            //console.log(taskIndex, "current task index");
+                            //console.log(newTask, "zee current new task")
+                             staticListTasks[currentBoardIndex].tasks[currentTaskIndex] = newTask;
+                             let tasks = staticListTasks[currentBoardIndex].tasks;
+                             staticListTasks[currentBoardIndex].changedBoardLists = tasks;
+                         }
+                        
+                    }
+        
+
+
+                }
+                currentTaskIndex ++
+            })
+            currentBoardIndex ++;
+
+ 
+        })
+
+       //console.log(staticListTasks, "the current static list tasks starter")
+
     }
 
 
 
+
+
+// upcoming task array will always give a unique task index because it using the length of the upcoming task
+// which is only chaged when we get new data. The new data will change the task index so that it is in order
+// so it isn't just a random number and that is why upcoming works.
     const addTask =  (index) => {
-    
-
-    
-
         let elements = getUpdatedElements();
         let dateValue = elements.datePicker[0].value
         let currentDate;
@@ -376,19 +468,37 @@ const Content = () => {
         // //console.log(index, "the current value of index")
 
          if (typeof index != "undefined") {
-            let currentTask = getTaskByListIndex(index);
+            if (isUpComing){
+                let oldTask =   staticListTasks[boardIndex].tasks[index];
 
-             if (isUpComing && currentTask.boardIndex != "undefined") {
-                 let navIndex = currentTask.navIndex;
-                 let boardIndex = currentTask.boardIndex;
-                 let taskIndex = currentTask.taskIndex
-                 updateNavTasks(navIndex,boardIndex,taskIndex,task)
-             }
+                task.navName = oldTask.navName;
+                task.taskIndex = oldTask.taskIndex;
+                if (typeof oldTask.boardIndex != "undefined") task.boardIndex = oldTask.boardIndex;
+                task.navIndex = oldTask.navIndex;
+
+
+            }
+
+            
             staticListTasks[boardIndex].tasks[index] = task;
             let tasks = staticListTasks[boardIndex].tasks;
             staticListTasks[boardIndex].changedBoardLists = tasks;
+            if (isUpComing) changeDuplicateTasks(task.navIndex,task.boardIndex,task.taskIndex,task);
+
+
 
          } else {
+            //console.log(task, "The current added task")
+
+            if (isUpComing){
+                task.navIndex = "upcoming";
+                task.navName = "Upcoming";
+                upcomingTasks.push(task);
+                task.taskIndex = upcomingTasks.length -1;
+                console.log(upComingTask, "the upcoming tasks")
+
+            }
+
              staticListTasks[boardIndex].tasks.push(task);
              let tasks = staticListTasks[boardIndex].tasks;
             //  //console.log(tasks, "the current tasks")
@@ -396,12 +506,38 @@ const Content = () => {
          }
         //  //console.log(staticListTasks[boardIndex].changedBoardLists, "static change board lists");
         //  //console.log(staticListTasks[boardIndex].tasks, "taskos")
-
+        if (isUpComing) removeOutOfDateTasks();
         renderBoardLists();
     }
 
 
 
+    const removeOutOfDateTasks = () => {
+        let boardIndex = 0;
+
+        staticListTasks.forEach(board => {
+            board.tasks.forEach(task => {
+
+2
+                let tasks = board.tasks;
+                let newTasks = tasks.filter(newTask => newTask.date != task.date)
+
+                console.log(tasks, "the current tasks");
+                console.log(newTasks, "the current new tasks")
+
+                 if  (!isThisWeek(task.date)) tasks = newTasks;
+            
+                staticListTasks[boardIndex].tasks = tasks;
+                staticListTasks[boardIndex].changedBoardLists = tasks;
+            })
+            boardIndex ++;
+        
+
+        })
+
+
+
+    }
 
 
     const shadeButtonByClass = (className,color) => {
@@ -566,10 +702,13 @@ const Content = () => {
         //  //console.log(listEditorTemplate.priority, "list editor priority")
 
     
+       //console.log(index, "the current index")
 
         if (typeof index != "undefined") {
         
             let newTasks = staticListTasks[boardIndex].changedBoardLists;
+           //console.log(index +1, "the current splice index")
+
             newTasks.splice(index +1,0,listEditorTemplate);
             finalArray = newTasks
         } else {
@@ -647,7 +786,7 @@ const Content = () => {
         let indexesLength = staticListTasks.length;
         //console.log(staticListTasks, "the static list tasks")
 
-        console.log(staticListTasks, "the static list task")
+       //console.log(staticListTasks, "the static list task")
         for (let i = 0; i < indexesLength; i++) {
              //console.log(i, "the index")
             if (staticListTasks.length != 0)renderSingleBoardList(i);
@@ -678,22 +817,22 @@ const Content = () => {
 
 
     const renderSingleBoardList = (index) => {
-        console.log(renderSingleBoardList, "render single board list")
+       //console.log(renderSingleBoardList, "render single board list")
         let taskList = getElementByBoardIndex(index, "taskLists");
         let addDate = false;
         let date;
-        console.log(taskList, "the current task list")
+       //console.log(taskList, "the current task list")
 
        // //console.log(taskHolder, "the task holder")
         taskList.innerHTML = "";
-  ////      console.log(taskList, "the current task list")
+  ////     //console.log(taskList, "the current task list")
  //       //console.log(index, "the index");
 //        //console.log(staticListTasks[index], "static list current index");
         // //console.log(staticListTasks[index], "static list tasks indexes")
         // //console.log(staticListTasks[index].changedBoardLists, "static change board lists")
 
         staticListTasks[index].changedBoardLists.forEach(task => {
-            // console.log(task, "each individual task")
+            ////console.log(task, "each individual task")
             if (task.editBoard){
                 let boardText = createBoardEditor(task);
                 taskList.innerHTML += boardText;
@@ -713,11 +852,11 @@ const Content = () => {
 
 
             } else if (task.listTask){
-                // console.log(task, "the current task")
+                ////console.log(task, "the current task")
                 let taskText = createTask(task);
-                // console.log(taskText, "the current task text");
+                ////console.log(taskText, "the current task text");
                 taskList.innerHTML += taskText;
-                // console.log(taskList," the text list")
+                ////console.log(taskList," the text list")
 
 
 
@@ -729,7 +868,7 @@ const Content = () => {
 
         if (addDate) setTaskDate(date);
         let taskListChildren = Array.from(taskList.children)
-       console.log(taskList, "current task list")
+      //console.log(taskList, "current task list")
         let boardIndex = taskList.boardIndex;
         assignTaskIndex(taskListChildren,boardIndex);
 
@@ -833,44 +972,93 @@ const Content = () => {
     }
 
 
+
+
+    const getUpComingTasks  = () => {
+        let newArray = []
+
+        staticListTasks.forEach(board => {
+            board.tasks.forEach(task => {
+                if (task.navIndex == "upcoming") {
+                    newArray.push(task);
+                }
+            })
+        })
+
+        console.log(newArray);
+        return newArray;
+    }
+
+
+
     const getTaskTimeValues = () => {
-        let navs = send.getAllData();
+       //console.log("new stuff")
+       //console.log('get task time value')
+        let data = send.getAllData();
+       //console.log(data, "the current form")
+        let navs = setObject(data);
+
+      //console.log(data, "current navs")
         let navKeys = Object.keys(navs);
 
-
-        console.log(navs, "the navs");
+       
+      //console.log(data)
+      //console.log(navs, "the navs");
+    
         
         let todayTasks = [];
         let weekTasks = []
-        
 
 
         navKeys.forEach(key => {
             let boardIndex = 0;
-            navs[key].forEach(board => {
+            if (key == "upcoming"){
                 let taskIndex = 0;
-                board.tasks.forEach(task => {
+                navs[key].forEach(task => {
+
                     task.taskIndex = taskIndex;
-                    task.boardIndex = boardIndex;
-                    task.navIndex = key;
-                    task.navName = send.retrieveTitle(key);
-                    console.log(task.navName,"current nav name")
+                    task.navIndex = "upcoming";
+                    task.navName = "Upcoming";
                     if (isToday(task.date)) todayTasks.push(task)
                     if (isThisWeek(task.date)) weekTasks.push(task);
-                    taskIndex++;
-   
+                    upcomingTasks.push(task);
+
+                    taskIndex ++;
                 })
-                boardIndex++;
-            })
+
+            } else {
+                navs[key].forEach(board => {
+                    let taskIndex = 0;
+                    board.tasks.forEach(task => {
+                        task.taskIndex = taskIndex;
+                        task.boardIndex = boardIndex;
+                        task.navIndex = key;
+                        task.navName = send.retrieveTitle(key);
+                     //console.log(task.navName,"current nav name")
+                       //console.log(task.date, "task current date")
+                        if (isToday(task.date)) todayTasks.push(task)
+                        if (isThisWeek(task.date)) weekTasks.push(task);
+                        taskIndex++;
+       
+                    })
+                    boardIndex++;
+                })
+            }
+
+
+
         })
 
-
-
-        console.log(navs, "the after navs")
+        upcomingTasks = getUpComingTasks();
+       navs = send.getAllData();
+      //console.log(navs, "the after navs")
 
 
         todayTasks = sortDatesByLatestDay(todayTasks);
         weekTasks = sortDatesByLatestDay(weekTasks);
+
+       //console.log(todayTasks);
+       //console.log(weekTasks);
 
         return {todayTasks, weekTasks};
     }
@@ -967,6 +1155,7 @@ const Content = () => {
     }
 
     const activateNavContent = () => {
+        staticListTasks = [];
         let newTasks = send.retrieveData(index);
         // //console.log(newTasks, " the new task")
         //console.log(newTasks,"current new task")
@@ -976,7 +1165,7 @@ const Content = () => {
         }
 
 
-        //console.log(newTasks, "current new task")
+       //console.log(newTasks, "current new task")
 
         staticListTasks = newTasks;
 
@@ -990,7 +1179,7 @@ const Content = () => {
     const activateUpComingContent = () => {
         staticListTasks = [];
         staticListTasks = renderTimeTasks(staticListTasks);
-        console.log(staticListTasks, "the static list tasks");
+       //console.log(staticListTasks, "the static list tasks");
 
         isUpComing = true;
         changedListTasks = setArray(staticListTasks)
@@ -1010,25 +1199,109 @@ const Content = () => {
 
         }
 
+    
+    const removeUpComingItems = (navs) => {
+       console.log(deletedUpComingItems, "deleted up coming items")
+
+       console.log(staticListTasks, "the static list tasks")
+
+        deletedUpComingItems.forEach(task => {
+            if (task.navIndex == "upcoming"){
+                let navTask = navs[task.navIndex];
+                navs[task.navIndex] = removeItem(navTask,task.taskIndex);
+
+            } else {
+                let navTask = navs[task.navIndex][task.boardIndex].tasks;
+                navs[task.navIndex][task.boardIndex].tasks = removeItem(navTask,task.taskIndex);
+            }
+
+        })
+        deletedUpComingItems = [];
+
+       console.log(navs, "the current nav")
+
+        return navs;
+
+    }
+
+
+    const sendUpComingChanges = () => {
+       //console.log("sending up coming tasks")
+        let navs = send.getAllData();
+       //console.log(navs, "the current navs")
+       //console.log(staticListTasks, "the current static list tasks")
+        
+
+        staticListTasks.forEach(board => {
+            board.tasks.forEach(task => {
+                let newTask = task;
+                if (task.listTask){
+                   //console.log(task, "the current task")
+     
+                    if (task.navIndex != "upcoming"){
+                        let text = task.text;
+                        let date = task.date;
+                        let priority = task.priority;
+                        let projectTypeText = task.projectTypeText;
+                        let checked = task.checked;
+                        newTask = createTaskTemplate(text, date, priority, projectTypeText, checked)
+                    }        
+                    
+                    console.log(task.navIndex, "task nav index")
+                    console.log(task, "the current task")
+
+                    if(task.navIndex == "upcoming") navs[task.navIndex][task.taskIndex] = newTask;
+                    else navs[task.navIndex][task.boardIndex].tasks[task.taskIndex] = newTask;
+
+                   
+                } 
+            })
+        })
+
+
+       //console.log(navs, "the after current navs");
+
+
+        if(deletedUpComingItems.length != 0) navs = removeUpComingItems(navs);
+        let newData = setObject(navs);
+       //console.log("objectefied navs", navs);
+
+        send.overwriteData(newData);
+
+
+
+    }
+
+
 
     const activateContent = (objectIndex, disruptFlow,objectName) => {
+        let data = send.getAllData();
         changedListTasks = [];
+        deletedUpComingItems = []
         setChangedToDoListsEmpty();
         isUpComing = false;
         canDisrupt = false;
 
         if (disruptFlow) {
+           //console.log("disrupting flow")
             disruptContent(objectIndex)
             if (canDisrupt) return;
         }
+       //console.log(typeof index);
+       //console.log(typeof index == "number")
 
         if (typeof index == "number"){
             send.sendData(staticListTasks,index,name);  
-        } 
+        } else if (index == "upcoming"){
+            sendUpComingChanges();
+        }
+
+
         index = objectIndex;
         name = objectName;
 
         if (index == "upcoming"){
+           //console.log("activating up coming")
             activateUpComingContent();
         } else {
             activateNavContent();
@@ -1039,7 +1312,7 @@ const Content = () => {
 
 
 
-        console.log(staticListTasks, "new times")
+       //console.log(staticListTasks, "new times")
         renderListTasks();
     }
 

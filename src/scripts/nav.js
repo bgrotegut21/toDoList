@@ -73,8 +73,8 @@ const nav = () => {
 
 
     const switchPage = (event) => {
-    //    console.log("switching page")
-   //     console.log(event.target.currentIndex, "event tageet current index")
+    //    //console.log("switching page")
+   //     //console.log(event.target.currentIndex, "event tageet current index")
         let title = staticTasks[event.target.currentIndex].task;
         content.activateContent(event.target.currentIndex, false, title);
         highlightedIndex = event.target.currentIndex;
@@ -99,10 +99,10 @@ const nav = () => {
     const renderHighlightElements = () => {
         if (staticTasks.length == 0) return;
         
-        console.log(highlightedIndex, "the highlighted index")
+        //console.log(highlightedIndex, "the highlighted index")
 
         let isEdit = changedTasks.filter(task => task.edit);
-        console.log(isEdit, "is edit array")
+        //console.log(isEdit, "is edit array")
         if (isEdit.length != 0){
             unHighlightButton();
         } else {
@@ -115,16 +115,16 @@ const nav = () => {
         unHighlightButton();
 
         changedTasks[index].highlight = true;
-        console.log("high lighting button", index)
+        //console.log("high lighting button", index)
     }
 
 
 
     const getCurrentIndex = ()=> {
         let updatedItems = getUpdatedElements()
-        console.log(updatedItems.projectLabel, "updated item project lable")
+        //console.log(updatedItems.projectLabel, "updated item project lable")
         let projectLabel = updatedItems.addProjectLabels[0];
-        console.log([projectLabel], "the current project label")
+        //console.log([projectLabel], "the current project label")
 
         let currentIndex = projectLabel.currentIndex;
         return currentIndex
@@ -140,7 +140,7 @@ const nav = () => {
     }
 
     const createProjectTasksClick = () => {
-        console.log("create project tacks click")
+        //console.log("create project tacks click")
         let currentIndex = getCurrentIndex();
         createProjectTasks(currentIndex);
     }
@@ -153,10 +153,10 @@ const nav = () => {
 
 
     const createProjectTasks = (index) => {
-        // console.log("create project tasks")
+        // //console.log("create project tasks")
         let taskText = getTextBoxValues()
-        // console.log(taskText, "the current task text");
-        // console.log(taskText.length, "the current task text length")
+        // //console.log(taskText, "the current task text");
+        // //console.log(taskText.length, "the current task text length")
 
         let task = {navTask:true,task: taskText, highlight:false};   
 
@@ -166,16 +166,16 @@ const nav = () => {
             highlightedIndex = index;
         }
 
-        console.log(staticTasks,"the static tasks") 
+        //console.log(staticTasks,"the static tasks") 
         changedTasks = setArray(staticTasks);
-        console.log(changedTasks, "the changed tasks")
+        //console.log(changedTasks, "the changed tasks")
 
         renderHighlightElements();
         renderProjectTasks();
 
 
-        // console.log(index, " the current index")
-        // console.log(staticTasks, "the static tasks")
+        // //console.log(index, " the current index")
+        // //console.log(staticTasks, "the static tasks")
 
         if (index == staticTasks.length -1){
             let title = staticTasks[index].task;
@@ -210,9 +210,9 @@ const nav = () => {
         changedTasks = setArray(staticTasks)
         highlightedIndex = renderIndex;
         renderHighlightElements();
-        //console.log("no rendering project tasks")
+        ////console.log("no rendering project tasks")
         renderProjectTasks();
-        console.log("delete item")
+        //console.log("delete item")
     }
 
 
@@ -319,7 +319,7 @@ const nav = () => {
 
             } else if (task.navTask){
                 let taskText;
-              //  console.log(task, " the task")
+              //  //console.log(task, " the task")
                 task.highlight? taskText = createTask(task,true): taskText = createTask(task);
                 domElements.projectTaskHolder.innerHTML += taskText
             }
@@ -357,10 +357,10 @@ const nav = () => {
     const disablePageContentElements = () => {
         removeNavigationBindings(true);
         let updatedElement = getUpdatedElements();
-        console.log(updatedElement.projectButton,"updated element project button")
+        //console.log(updatedElement.projectButton,"updated element project button")
         if (updatedElement.projectButton.length == 0) return;
         updatedElement.projectButton.forEach( button =>{
-            console.log(button, "the current button")
+            //console.log(button, "the current button")
             button.classList.remove("projectButtonHover")
             button.style.color = "rgb(157,162,175)";
             button.style.cursor = "pointer"
@@ -374,7 +374,7 @@ const nav = () => {
 //This is because renderOverlay will overwrite the changes causing the page to act werid.
     const createEditor = (text,index) => {
 
-        console.log("create")
+        //console.log("create")
         let editorText = "";
         if (typeof text != "undefined") editorText = text;
 
