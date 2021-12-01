@@ -167,29 +167,38 @@ const Content = () => {
     
 
     const deleteTask =  () => {
+       
         let indexes = getIndexes();
         let taskIndex = indexes.listIndex;
         let boardIndex = indexes.boardIndex;
-
+        let newStaticListTasks = setObject(staticListTasks);
+        let deletedTask;
 
 
 
         //console.log(taskIndex, "the current task index");
         //console.log(boardIndex, "the board index")
-
-        //console.log(staticListTasks[boardIndex].tasks[taskIndex])
-
+       //console.log(staticListTasks[boardIndex].tasks[taskIndex])
 
 
-        let task = staticListTasks[boardIndex].tasks[taskIndex];
-        task.listTask = false;
+        console.log(newStaticListTasks, "the current static list tasks")
 
+
+
+        let currentTask = newStaticListTasks[boardIndex].tasks[taskIndex];
+
+        console.log(currentTask, "the current task")
+
+        currentTask.listTask = false;
+        deletedTask = currentTask;
+
+        console.log(newStaticListTasks, "static list tasks middle")
         
 
 
 
-        let newArray = staticListTasks[boardIndex].tasks;
-        //console.log(newArray, "the before new array")
+        let newArray = newStaticListTasks[boardIndex].tasks;
+        console.log(newArray, "the before new array")
 
         let newerArray = [];
 
@@ -201,23 +210,24 @@ const Content = () => {
             }
         })
 
-        //console.log(newerArray, "the newer array")
+        console.log(newerArray, "the newer array")
 
         staticListTasks[boardIndex].tasks = newerArray
+        console.log(newStaticListTasks[boardIndex].tasks, "static list tasks")
 
 
+        let newTasks =   staticListTasks[boardIndex].tasks
+        console.log(newTasks,"current tasks")
 
-        let tasks =   staticListTasks[boardIndex].tasks
+        staticListTasks[boardIndex].changedBoardLists = newTasks
+
+        console.log( newStaticListTasks[boardIndex].changedBoardLists, "changed board lists")
+        console.log(newStaticListTasks, "after")
+
+
+        
         removeListEditor();
-        staticListTasks[boardIndex].changedBoardLists = tasks;
-            
-
-
-
-
-
-
-        removeListEditor();
+        if(isUpComing) removeUpComingTasks(deletedTask)
 
         renderBoardLists();
 
@@ -228,16 +238,55 @@ const Content = () => {
     }
 
 
+    const removeUpComingTasks = (task) => {
+        let newStaticListTasks = setObject(staticListTasks,true);
+        let boardIndex = 0;
+        let newTasks;
+
+        console.log(staticListTasks, "the static list tasks")
+
+        console.log(newStaticListTasks, "the new staticlisttasks")
+
+        newStaticListTasks.forEach(board => {
+            newTasks = board.tasks.filter(childTask => {
+                if (childTask.navIndex == "upcoming"){
+                    if (childTask.taskIndex == task.taskIndex){
+                        deletedUpComingItems.push(childTask);
+                        return false;
+                    }
+                } else return true;
+            })
+  
+            console.log(newTasks, "current new tasks")
+
+            staticListTasks[boardIndex].tasks = newTasks
+            staticListTasks[boardIndex].changedBoardLists = newTasks;
+            boardIndex++;
+        })
+
+
+
+    }
+
+        
+        
+
+
+
+
+
 
 
     const editTask = (event) => {
 
-        // //console.log([event.target])
+
         let boardIndex = event.target.boardIndex;
         let taskIndex = event.target.taskIndex;
 
+
+
         // //console.log("\n")
-        //console.log(taskIndex, "the current task index")
+        console.log(taskIndex, "the current task index")
  
         // //console.log(boardIndex,"the current board index")
         // //console.log(staticListTasks[boardIndex].changedBoardLists, "changed board lists")
@@ -277,6 +326,8 @@ const Content = () => {
         staticListTasks.forEach(task => {
             let newTasks = task.changedBoardLists;
             newTasks = newTasks.filter(task => task.listEditor != true );
+
+            console.log(newTasks)
             task.changedBoardLists = newTasks;
         })
 
@@ -495,7 +546,7 @@ const Content = () => {
                 task.navName = "Upcoming";
                 upcomingTasks.push(task);
                 task.taskIndex = upcomingTasks.length -1;
-                console.log(upComingTask, "the upcoming tasks")
+                console.log(upcomingTasks, "the upcoming tasks")
 
             }
 
@@ -506,9 +557,79 @@ const Content = () => {
          }
         //  //console.log(staticListTasks[boardIndex].changedBoardLists, "static change board lists");
         //  //console.log(staticListTasks[boardIndex].tasks, "taskos")
+   
+        if (isUpComing) addTaskToTime(task);
         if (isUpComing) removeOutOfDateTasks();
+
+        console.log(staticListTasks,"the static list tasks")
+
         renderBoardLists();
+    
     }
+
+
+
+
+    const addTaskToTime = (newTask) => {
+        let newBoardIndex;
+        let breakLoop = false;
+        let newTaskIndex;
+
+
+        staticListTasks.forEach(board => {
+            let currentTaskIndex = 0;
+            board.tasks.forEach(task => {
+                if (task.navIndex == "upcoming"){
+                    if (task.taskIndex == newTask.taskIndex){
+                        if (board.text == "Week") newBoardIndex = 0;
+                        if (board.text == "Today") newBoardIndex = 1;
+                        breakLoop = true
+                        newTaskIndex = currentTaskIndex;
+                        return;
+                    }
+                }
+                currentTaskIndex ++;
+
+            })
+            if(breakLoop) return;
+        })
+
+
+
+        if (typeof newBoardIndex == "undefined") return;
+        let currentTask = staticListTasks[newBoardIndex].tasks[newTaskIndex];
+
+
+        console.log(newBoardIndex, "the current new board index")
+
+  
+        if (typeof currentTask != "undefined") {
+            if (currentTask.taskIndex == newTask.taskIndex && currentTask.navIndex == "upcoming"){
+            
+                staticListTasks[newBoardIndex].tasks[newTaskIndex] = newTask;
+                let tasks =  staticListTasks[newBoardIndex].tasks;
+                staticListTasks[newBoardIndex].changedBoardLists = tasks;
+
+            }
+
+
+        }
+        
+        if (typeof currentTask == "undefined" ||
+            currentTask.navIndex != "upcoming"
+        ) {
+            staticListTasks[newBoardIndex].tasks.push(newTask);
+            let tasks =  staticListTasks[newBoardIndex].tasks;
+            staticListTasks[newBoardIndex].changedBoardLists = tasks;
+
+            console.log(tasks, "adding tasks to time")
+
+        }
+
+    
+
+    }
+
 
 
 
@@ -518,14 +639,21 @@ const Content = () => {
         staticListTasks.forEach(board => {
             board.tasks.forEach(task => {
 
-2
+
                 let tasks = board.tasks;
                 let newTasks = tasks.filter(newTask => newTask.date != task.date)
 
                 console.log(tasks, "the current tasks");
                 console.log(newTasks, "the current new tasks")
 
-                 if  (!isThisWeek(task.date)) tasks = newTasks;
+
+                if (boardIndex == 0){
+                    if (!isToday(task.date)) tasks = newTasks
+                } else {
+                    if  (!isThisWeek(task.date)) tasks = newTasks;
+
+                }
+                 
             
                 staticListTasks[boardIndex].tasks = tasks;
                 staticListTasks[boardIndex].changedBoardLists = tasks;
@@ -707,6 +835,11 @@ const Content = () => {
         if (typeof index != "undefined") {
         
             let newTasks = staticListTasks[boardIndex].changedBoardLists;
+
+            console.log(staticListTasks[boardIndex].changedBoardLists, "the changed board shit")
+            console.log(boardIndex, "the current board index")
+            console.log(newTasks, "the new tasks")
+            
            //console.log(index +1, "the current splice index")
 
             newTasks.splice(index +1,0,listEditorTemplate);
@@ -726,7 +859,7 @@ const Content = () => {
     }
 
 
-    const changeName = (event) => {
+    const changeName = () => {
         let elements = getUpdatedElements();
         let boardText = elements.boardContentTextBox[0].value;
         if (boardText.length == 0 ){
@@ -745,7 +878,7 @@ const Content = () => {
         staticListTasks[currentIndex].changedBoardLists = newTasks;
         staticListTasks[currentIndex].text = boardText;
 
-        // //console.log(staticListTasks, "the static list tasks")
+    //    console.log(staticListTasks, "the static list tasks")
 
         renderListTasks();
     
@@ -931,7 +1064,7 @@ const Content = () => {
     }
 
     const addToDoTasks = (currentIndex) => {
-        
+
 
     }
 
@@ -985,7 +1118,6 @@ const Content = () => {
             })
         })
 
-        console.log(newArray);
         return newArray;
     }
 
@@ -1049,7 +1181,7 @@ const Content = () => {
 
         })
 
-        upcomingTasks = getUpComingTasks();
+       
        navs = send.getAllData();
       //console.log(navs, "the after navs")
 
@@ -1183,6 +1315,10 @@ const Content = () => {
 
         isUpComing = true;
         changedListTasks = setArray(staticListTasks)
+
+        console.log(upcomingTasks,"the current upcoming tasks")
+        upcomingTasks = getUpComingTasks();
+
       
     }
 
@@ -1216,6 +1352,9 @@ const Content = () => {
             }
 
         })
+
+
+
         deletedUpComingItems = [];
 
        console.log(navs, "the current nav")
@@ -1264,6 +1403,7 @@ const Content = () => {
 
         if(deletedUpComingItems.length != 0) navs = removeUpComingItems(navs);
         let newData = setObject(navs);
+        
        //console.log("objectefied navs", navs);
 
         send.overwriteData(newData);
@@ -1277,7 +1417,7 @@ const Content = () => {
     const activateContent = (objectIndex, disruptFlow,objectName) => {
         let data = send.getAllData();
         changedListTasks = [];
-        deletedUpComingItems = []
+        upcomingTasks = [];
         setChangedToDoListsEmpty();
         isUpComing = false;
         canDisrupt = false;
