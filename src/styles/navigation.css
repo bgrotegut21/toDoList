@@ -189,7 +189,7 @@
     margin-left: 5px;
 }
 
-.projectButtonHover:hover, .projectAdder:hover, .upComingButton:hover{
+.projectButtonHover:hover, .projectAdder:hover{
     background:rgb(22, 83, 227);
     
 }

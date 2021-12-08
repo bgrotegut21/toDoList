@@ -20,6 +20,9 @@ const nav = () => {
     let staticTasks = [];
     let content = Content();
     let highlightedIndex;
+    let dom = getInitialElements();
+    let upcomingButton = dom.upComingButton;
+
 
 
     const removeNavigationBindings = (notRemoveAddProjectLabel) => {
@@ -31,6 +34,8 @@ const nav = () => {
         removeBindings(updatedItems.projectContainer, switchPage, "click");
         removeBindings(domElements.projectAdder,activateProjectTask,"click");
         removeBindings(domElements.upComingButton,activateUpComingTask,"click");
+        removeBindings(upcomingButton, highlightUpComingButton, "mouseover");
+        removeBindings(upcomingButton, unhoverUpComingButton, "mouseleave")
 
 
        if (!notRemoveAddProjectLabel) removeBindings(updatedItems.addProjectLabels,createProjectTasksClick, "click");
@@ -45,6 +50,10 @@ const nav = () => {
     }
 
 
+    const unhoverUpComingButton = () => {
+        if (highlightedIndex != "upcoming")  unhighlightUpComingButton();
+    }
+
 
     const addNavigationBindings = () => {
         let updatedItems = getUpdatedElements();
@@ -55,7 +64,9 @@ const nav = () => {
         addBindings(updatedItems.addProjectLabels,createProjectTasksClick, "click");
         addBindings(updatedItems.projectContainer,switchPage, "click")
         addBindings(domElements.projectAdder,activateProjectTask,"click");
-        addBindings(domElements.upComingButton,activateUpComingTask,"click");
+        addBindings(upcomingButton,activateUpComingTask,"click");
+        addBindings(upcomingButton, highlightUpComingButton, "mouseover");
+        addBindings(upcomingButton, unhoverUpComingButton, "mouseleave")
 
         if (updatedItems.addProjectLabels.length != 0) addBindings(window, createProjectTasksKeys, "keydown");
 
@@ -82,8 +93,15 @@ const nav = () => {
         renderProjectTasks();
     }
 
+
+
+
+
+
     const unHighlightButton = () => {
+        
         let index = 0;
+        unhighlightUpComingButton();
         changedTasks.forEach(task => {
             if (task.navTask || task.upComingTask) {
                 if (task.highlight){
@@ -96,25 +114,38 @@ const nav = () => {
 
     } 
 
+    const unhighlightUpComingButton = () => {
+        upcomingButton.style.background = "rgb(19, 75, 205)";
+    }
+
+    const highlightUpComingButton = () => {
+        console.log("activating the up coming task")
+        upcomingButton.style.background = "rgb(22, 83, 227)";
+    }    
+
     const renderHighlightElements = () => {
-        if (staticTasks.length == 0) return;
+        if (staticTasks.length == 0 &&  highlightedIndex != "upcoming") return;
         
-        //console.log(highlightedIndex, "the highlighted index")
+        console.log("render higlight elements")
 
         let isEdit = changedTasks.filter(task => task.edit);
-        //console.log(isEdit, "is edit array")
+        console.log(isEdit, "is edit array")
         if (isEdit.length != 0){
             unHighlightButton();
         } else {
             highlightButton(highlightedIndex);
         }
+
+        
     }
 
 
     const highlightButton = (index) => {
         unHighlightButton();
+        console.log(index,"the current index")
 
-        changedTasks[index].highlight = true;
+        if (index == "upcoming") highlightUpComingButton();
+        else changedTasks[index].highlight = true;
         //console.log("high lighting button", index)
     }
 
@@ -155,33 +186,55 @@ const nav = () => {
     const createProjectTasks = (index) => {
         // //console.log("create project tasks")
         let taskText = getTextBoxValues()
+        let isEditingTask = false
+        let isUpComing = content.getIsUpComing();
         // //console.log(taskText, "the current task text");
         // //console.log(taskText.length, "the current task text length")
 
         let task = {navTask:true,task: taskText, highlight:false};   
 
         if (taskText.length != 0) {
-            if(staticTasks[index]) staticTasks[index] = task;
-            else staticTasks.push(task)
-            highlightedIndex = index;
+            if(staticTasks[index]) {
+                staticTasks[index] = task;
+                isEditingTask = true;
+            }
+            else {
+
+                staticTasks.push(task)
+                highlightedIndex = index;
+
+            }
+            
         }
 
         //console.log(staticTasks,"the static tasks") 
         changedTasks = setArray(staticTasks);
+
+        console.log(staticTasks[index], "the static tasks index")
+
+  
         //console.log(changedTasks, "the changed tasks")
 
         renderHighlightElements();
+        if (staticTasks[index]) changedTasks[index].highlight = true;
+
         renderProjectTasks();
 
 
         // //console.log(index, " the current index")
         // //console.log(staticTasks, "the static tasks")
 
-        if (index == staticTasks.length -1){
+        if (index == staticTasks.length -1 && !isEditingTask){
             let title = staticTasks[index].task;
             content.activateContent(index,false,title );
 
-        } 
+
+        } else if (isEditingTask && isUpComing){
+            console.log("is activatating up coming")
+            send.sendName(index,task.task)
+            content.activateContent("upcoming");
+        
+        }
         renderOverlay();
         content.addTaskBindings();
 
@@ -197,18 +250,36 @@ const nav = () => {
 
         staticTasks = removeItem(staticTasks,index);
         send.deleteData(index);
-
+        console.log(index, "the current index")
         let renderIndex = index -1;
         if (renderIndex < 0){
             renderIndex = staticTasks.length - 1;
             if (staticTasks.length == 0) renderIndex = -1;
         }
 
+        let contentIndex = content.getIndex();
+        let isUpComing = content.getIsUpComing();
+        let normalIndex = renderIndex + 1;
 
-        let title = staticTasks[renderIndex].task;
-        content.activateContent(renderIndex,true,title);
+        if (renderIndex == -1){
+            content.activateContent(renderIndex,true);
+        } else if (normalIndex ==  contentIndex){
+            let title = staticTasks[renderIndex].task;
+            console.log(renderIndex, "the current")
+            console.log(staticTasks[renderIndex], "static tasks render index")
+            content.activateContent(renderIndex,true,title);
+            highlightedIndex = renderIndex;
+        } else if (isUpComing){
+            content.activateContent("upcoming",true)
+            highlightedIndex = "upcoming";
+        } else {
+            let title = staticTasks[contentIndex].task;
+            content.activateContent(contentIndex,true,title);
+            highlightedIndex = contentIndex;
+        }
+
+
         changedTasks = setArray(staticTasks)
-        highlightedIndex = renderIndex;
         renderHighlightElements();
         ////console.log("no rendering project tasks")
         renderProjectTasks();
@@ -395,8 +466,13 @@ const nav = () => {
 
 
     const activateUpComingTask = () => {
+
+        console.log("activating up coming tasks")
+
         content.activateContent("upcoming")
-        
+        highlightedIndex = "upcoming";
+        renderHighlightElements();
+        renderProjectTasks();
     }
 
     const activateProjectTask = () => {
@@ -411,6 +487,8 @@ const nav = () => {
 
         addBindings(domElements.projectAdder,activateProjectTask,"click");
         addBindings(domElements.upComingButton,activateUpComingTask,"click");
+        addBindings(upcomingButton, highlightUpComingButton, "mouseover");
+        addBindings(upcomingButton, unhoverUpComingButton, "mouseleave")
 
     }
     return {activateNavigation};
