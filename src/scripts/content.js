@@ -238,7 +238,6 @@ const Content = () => {
         if(isUpComing) removeUpComingTasks(deletedTask)
         console.log(deletedUpComingItems, "the deleted up coming items")
        // if (isUpComing) removeOutOfDateTasks();
-2
         renderBoardLists();
         
     }
@@ -251,6 +250,7 @@ const Content = () => {
         let boardIndex = 0;
         let newTasks;
 
+        console.log(task, "the current task")
         //console.log(staticListTasks, "the static list tasks")
 
         console.log(newStaticListTasks, "the new staticlisttasks")
@@ -264,20 +264,24 @@ const Content = () => {
                     } else return true;
 
                 } else  if (childTask.navIndex  ==  task.navIndex ) {
-                    if (childTask.taskIndex == task.taskIndex &&
-                        childTask.boadIndex == task.boadIndex
+                    if (childTask.boardIndex == task.boardIndex &&
+                        childTask.taskIndex == task.taskIndex
                         ){
                         return false;
                     } else return true;
                 } else return true;
+
             })
   
             //console.log(newTasks, "current new tasks")
 
+            
             staticListTasks[boardIndex].tasks = newTasks
             staticListTasks[boardIndex].changedBoardLists = newTasks;
             boardIndex++;
         })
+
+        console.log(staticListTasks, "the current static list tasks")
 
 
 
@@ -1232,7 +1236,6 @@ const Content = () => {
         //console.log(navKeys,"the nav keys")
 
         navKeys.forEach(key => {
-            let boardIndex = 0;
             if (key == "upcoming"){
                 let taskIndex = 0;
                 navs[key].forEach(task => {
@@ -1250,6 +1253,7 @@ const Content = () => {
                 })
 
             } else {
+                let boardIndex = 0;
                 navs[key].forEach(board => {
                     let taskIndex = 0;
                     board.tasks.forEach(task => {
@@ -1437,7 +1441,7 @@ const Content = () => {
 
         }
 
-    
+     
     const removeUpComingItems = (navs) => {
        console.log(deletedUpComingItems, "deleted up coming items")
 
@@ -1456,6 +1460,7 @@ const Content = () => {
         console.log(navs, "navs with an empty")
 
         navs = removeNavEmpties(navs);
+        deletedUpComingItems = [];
 
 
 
