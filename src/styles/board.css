@@ -18,8 +18,15 @@
 
   .pageContent {
     display:flex;
-    overflow:auto;
+    flex-basis: auto;
+    overflow-y: hidden;
+    height:100%;
+    overflow-x: auto;
 }
+
+
+
+
 
 .addBoard {
     width: 250px;
@@ -45,6 +52,9 @@ input {
 .boardContent {
 
     font-family: 'Roboto', sans-serif;
+    overflow-y: auto;
+    overflow-x: hidden;
+    flex-shrink: 0;
 }
 
 .board {

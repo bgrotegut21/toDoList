@@ -1,3 +1,7 @@
+import { getUpdatedElements } from "./pageLayout.js";
+import { getElementByBoardIndex, findObjectByName} from "./utilities.js";
+
+
 const unshadeButtons = ()=> {
     let elements = getUpdatedElements();
     let buttons = elements.button;
@@ -72,5 +76,5 @@ const shadeButtonColor = (event,array) => {
 
  
 
-export {unshadeButtons, removeBoardOverlay, addBoardOverlay}
+export {removeBoardOverlay, addBoardOverlay, shadeButtonColor, setTaskDate}
 

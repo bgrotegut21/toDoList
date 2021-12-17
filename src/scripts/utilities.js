@@ -1,5 +1,7 @@
 //helpful functions that ate tucked in this file to make content more clean and readable
 import format from 'date-fns/format'
+import getDayOfYear from 'date-fns/getDayOfYear'
+
 import {getUpdatedElements} from "./pageLayout.js"
 
 const findBoardTextBox =  (index) => {
@@ -30,6 +32,21 @@ const getElementByBoardIndex = (index,domElement) => {
 
 }
 
+
+
+const getUpComingTasks  = (array) => {
+    let newArray = []
+
+    array.forEach(board => {
+        board.tasks.forEach(task => {
+            if (task.navIndex == "upcoming") {
+                newArray.push(task);
+            }
+        })
+    })
+
+    return newArray;
+}
 
 // only works with static list tasks which has two arrays
 // one that can take different types of editors which is known as
@@ -77,17 +94,21 @@ const changeValueToDate = (value) => {
     return date;
 }
 
-const unshadeButtons = ()=> {
-    let elements = getUpdatedElements();
-    let buttons = elements.button;
-    buttons.forEach(element => {
-        let elementChildren = Array.from(element.children);
-        elementChildren.forEach(childElement => {
-            childElement.style.background = "none";
-            // console.log(childElement, "the current child element")
-        })
+const sortDatesByLatestDay = (timeTasks) => {
+    let newTimeTasks = timeTasks;
+    newTimeTasks.sort((timeTask1, timeTask2) => {
+        let days2 = getDayOfYear(timeTask2.date);
+        let days1 = getDayOfYear(timeTask1.date);
+        return days2 - days1;
     })
+   // console.log(newTimeTasks, "the new time tasks");
+
+    return newTimeTasks;
+
+
 }
+
+
 
 
 const createTaskTemplate = (text,date,priority,projectTypeText,checked) => {
@@ -105,4 +126,7 @@ const createTaskTemplate = (text,date,priority,projectTypeText,checked) => {
 
 
 
-export {findBoardTextBox, getElementByBoardIndex, getObjectValue, changeValueToDate, unshadeButtons, createTaskTemplate,findObjectByName};
+export {findBoardTextBox, getElementByBoardIndex, getObjectValue, 
+    changeValueToDate, sortDatesByLatestDay, createTaskTemplate,
+    findObjectByName, getUpComingTasks
+};

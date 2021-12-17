@@ -1,5 +1,8 @@
 import {setArray, setObject} from "./elementEvents.js";
 
+import {randomFunction} from "./mobile.js";
+
+
 const send = (
     () => {
         let items = {};
@@ -52,6 +55,9 @@ const send = (
             console.log(items, "the data items")
             return setObject(items);
         }
+
+
+
 
         const deleteData = (index) => {
           //  console.log(index, "the current index")

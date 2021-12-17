@@ -15,7 +15,10 @@ module.exports = {
         template: "./src/scripts/template.js",
         assign:"./src/scripts/assign.js",
         utilities: "./src/scripts/utilities.js",
-
+        uiEffects: "./src/scripts/uiEffects.js",
+        times: "./src/scripts/times.js",
+        mobile: "./src/scripts/mobile.js",
+        contentEffects: "./src/scripts/contentEffects.js",
     },
     output: {
         filename:"[name].bundle.js",

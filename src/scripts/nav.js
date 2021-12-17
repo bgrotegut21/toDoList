@@ -1,12 +1,13 @@
 import {removeItem, addItem, addBindings, removeBindings, setArray} from "./elementEvents.js"
 import {getInitialElements, getUpdatedElements} from "./pageLayout.js";
-import {send} from "./send"
 
-import trashImage from "../images/trash.svg";
-import editIcon from "../images/editOff.svg";
 
-import Content from "./content.js";
+import {send} from "./send.js"
 
+import {createNavTask, createProjectEditor} from "./template.js"
+
+
+import {contentMenu} from "./content.js";
 
 
 
@@ -16,18 +17,17 @@ const nav = () => {
 
     let domElements;
     let changedTasks = [];
-    let upComingTask = {upComingTask: true, highlight:true}
     let staticTasks = [];
-    let content = Content();
+    let content = contentMenu;
     let highlightedIndex;
-    let dom = getInitialElements();
-    let upcomingButton = dom.upComingButton;
+    let upcomingButton;
 
 
 
     const removeNavigationBindings = (notRemoveAddProjectLabel) => {
         let updatedItems = getUpdatedElements();
         let domElements = getInitialElements();
+        upcomingButton = domElements.upComingButton;
 
         removeBindings(updatedItems.editItems,editItem,"click");
         removeBindings(updatedItems.deleteItems, deleteItem, "click");
@@ -41,7 +41,7 @@ const nav = () => {
        if (!notRemoveAddProjectLabel) removeBindings(updatedItems.addProjectLabels,createProjectTasksClick, "click");
        if (!notRemoveAddProjectLabel && updatedItems.addProjectLabels.length != 0) removeBindings(window, createProjectTasksKeys, "keydown")
 
-
+s
     }
 
 
@@ -56,8 +56,9 @@ const nav = () => {
 
 
     const addNavigationBindings = () => {
-        let updatedItems = getUpdatedElements();
+        let updatedItems = getUpdatedElements(); 
         let domElements = getInitialElements();
+        
 
         addBindings(updatedItems.editItems,editItem,"click");
         addBindings(updatedItems.deleteItems, deleteItem, "click");
@@ -91,6 +92,8 @@ const nav = () => {
         highlightedIndex = event.target.currentIndex;
         renderHighlightElements();
         renderProjectTasks();
+     //   mobile.closeMobileMenu();
+
     }
 
 
@@ -220,6 +223,8 @@ const nav = () => {
 
         renderProjectTasks();
 
+        console.log(isEditingTask, "the current is editing task")
+        console.log(task, "the current edited task")
 
         // //console.log(index, " the current index")
         // //console.log(staticTasks, "the static tasks")
@@ -229,10 +234,14 @@ const nav = () => {
             content.activateContent(index,false,title );
 
 
-        } else if (isEditingTask && isUpComing){
+        } else if (isEditingTask ){
             console.log("is activatating up coming")
             send.sendName(index,task.task)
-            content.activateContent("upcoming");
+            let data = send.retrieveTitle(index);
+            console.log(data, "the current data")
+
+            console.log(data, "the current data")
+            if (isUpComing) content.activateContent("upcoming");
         
         }
         renderOverlay();
@@ -301,41 +310,12 @@ const nav = () => {
         return text;
     }
    
-    const createProjectEditor = (template) => {
-        let text = "";
-        if (typeof template.value != "undefined") text = template.value;
-
-        let editorText = ` <div class = "editProjectButton">
-        <input class = "editText" type="text" value="${text}">
-        <p class = "addProjectLabel"> +</p>
-    </div>`
-        return editorText;
-
-    }
 
 
     
 
 
-    const createTask = (task, highlighted) => {
 
-
-        let styleText = ''
-        if (highlighted) styleText = 'style = "background:rgb(22, 83, 227);" '
-
-
-        let taskText = `                             <div class  = "projectButton projectButtonHover" ${styleText}>
-        <div class = "projectTools">
-                <img  class = "deleteItem" src="${trashImage}" alt="">
-                <img class = "editProject" src="${editIcon}" alt="">
-            </div> 
-
-            <div class = "projectContainer">
-                <p class = "projectContainerText">${task.task}</p>
-            </div>
-        </div>`
-        return taskText;
-    }
 
     const assignTaskActions = (index,childElement) => {
         let childElements = Array.from(childElement.children);
@@ -378,7 +358,7 @@ const nav = () => {
 
 
     const renderProjectTasks = () => {
-        removeNavigationBindings();
+        domElements = getInitialElements();
 
         domElements.projectTaskHolder.innerHTML = "";
         changedTasks.forEach(task => {
@@ -391,7 +371,7 @@ const nav = () => {
             } else if (task.navTask){
                 let taskText;
               //  //console.log(task, " the task")
-                task.highlight? taskText = createTask(task,true): taskText = createTask(task);
+                task.highlight? taskText = createNavTask(task,true): taskText = createNavTask(task);
                 domElements.projectTaskHolder.innerHTML += taskText
             }
         })
@@ -453,12 +433,14 @@ const nav = () => {
             typeof index != "undefined" ? changedTasks = addItem(changedTasks,index,{edit:true, value:editorText}): changedTasks.push({edit: true})
         }
    
+
         renderHighlightElements();
-
         renderProjectTasks();
-
+        
         disablePageContentElements();
         renderOverlay();
+      
+
 
         content.removeTaskBindings();
 
@@ -469,10 +451,13 @@ const nav = () => {
 
         console.log("activating up coming tasks")
 
+        console.log(content, "the content")
+
         content.activateContent("upcoming")
         highlightedIndex = "upcoming";
         renderHighlightElements();
         renderProjectTasks();
+      //  mobile.closeMobileMenu();
     }
 
     const activateProjectTask = () => {
@@ -484,15 +469,26 @@ const nav = () => {
     // when dom is called it will create the default elements
     const activateNavigation = () => {
         domElements = getInitialElements();
+        upcomingButton = domElements.upComingButton;
+
+        console.log(domElements, "current dom elements")
 
         addBindings(domElements.projectAdder,activateProjectTask,"click");
         addBindings(domElements.upComingButton,activateUpComingTask,"click");
+
+        console.log(upcomingButton, "the ccurrent upcoming button")
+
         addBindings(upcomingButton, highlightUpComingButton, "mouseover");
         addBindings(upcomingButton, unhoverUpComingButton, "mouseleave")
 
     }
-    return {activateNavigation};
+    return {activateNavigation, removeNavigationBindings, addNavigationBindings};
 }
 
 
-export default nav;
+
+
+let navigation = nav();
+
+
+export {navigation};

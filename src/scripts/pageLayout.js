@@ -81,10 +81,19 @@ const getInitialElements = () => {
     let errorMessageText = document.querySelector(".errorMessageText");
     let exitButton = document.querySelector(".exitButton");
 
+    let hamburgerMenu = document.querySelector(".hamburgerMenu");
+    let mobileMenu = document.querySelector(".mobileMenu");
+
+
+    console.log(upComingButton, "the current up coming button")
+
     return {section, navigation, overlay, exit, elements,
             listTitle, upComingButton, projectAdder, projectText,
             plusSign, projectTaskHolder, editProjectButton, editText,
-            addProjectLabel,pageContent, wholeOverlay, exitButton, errorMessage, errorMessageText}
+            addProjectLabel,pageContent, wholeOverlay, exitButton, errorMessage, errorMessageText,
+            hamburgerMenu, mobileMenu
+        
+        }
     }
 
 
@@ -128,6 +137,7 @@ const getInitialElements = () => {
         let dateTools = Array.from(document.getElementsByClassName("dateTool"))
 
         let exitEditor = Array.from(document.getElementsByClassName("exitEditor"));
+
 
 
         return {editItems, deleteItems, addProjectLabels, projectButton,

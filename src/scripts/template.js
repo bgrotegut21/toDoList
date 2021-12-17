@@ -1,13 +1,13 @@
 
-
 import trashImage from "../images/trash.svg";
 import editIcon from "../images/editOff.svg";
 import checkMarkIcon from "../images/finished.svg";
 import exitIcon from "../images/exit.svg";
 
+
    
    
-   const createTask = (task) => {
+   const createTaskArrangement = (task) => {
         let color;
         let taskClass = "task";
         let editClass = "edit";
@@ -118,10 +118,6 @@ import exitIcon from "../images/exit.svg";
     }
 
 
-    const createDatePicker = (date) => {
-        
-    }
-
     const createListEditor = (task) => {
         let defaultColor = "blue"
         let icon = trashImage;
@@ -172,4 +168,39 @@ import exitIcon from "../images/exit.svg";
     return listText;
     }
 
-export {createTask,createBoard, createAddBoard, createBoardEditor, createListEditor, createUpComingBoard}
+
+    const createNavTask = (task, highlighted) => {
+
+
+        let styleText = ''
+        if (highlighted) styleText = 'style = "background:rgb(22, 83, 227);" '
+
+
+        let taskText = `                             <div class  = "projectButton projectButtonHover" ${styleText}>
+        <div class = "projectTools">
+                <img  class = "deleteItem" src="${trashImage}" alt="">
+                <img class = "editProject" src="${editIcon}" alt="">
+            </div> 
+
+            <div class = "projectContainer">
+                <p class = "projectContainerText">${task.task}</p>
+            </div>
+        </div>`
+        return taskText;
+    }
+
+
+    const createProjectEditor = (template) => {
+        let text = "";
+        if (typeof template.value != "undefined") text = template.value;
+
+        let editorText = ` <div class = "editProjectButton">
+        <input class = "editText" type="text" value="${text}">
+        <p class = "addProjectLabel"> +</p>
+    </div>`
+        return editorText;
+
+    }
+
+
+export {createNavTask,createBoard, createAddBoard, createBoardEditor, createListEditor, createUpComingBoard, createProjectEditor, createTaskArrangement}
