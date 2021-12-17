@@ -9,7 +9,8 @@ import {createNavTask, createProjectEditor} from "./template.js"
 
 import {contentMenu} from "./content.js";
 
-
+import {randomFunction} from "./mobile.js";
+randomFunction();
 
 
 
