@@ -141,6 +141,7 @@ input {
 .generalText {
     font-size:10px;
     margin-right: 20px;
+    word-wrap: break-word;
 
 }
 
@@ -461,6 +462,12 @@ input {
         width:12px;
     }
 
+    .addBoarderButton {
+    
+        height: 10px;
+        font-size: 12px;
+    }
+
 
 
     .board{
@@ -471,7 +478,7 @@ input {
         font-size:xx-small
     }
 
-    .edit {
+    .edit, .notEdit {
 
         width:10px;
         
@@ -521,8 +528,13 @@ input {
         margin:5px; 
     }
     .circleIcon {
-        width:2px;
-        height:2px
+        width:5px;
+        height:5px
+
+    }
+
+    .circleIcon {
+        border: 2px solid black;
     }
 
     .taskHolderText, .dateText, .buttonText {
@@ -557,7 +569,7 @@ input {
     }
 
     .medium {
-        border: 3px solid rgb(255,202,10);
+        border: 3px solid #ff9800;
     }
 
     .low {

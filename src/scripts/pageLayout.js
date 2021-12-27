@@ -1,8 +1,3 @@
-
-
-
-//createing new elment involves using a template which is {element:"",  className: "", source:"",type:""};
-
 const createDomElements = () => {
     let body = document.body;
 
@@ -44,13 +39,24 @@ const createDomElements = () => {
                     <h2 class = "plusSign">+</h2>
                 </div>
                 
-                <div class = "projectTaskHolder"></div> 
+                <div class = "projectTaskHolder"></div>
+
+
+
+
+ 
+
             </div>
+
+
+
 
 
         </div>
         <div class = "pageContent"> </div>
         </div>
+
+
     </div>`
 
     body.innerHTML = pageText;
@@ -85,7 +91,6 @@ const getInitialElements = () => {
     let mobileMenu = document.querySelector(".mobileMenu");
 
 
-    console.log(upComingButton, "the current up coming button")
 
     return {section, navigation, overlay, exit, elements,
             listTitle, upComingButton, projectAdder, projectText,
@@ -98,6 +103,7 @@ const getInitialElements = () => {
 
 
     const getUpdatedElements = () => {
+
         let boardTextBox = Array.from(document.getElementsByClassName("addBoarderTextBox"))
         let boarderButton = Array.from(document.getElementsByClassName("addBoarderButton"))
         let editItems = Array.from(document.getElementsByClassName("editProject"));
@@ -108,6 +114,8 @@ const getInitialElements = () => {
         let projectButton = Array.from(document.getElementsByClassName("projectButton"));
 
         let projectTaskHolder = document.querySelector(".projectTaskHolder");
+
+
         let projectTaskHolderChildren = Array.from(projectTaskHolder.children);
         
         let pageContent = document.querySelector(".pageContent");

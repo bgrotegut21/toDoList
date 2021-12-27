@@ -6,7 +6,6 @@ const assignTools = (elements,index,boardIndex) => {
             let toolsChildren = Array.from(childElement.children);
             toolsChildren.forEach(toolElement => 
                 {
-                // console.log(toolElement, "current tool element")
                 toolElement.taskIndex = index;
                 toolElement.boardIndex = boardIndex;
             })
@@ -17,12 +16,8 @@ const assignTools = (elements,index,boardIndex) => {
 }
 
 const assignTaskIndex = (element,boardIndex) => {
-
     let taskIndex =0;
-    // console.log(boardIndex, "the current boardIndex")
-
     element.forEach(childElement => {
-        // console.log(childElement, "the child element")
         if (childElement.getAttribute("class") == "task" ||
             childElement.getAttribute("class") == "notTask"
         ){
@@ -58,32 +53,24 @@ const assignBoardIcons = (element, currentIndex) =>  {
 
         if (childElement.getAttribute("class") == "taskAdder"){
             let taskParagraph = Array.from(childElement.children)[0];
-            // console.log(taskParagraph, "the task paragraph")
             taskParagraph.boardIndex = currentIndex;
         }
-      //  console.log(childElement, "the child element")
         childElement.boardIndex = currentIndex;
-       // console.log(childElement.boardIndex, "child element board index")
     })
 }
 
 
 const assignBoardElements = () => {
-
-    
     let elements = getUpdatedElements();
     let pageContentChildren = elements.pageContentChildren;
     let currentIndex = 0;
 
-
- //   console.log(pageContentChildren, " the page content children")
     pageContentChildren.forEach(element => {
         if (element.getAttribute("class") == "boardContent"){
             element.boardIndex = currentIndex;
             let boardContent = Array.from(element.children);
             boardContent.forEach(childElement => {
                 childElement.boardIndex = currentIndex;
-             //   console.log(childElement.getAttribute("class"), "the current child element calss")
                 if (childElement.getAttribute("class") == "board") assignBoardIcons(childElement,currentIndex)
              
             })

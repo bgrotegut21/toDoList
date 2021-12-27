@@ -69,7 +69,6 @@ const findObjectByName = (name,parentArray) => {
 
     })
 
-    // console.log(currentObject, "the current object")
     return currentObject;
 
 }
@@ -101,14 +100,10 @@ const sortDatesByLatestDay = (timeTasks) => {
         let days1 = getDayOfYear(timeTask1.date);
         return days2 - days1;
     })
-   // console.log(newTimeTasks, "the new time tasks");
-
     return newTimeTasks;
 
 
 }
-
-
 
 
 const createTaskTemplate = (text,date,priority,projectTypeText,checked) => {
@@ -116,8 +111,15 @@ const createTaskTemplate = (text,date,priority,projectTypeText,checked) => {
     task.listTask = true;
     task.text = text,
     task.date = date;
-    task.dateText = format(task.date,"MMM d y")
+
+    let year = date.getFullYear();
+    let month = date.getMonth();
+    let day = date.getDate();
+
+    task.dates = [year, month, day];
+    task.dateText = format(task.date,"MMM d y");
     task.priority = priority;
+
     !checked? task.checked = false: task.checked = true;
     if (typeof projectTypeText != "undefined")  task.projectTypeText = projectTypeText;
     return task;
@@ -125,8 +127,13 @@ const createTaskTemplate = (text,date,priority,projectTypeText,checked) => {
 }
 
 
+const checkSpaces = (text) => {
+    if (text.trim().length != 0) return true
+    else return false
+}
+
 
 export {findBoardTextBox, getElementByBoardIndex, getObjectValue, 
     changeValueToDate, sortDatesByLatestDay, createTaskTemplate,
-    findObjectByName, getUpComingTasks
+    findObjectByName, getUpComingTasks, checkSpaces
 };

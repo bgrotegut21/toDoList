@@ -1,7 +1,4 @@
-import {setArray, setObject} from "./elementEvents.js";
-
-import {randomFunction} from "./mobile.js";
-
+import {setObject} from "./elementEvents.js";
 
 const send = (
     () => {
@@ -9,11 +6,9 @@ const send = (
         let titleItems = {}
         items.upcoming = []
 
-        
         const sendData = (data,index,title) => {
             items[index] = data;
             titleItems[index] = title;
-
         }
 
         const sendName = (index, title) => {
@@ -21,9 +16,7 @@ const send = (
         }
     
         const retrieveData = (index) => {
-            console.log(items, "items retrieve data")
             if (items[index]){
-
                 return items[index];
             } else {
                 return false;
@@ -32,35 +25,49 @@ const send = (
 
 
         const retrieveTitle = (index) => {
-            
             if (titleItems[index]){
-
-
                 return titleItems[index];
             } else {
                 return false;
             }
-
         }
 
-        const overwriteData = (data) => {
-            console.log(data, "the current data")
-            console.log(items, "items from send")
-            items = data;
+        const retrieveTitles = () => {
+            return setObject(titleItems);
+        }
 
+        const overwriteTitles = (titles) => {
+            titleItems =  titles
+        }
+
+
+        const overwriteData = (data) => { 
+            items = data;
         }
 
 
         const getAllData = () => {
-            console.log(items, "the data items")
             return setObject(items);
+        }
+ 
+        const deleteName = (index) => {
+            let newTitles = titleItems;
+            let newTitleKeys = Object.keys(newTitles);
+            let finalTitles = {}
+            newTitleKeys = newTitleKeys.filter(key => key != index);
+
+            for (let i = 0; i <newTitleKeys.length; i++) {
+                finalTitles[i] = newTitles[newTitleKeys[i]];
+            }
+
+            return finalTitles;
+
         }
 
 
 
-
         const deleteData = (index) => {
-          //  console.log(index, "the current index")
+            titleItems = deleteName(index);
             let newItems = setObject(items);
             let newItemsKeys = Object.keys(newItems);
             newItemsKeys = newItemsKeys.filter(key => key != index);
@@ -75,7 +82,9 @@ const send = (
 
         }
         
-        return {sendData, retrieveData,retrieveTitle, deleteData, getAllData, overwriteData, sendName};
+        return {sendData, retrieveData,retrieveTitle, 
+            deleteData, getAllData, overwriteData, 
+            sendName, retrieveTitles, overwriteTitles};
 
     }
 )()

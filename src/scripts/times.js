@@ -7,9 +7,6 @@ import {sortDatesByLatestDay} from "./utilities.js"
 import  {send} from "./send.js"
 import {setObject} from "./elementEvents.js"
 
-
-
-
     const createUpComingTemplate = (currentText, tasks) => {
         let currentTasks = [];
         if (typeof tasks != "undefined") currentTasks = tasks; 
@@ -19,6 +16,7 @@ import {setObject} from "./elementEvents.js"
     
     
     }
+
     const addUpComingBoards = (array) => {
         let newArray = array;
         let todayBoard = createUpComingTemplate("Today", []);
@@ -27,10 +25,6 @@ import {setObject} from "./elementEvents.js"
         timeBoards.forEach(board => newArray.push(board));
         return newArray;
     }
-    
-    
-    
-    
     
     const getTimeUpcomingValues = (navs,key,todayTasks, weekTasks) => {
         let taskIndex = 0;
@@ -59,10 +53,6 @@ import {setObject} from "./elementEvents.js"
     
                 task.navIndex = key;
                 task.navName = send.retrieveTitle(key);
-                console.log(task.navName, "the task task nav name")
-
-             ////console.log(task.navName,"current nav name")
-               ////console.log(task.date, "task current date")
                 if (isToday(task.date)) todayTasks.push(task)
                 if (isThisWeek(task.date)) weekTasks.push(task);
                 taskIndex++;
@@ -76,28 +66,13 @@ import {setObject} from "./elementEvents.js"
     
     }
     
-    
-    
     const getTaskTimeValues = () => {
-        ////console.log("new stuff")
-        ////console.log('get task time value')
          let data = send.getAllData();
-        ////console.log(data, "the current form")
          let navs = setObject(data);
-    
-      // console.log(data, "current navs")
          let navKeys = Object.keys(navs);
-    
-        
-       ////console.log(data)
-       ////console.log(navs, "the navs");
-     
          
          let todayTasks = [];
          let weekTasks = [];    
-         //console.log(navs, "the current navs")        
-         //console.log(navKeys,"the nav keys")
-    
          navKeys.forEach(key => {
              if (key == "upcoming"){
                  let times = getTimeUpcomingValues(navs,key, todayTasks, weekTasks);
@@ -110,22 +85,10 @@ import {setObject} from "./elementEvents.js"
                  weekTasks = times.weekTasks;
     
              }
-    
-    
-    
          })
-    
-        
-        navs = send.getAllData();
-       ////console.log(navs, "the after navs")
-    
-    
+         navs = send.getAllData();    
          todayTasks = sortDatesByLatestDay(todayTasks);
          weekTasks = sortDatesByLatestDay(weekTasks);
-    
-        ////console.log(todayTasks);
-        ////console.log(weekTasks);
-    
          return {todayTasks, weekTasks};
      }
     

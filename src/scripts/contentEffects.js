@@ -1,9 +1,12 @@
 import { createTaskTemplate, findObjectByName } from "./utilities.js";
 import {getUpdatedElements} from "./pageLayout.js";
 import {setArray} from "./elementEvents.js";
+import {checkSpaces} from "./utilities.js";
 
 
 const applyTaskChanges = (navs,taskChanges) => {
+
+
     let newNav = navs;
     taskChanges.forEach(task => {
         let newTask;
@@ -29,7 +32,6 @@ const applyTaskChanges = (navs,taskChanges) => {
 
 const removeNavEmpties = (navs) => {
 
-    console.log("navs with empty")
     let navKeys = Object.keys(navs);
     navKeys.forEach(key => {
         if (key == "upcoming"){
@@ -41,7 +43,6 @@ const removeNavEmpties = (navs) => {
         }
     })
 
-    console.log(navs, "the emptied navs")
     return navs;
 
 }
@@ -61,18 +62,9 @@ const createBoardTemplate =(currentText,tasks) => {
 const renderListEditorValue = (tasks) => {
     let listEditor = findObjectByName("listEditor",tasks);
     if (!listEditor) return;
-
-    // ////console.log(listEditor, "the current list editor")
-
-
     let elements = getUpdatedElements();
     let datePicker = elements.datePicker[0];
     let taskTextBox = elements.taskTextBox[0];
-
-    // ////console.log(datePicker);
-    // ////console.log(taskTextBox);
-    // if(datePicker) ////console.log(datePicker.valueAsDate, "date picker current date");
-    // if (taskTextBox)////console.log(taskTextBox.value, "textbox")
     if (datePicker)  listEditor.date = datePicker.valueAsDate;
     if (taskTextBox) listEditor.text = taskTextBox.value;
 
@@ -81,17 +73,12 @@ const renderListEditorValue = (tasks) => {
 
 
 const addBoardTasks = (staticArray) => {
-    // ////console.log("adding board tasks")
-
-
-
     renderListEditorValue(staticArray);
     let elements = getUpdatedElements();
     let text = elements.boardTextBox[0].value;
-    if(text.length == 0) text = "New Board";
+    if(text.length == 0 || !checkSpaces(text)) text = "New Board";
     let task = createBoardTemplate(text);
     staticArray.push(task);
-//    ////console.log(staticListTasks, "the static list tasks")
 }
 
 

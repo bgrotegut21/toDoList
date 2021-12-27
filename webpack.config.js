@@ -8,7 +8,6 @@ module.exports = {
         index:"./src/scripts/index.js",
         nav:"./src/scripts/nav.js",
         layout:"./src/scripts/pageLayout.js",
-        emit:"./src/scripts/emit.js",
         elementEvent: "./src/scripts/elementEvents.js",
         content: "./src/scripts/content.js",
         send: "./src/scripts/send.js",
@@ -19,6 +18,7 @@ module.exports = {
         times: "./src/scripts/times.js",
         mobile: "./src/scripts/mobile.js",
         contentEffects: "./src/scripts/contentEffects.js",
+        storage: "./src/scripts/storage.js",
     },
     output: {
         filename:"[name].bundle.js",

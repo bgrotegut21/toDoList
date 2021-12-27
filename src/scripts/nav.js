@@ -3,27 +3,24 @@ import {getInitialElements, getUpdatedElements} from "./pageLayout.js";
 
 
 import {send} from "./send.js"
+import { storage } from "./storage.js";
 
 import {createNavTask, createProjectEditor} from "./template.js"
 
 
 import {contentMenu} from "./content.js";
 
-import {randomFunction} from "./mobile.js";
-randomFunction();
+import {checkSpaces} from "./utilities.js";
 
 
 
 const nav = () => {
-
     let domElements;
     let changedTasks = [];
     let staticTasks = [];
-    let content = contentMenu;
+    let content;
     let highlightedIndex;
     let upcomingButton;
-
-
 
     const removeNavigationBindings = (notRemoveAddProjectLabel) => {
         let updatedItems = getUpdatedElements();
@@ -38,13 +35,18 @@ const nav = () => {
         removeBindings(upcomingButton, highlightUpComingButton, "mouseover");
         removeBindings(upcomingButton, unhoverUpComingButton, "mouseleave")
 
-
        if (!notRemoveAddProjectLabel) removeBindings(updatedItems.addProjectLabels,createProjectTasksClick, "click");
        if (!notRemoveAddProjectLabel && updatedItems.addProjectLabels.length != 0) removeBindings(window, createProjectTasksKeys, "keydown")
-
-s
     }
 
+    const removeSpecialMobileBindings = () => {
+        let updatedItems = getUpdatedElements(); 
+
+        removeBindings(domElements.projectAdder,activateProjectTask,"click");
+        removeBindings(updatedItems.addProjectLabels,createProjectTasksClick,"click");
+        removeBindings(domElements.wholeOverlay, createProjectTasksClick,"click");
+        removeBindings(window, createProjectTasksKeys, "keydown")
+    }
 
     const lookUpTask = (index) => {
         return staticTasks[index];
@@ -60,7 +62,6 @@ s
         let updatedItems = getUpdatedElements(); 
         let domElements = getInitialElements();
         
-
         addBindings(updatedItems.editItems,editItem,"click");
         addBindings(updatedItems.deleteItems, deleteItem, "click");
         addBindings(updatedItems.addProjectLabels,createProjectTasksClick, "click");
@@ -71,8 +72,9 @@ s
         addBindings(upcomingButton, unhoverUpComingButton, "mouseleave")
 
         if (updatedItems.addProjectLabels.length != 0) addBindings(window, createProjectTasksKeys, "keydown");
-
     } 
+
+
 
     const addProjectButtonWholeOverayBindings = () => {
         let updatedItems = getUpdatedElements();
@@ -85,16 +87,19 @@ s
     }
 
 
+
+    const setHighlightIndex = (index) => {
+        highlightedIndex = index;
+        storage.storeHighlighIndex(index);
+    }
+
+
     const switchPage = (event) => {
-    //    //console.log("switching page")
-   //     //console.log(event.target.currentIndex, "event tageet current index")
         let title = staticTasks[event.target.currentIndex].task;
         content.activateContent(event.target.currentIndex, false, title);
-        highlightedIndex = event.target.currentIndex;
+        setHighlightIndex(event.target.currentIndex);
         renderHighlightElements();
         renderProjectTasks();
-     //   mobile.closeMobileMenu();
-
     }
 
 
@@ -103,7 +108,6 @@ s
 
 
     const unHighlightButton = () => {
-        
         let index = 0;
         unhighlightUpComingButton();
         changedTasks.forEach(task => {
@@ -123,126 +127,92 @@ s
     }
 
     const highlightUpComingButton = () => {
-        console.log("activating the up coming task")
         upcomingButton.style.background = "rgb(22, 83, 227)";
     }    
 
     const renderHighlightElements = () => {
         if (staticTasks.length == 0 &&  highlightedIndex != "upcoming") return;
-        
-        console.log("render higlight elements")
-
         let isEdit = changedTasks.filter(task => task.edit);
-        console.log(isEdit, "is edit array")
         if (isEdit.length != 0){
             unHighlightButton();
         } else {
             highlightButton(highlightedIndex);
         }
-
-        
     }
 
 
     const highlightButton = (index) => {
         unHighlightButton();
-        console.log(index,"the current index")
 
         if (index == "upcoming") highlightUpComingButton();
         else changedTasks[index].highlight = true;
-        //console.log("high lighting button", index)
     }
 
 
 
     const getCurrentIndex = ()=> {
         let updatedItems = getUpdatedElements()
-        //console.log(updatedItems.projectLabel, "updated item project lable")
         let projectLabel = updatedItems.addProjectLabels[0];
-        //console.log([projectLabel], "the current project label")
-
+        if (!projectLabel) return false;
         let currentIndex = projectLabel.currentIndex;
+
         return currentIndex
         
     }
 
 
     const createProjectTasksKeys = (event)  => {
-        let currentIndex = getCurrentIndex();
+
         if (event.key == "Enter") {
+            let currentIndex = getCurrentIndex();
+            if (currentIndex === false) return;
             createProjectTasks(currentIndex);
         }
     }
 
     const createProjectTasksClick = () => {
-        //console.log("create project tacks click")
         let currentIndex = getCurrentIndex();
         createProjectTasks(currentIndex);
     }
 
-
-
-
-
-
-
-
-    const createProjectTasks = (index) => {
-        // //console.log("create project tasks")
+    const createProjectTasks = (index) => {        
         let taskText = getTextBoxValues()
         let isEditingTask = false
         let isUpComing = content.getIsUpComing();
-        // //console.log(taskText, "the current task text");
-        // //console.log(taskText.length, "the current task text length")
 
         let task = {navTask:true,task: taskText, highlight:false};   
-
-        if (taskText.length != 0) {
+        if (taskText.length != 0 && checkSpaces(taskText) ) {
             if(staticTasks[index]) {
                 staticTasks[index] = task;
                 isEditingTask = true;
             }
             else {
-
                 staticTasks.push(task)
-                highlightedIndex = index;
-
+                setHighlightIndex(index);
             }
-            
         }
 
-        //console.log(staticTasks,"the static tasks") 
         changedTasks = setArray(staticTasks);
-
-        console.log(staticTasks[index], "the static tasks index")
-
-  
-        //console.log(changedTasks, "the changed tasks")
-
         renderHighlightElements();
         if (staticTasks[index]) changedTasks[index].highlight = true;
-
         renderProjectTasks();
 
-        console.log(isEditingTask, "the current is editing task")
-        console.log(task, "the current edited task")
-
-        // //console.log(index, " the current index")
-        // //console.log(staticTasks, "the static tasks")
 
         if (index == staticTasks.length -1 && !isEditingTask){
-            let title = staticTasks[index].task;
+            send.sendName(index,task.task)
+            storage.storeData();
+            let title = staticTasks[index].task; 
+
+
+
             content.activateContent(index,false,title );
 
 
         } else if (isEditingTask ){
-            console.log("is activatating up coming")
             send.sendName(index,task.task)
-            let data = send.retrieveTitle(index);
-            console.log(data, "the current data")
-
-            console.log(data, "the current data")
+            storage.storeData();
             if (isUpComing) content.activateContent("upcoming");
+
         
         }
         renderOverlay();
@@ -255,12 +225,12 @@ s
     
 
     const deleteItem = (event) => {
-
         let index = event.target.currentIndex;
-
         staticTasks = removeItem(staticTasks,index);
+
         send.deleteData(index);
-        console.log(index, "the current index")
+        storage.storeData();
+
         let renderIndex = index -1;
         if (renderIndex < 0){
             renderIndex = staticTasks.length - 1;
@@ -275,25 +245,22 @@ s
             content.activateContent(renderIndex,true);
         } else if (normalIndex ==  contentIndex){
             let title = staticTasks[renderIndex].task;
-            console.log(renderIndex, "the current")
-            console.log(staticTasks[renderIndex], "static tasks render index")
             content.activateContent(renderIndex,true,title);
-            highlightedIndex = renderIndex;
+            setHighlightIndex(renderIndex);
+            
         } else if (isUpComing){
             content.activateContent("upcoming",true)
-            highlightedIndex = "upcoming";
+            setHighlightIndex("upcoming")
         } else {
             let title = staticTasks[contentIndex].task;
             content.activateContent(contentIndex,true,title);
-            highlightedIndex = contentIndex;
+            setHighlightIndex(contentIndex);
         }
 
 
         changedTasks = setArray(staticTasks)
         renderHighlightElements();
-        ////console.log("no rendering project tasks")
         renderProjectTasks();
-        //console.log("delete item")
     }
 
 
@@ -371,7 +338,6 @@ s
 
             } else if (task.navTask){
                 let taskText;
-              //  //console.log(task, " the task")
                 task.highlight? taskText = createNavTask(task,true): taskText = createNavTask(task);
                 domElements.projectTaskHolder.innerHTML += taskText
             }
@@ -409,10 +375,8 @@ s
     const disablePageContentElements = () => {
         removeNavigationBindings(true);
         let updatedElement = getUpdatedElements();
-        //console.log(updatedElement.projectButton,"updated element project button")
         if (updatedElement.projectButton.length == 0) return;
         updatedElement.projectButton.forEach( button =>{
-            //console.log(button, "the current button")
             button.classList.remove("projectButtonHover")
             button.style.color = "rgb(157,162,175)";
             button.style.cursor = "pointer"
@@ -425,8 +389,6 @@ s
 //make sure disablePageContentElements and renderOverlay methods are below renderProject tasks.
 //This is because renderOverlay will overwrite the changes causing the page to act werid.
     const createEditor = (text,index) => {
-
-        //console.log("create")
         let editorText = "";
         if (typeof text != "undefined") editorText = text;
 
@@ -449,41 +411,64 @@ s
 
 
     const activateUpComingTask = () => {
-
-        console.log("activating up coming tasks")
-
-        console.log(content, "the content")
-
         content.activateContent("upcoming")
-        highlightedIndex = "upcoming";
+        setHighlightIndex("upcoming");
         renderHighlightElements();
         renderProjectTasks();
-      //  mobile.closeMobileMenu();
     }
 
     const activateProjectTask = () => {
         createEditor();
-        
+    }
 
+
+    const changedTitlesToTasks = (titles) => {
+        let newTasks = []
+        let titleArray = Object.values(titles);
+        titleArray.forEach(title => {
+            let task = {navTask:true,task: title, highlight:false};  
+            newTasks.push(task);
+
+        })
+
+        return newTasks;
     }
 
     // when dom is called it will create the default elements
     const activateNavigation = () => {
+        content = contentMenu;
         domElements = getInitialElements();
         upcomingButton = domElements.upComingButton;
-
-        console.log(domElements, "current dom elements")
-
         addBindings(domElements.projectAdder,activateProjectTask,"click");
         addBindings(domElements.upComingButton,activateUpComingTask,"click");
-
-        console.log(upcomingButton, "the ccurrent upcoming button")
-
         addBindings(upcomingButton, highlightUpComingButton, "mouseover");
-        addBindings(upcomingButton, unhoverUpComingButton, "mouseleave")
+        addBindings(upcomingButton, unhoverUpComingButton, "mouseleave");
+
+        let storedData = storage.retrieveData()
+
+        if (storedData){
+            let newTasks = changedTitlesToTasks(storedData.formatedTitles);
+            staticTasks = setArray(newTasks);
+            changedTasks = setArray(newTasks);
+
+            send.overwriteData(storedData.formatedData);
+            send.overwriteTitles(storedData.formatedTitles);
+            highlightedIndex = storage.retrieveHighlightIndex();
+
+            renderProjectTasks();
+        }
+
+
+       
+
+
+        
 
     }
-    return {activateNavigation, removeNavigationBindings, addNavigationBindings};
+    return {activateNavigation, removeNavigationBindings, addNavigationBindings, 
+        activateProjectTask, removeSpecialMobileBindings, createProjectTasksClick,
+        createProjectTasksKeys,
+    };
 }
 
 

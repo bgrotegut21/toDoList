@@ -9,7 +9,6 @@ const unshadeButtons = ()=> {
         let elementChildren = Array.from(element.children);
         elementChildren.forEach(childElement => {
             childElement.style.background = "none";
-            // console.log(childElement, "the current child element")
         })
     })
 }
@@ -35,7 +34,6 @@ const setTaskDate = (date) => {
 
 const changeListEditorPriority  = (currentPriority,array) => {
     let listEditor = findObjectByName("listEditor",array);
-    // ////console.log(listEditor, "current list editor")
     listEditor.priority = currentPriority;
     
 

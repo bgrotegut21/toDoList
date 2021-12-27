@@ -61,7 +61,7 @@
     display:none;
 }
 
-.listTitle, .projectText, .plusSign {
+.listTitle, .projectText, .plusSign, .deleteAllTaskText {
     font-family: 'Cutive Mono', monospace;
 }
 
@@ -234,9 +234,16 @@
     
 }
 
+
+
 .exit {
     display:none;
+
 }
+
+
+
+
 
 .hamburgerMenu {
     width:40px;
@@ -286,6 +293,8 @@
     .navigation {
         display:none;
     }
+
+
 
     .mobileMenu {
         display:flex;
@@ -360,10 +369,13 @@
     }
 }
 
-@media only screen and (max-width:200px){
+@media only screen and (max-width:203px){
     .listTitle {
         font-size: x-large;
     }
+
+
+
 }
 
 
@@ -375,6 +387,7 @@
     .projectContainer p{
         margin-right:30px;
     }
+
 
 }
 

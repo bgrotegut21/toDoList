@@ -23,9 +23,6 @@ import exitIcon from "../images/exit.svg";
 
         }
 
-
-
-
         if (task.checked) {
             taskClass = "notTask";
             editClass = "notEdit"
@@ -48,10 +45,7 @@ import exitIcon from "../images/exit.svg";
                                 </div>
                             </div>
 
-                            ${projectTypeText}
-                           
-
-                            
+                            ${projectTypeText}                            
                         </div>`
         return newTaskText;
     }
@@ -86,10 +80,7 @@ import exitIcon from "../images/exit.svg";
                                     <div class = "taskAdder">
                                         <p>+ Add Task</p>
                                     </div>
-                                
-                                    
                                 </div>  
-                                
                                 </div>`
         return boardText;
     }
@@ -122,8 +113,6 @@ import exitIcon from "../images/exit.svg";
         let defaultColor = "blue"
         let icon = trashImage;
         let iconClass = "trashIt";
-
-
 
         if (task.creatingTask) {
             defaultColor = "black";
@@ -170,22 +159,19 @@ import exitIcon from "../images/exit.svg";
 
 
     const createNavTask = (task, highlighted) => {
-
-
         let styleText = ''
         if (highlighted) styleText = 'style = "background:rgb(22, 83, 227);" '
 
+        let taskText = `<div class  = "projectButton projectButtonHover" ${styleText}>
+                            <div class = "projectTools">
+                                    <img  class = "deleteItem" src="${trashImage}" alt="">
+                                    <img class = "editProject" src="${editIcon}" alt="">
+                                </div> 
 
-        let taskText = `                             <div class  = "projectButton projectButtonHover" ${styleText}>
-        <div class = "projectTools">
-                <img  class = "deleteItem" src="${trashImage}" alt="">
-                <img class = "editProject" src="${editIcon}" alt="">
-            </div> 
-
-            <div class = "projectContainer">
-                <p class = "projectContainerText">${task.task}</p>
-            </div>
-        </div>`
+                                <div class = "projectContainer">
+                                    <p class = "projectContainerText">${task.task}</p>
+                                </div>
+                            </div>`
         return taskText;
     }
 
@@ -195,11 +181,10 @@ import exitIcon from "../images/exit.svg";
         if (typeof template.value != "undefined") text = template.value;
 
         let editorText = ` <div class = "editProjectButton">
-        <input class = "editText" type="text" value="${text}">
-        <p class = "addProjectLabel"> +</p>
-    </div>`
+                            <input class = "editText" type="text" value="${text}">
+                            <p class = "addProjectLabel"> +</p>
+                           </div>`
         return editorText;
-
     }
 
 

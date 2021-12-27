@@ -1,5 +1,3 @@
-import emit from "./emit.js";
-
 import "../styles/board.css";
 import "../styles/navigation.css";
 import "../styles/styles.css"
@@ -34,8 +32,6 @@ const addItem = (array,index, item) => {
 const setArray = (array) => {
     let newArray = array;
     let newTasks = [];
-
-    console.log(newArray, "the current array")
     newArray.forEach(task => {
         newTasks.push(task);
     })
