@@ -1,3 +1,4 @@
+//
 import {setObject} from "./elementEvents.js";
 
 const send = (
