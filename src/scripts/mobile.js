@@ -39,9 +39,20 @@ const Mobile = () => {
 
     }
 
+
+
+    const removeRenderProjectBindings = () => {
+        let elements = getUpdatedElements();
+
+        removeBindings(elements.addProjectLabels,renderMobileMenuClick,"click");
+        removeBindings(dom.wholeOverlay, renderMobileMenuClick, "click");
+        removeBindings(window, renderMobileMenuKeys, "keydown");
+
+    }
+
+
     const addMobileBindings = () => {
         let elements = getUpdatedElements();
-        console.log(elements, "the current elements")
 
         addBindings(dom.hamburgerMenu, openNavigation, "click");
         addBindings(dom.exit,openNavigation, "click");
@@ -73,7 +84,6 @@ const Mobile = () => {
 
 
     const addRenderProjectBindings = () => {
-        console.log("adding render project bindings!!!!!")
         nav.activateProjectTask();
         nav.removeSpecialMobileBindings();
 
@@ -104,7 +114,7 @@ const Mobile = () => {
     }
 
 
-    const renderMobileMenuClick = (event) => {
+    const renderMobileMenuClick = () => {
         nav.createProjectTasksClick();
         nav.removeSpecialMobileBindings();
         removeRenderMobileEvents();
@@ -154,9 +164,12 @@ const Mobile = () => {
     const watchMedia = (mediaQuery) => {       
         if(media.matches || mediaQuery.matches){
             if (!removeMobileMenu){
+                nav.removeEditor();
                 renderMobileMenu();
+
                 removeMobileMenu = true;
                 isMobile = true;
+                
             } 
 
 
@@ -166,6 +179,12 @@ const Mobile = () => {
             if (removeMobileMenu) {
                 renderMobileMenu(true);
                 removeMobileBindings();
+
+                removeRenderProjectBindings();
+                nav.removeNavigationBindings();
+                nav.addNavigationBindings();
+                nav.renderOverlay();
+
                 removeMobileMenu = false;
                 isMobile = false;
                 mobileMenuOn = false;

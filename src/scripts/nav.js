@@ -365,6 +365,13 @@ const nav = () => {
         }
     }
 
+
+    const removeEditor = () => {
+        changedTasks = changedTasks.filter(task => task.edit != true);
+        renderOverlay();
+        renderProjectTasks();
+    }
+
     const checkProjectEditor = () => {
         let bool = false;
         changedTasks.forEach( task => {
@@ -467,7 +474,7 @@ const nav = () => {
     }
     return {activateNavigation, removeNavigationBindings, addNavigationBindings, 
         activateProjectTask, removeSpecialMobileBindings, createProjectTasksClick,
-        createProjectTasksKeys,
+        createProjectTasksKeys, renderOverlay, removeEditor
     };
 }
 

@@ -690,15 +690,23 @@ const Content = () => {
 
     const renderBoardLists = (isChangedName) => {
         removeListBindings();
+        removeContentBindings();
         removeBoardOverlay();
 
         let indexesLength = staticListTasks.length;
         for (let i = 0; i < indexesLength; i++) {
             if (staticListTasks.length != 0)renderSingleBoardList(i);
         }
-        if (!isChangedName)addListBindings();
+        if (!isChangedName){
+            addListBindings();
+            addContentBindings();
+
+        }
         else addChangeNameBinding();
     }
+
+
+
 
     const renderSingleBoardList = (index) => {
         let taskList = getElementByBoardIndex(index, "taskLists");
