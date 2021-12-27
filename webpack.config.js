@@ -20,15 +20,10 @@ module.exports = {
         contentEffects: "./src/scripts/contentEffects.js",
         storage: "./src/scripts/storage.js",
     },
-    output: {
-        filename:"[name].bundle.js",
-        publicPath:"./",
-        path: path.resolve(__dirname, "dist"),
-        clean:true,
-    },
+
     devtool: "inline-source-map",
     devServer: {
-        static: "./dist",
+        static: "./dist",   
     },
     plugins: [
         new HtmlWebpackPlugin({
@@ -52,5 +47,11 @@ module.exports = {
                 type: "asset/resource",
             },
         ]
-    }
+    },
+    output: {
+        filename:"[name].bundle.js",
+        publicPath:"./",
+        path: path.resolve(__dirname, "dist"),
+        clean:true,
+    },
 }
