@@ -1,4 +1,4 @@
-import {removeItem, addBindings, removeBindings, setArray, setObject} from "./elementEvents.js"
+import { addBindings, removeBindings} from "./elementEvents.js"
 import  {getInitialElements, getUpdatedElements} from "./pageLayout.js"
 import {navigation} from "./nav.js";
 
