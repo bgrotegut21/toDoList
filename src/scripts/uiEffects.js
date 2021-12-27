@@ -26,7 +26,7 @@ const addBoardOverlay = (index) => {
 
 }
 
-const setTaskDate = (date) => {s
+const setTaskDate = (date) => {
     let element = getUpdatedElements();
     let datePicker = element.datePicker[0];
     datePicker.valueAsDate = date;
