@@ -1,213 +1,179 @@
-import { addBindings, removeBindings} from "./elementEvents.js"
-import  {getInitialElements, getUpdatedElements} from "./pageLayout.js"
-import {navigation} from "./nav.js";
+import { addBindings, removeBindings } from './elementEvents.js';
+import { getInitialElements, getUpdatedElements } from './pageLayout.js';
+import { navigation } from './nav.js';
 
+import { contentMenu } from './content.js';
 
-
-import {contentMenu} from "./content.js";
-
-
+console.log('ECPI');
 
 const Mobile = () => {
-    let dom ;
-    let isMobile = false;
+  let dom;
+  let isMobile = false;
 
+  let mobileMenuOn = false;
 
-    let mobileMenuOn = false;
+  let removeMobileMenu = false;
 
-    
-    let removeMobileMenu = false;
+  let media = window.matchMedia('(max-width: 550px)');
+  let content;
+  let nav;
 
-    let media = window.matchMedia("(max-width: 550px)");
-    let content;
-    let nav;
-    
+  const removeMobileBindings = () => {
+    let elements = getUpdatedElements();
 
-    const removeMobileBindings = () => {
-        let elements = getUpdatedElements();
+    removeBindings(dom.hamburgerMenu, openNavigation, 'click');
+    removeBindings(dom.exit, openNavigation, 'click');
+    removeBindings(dom.projectAdder, addRenderProjectBindings, 'click');
 
+    removeBindings(elements.projectContainer, openNavigation, 'click');
+    removeBindings(dom.upComingButton, openNavigation, 'click');
+    removeBindings(elements.editItems, addRenderMobileBindings, 'click');
+  };
 
+  const removeRenderProjectBindings = () => {
+    let elements = getUpdatedElements();
 
-        removeBindings(dom.hamburgerMenu, openNavigation, "click");
-        removeBindings(dom.exit,openNavigation, "click");
-        removeBindings(dom.projectAdder, addRenderProjectBindings, "click")
-        removeBindings(elements.projectContainer,openNavigation, "click")
-        removeBindings(dom.upComingButton, openNavigation,"click");
+    removeBindings(elements.addProjectLabels, renderMobileMenuClick, 'click');
+    removeBindings(dom.wholeOverlay, renderMobileMenuClick, 'click');
+    removeBindings(window, renderMobileMenuKeys, 'keydown');
+  };
 
+  const addMobileBindings = () => {
+    let elements = getUpdatedElements();
 
+    addBindings(dom.hamburgerMenu, openNavigation, 'click');
+    addBindings(dom.exit, openNavigation, 'click');
+    addBindings(dom.projectAdder, addRenderProjectBindings, 'click');
 
+    addBindings(elements.projectContainer, openNavigation, 'click');
+    addBindings(dom.upComingButton, openNavigation, 'click');
+    addBindings(elements.editItems, addRenderMobileBindings, 'click');
+  };
 
+  const openNavigation = () => {
+    mobileMenuOn = !mobileMenuOn;
+    renderMobileMenu();
+  };
+
+  const resetMobileMenu = () => {
+    dom.exit.style.display = 'none';
+    dom.mobileMenu.style.display = 'flex';
+    dom.pageContent.style.display = 'flex';
+    dom.navigation.style.display = 'none';
+  };
+
+  const addRenderProjectBindings = () => {
+    nav.activateProjectTask();
+
+    addRenderMobileBindings();
+  };
+
+  const addRenderMobileBindings = () => {
+    let elements = getUpdatedElements();
+    nav.removeSpecialMobileBindings();
+
+    addBindings(elements.addProjectLabels, renderMobileMenuClick, 'click');
+    addBindings(dom.wholeOverlay, renderMobileMenuClick, 'click');
+    addBindings(window, renderMobileMenuKeys, 'keydown');
+  };
+
+  const renderMobileMenuKeys = (event) => {
+    nav.createProjectTasksKeys(event);
+
+    if (event.key == 'Enter') {
+      nav.removeSpecialMobileBindings();
+      removeRenderMobileEvents();
+      renderMobileMenu();
+    }
+  };
+
+  const removeRenderMobileEvents = () => {
+    let elements = getUpdatedElements();
+
+    removeBindings(elements.addProjectLabels, renderMobileMenuClick, 'click');
+    removeBindings(dom.wholeOverlay, renderMobileMenuClick, 'click');
+    removeBindings(window, renderMobileMenuKeys, 'keydown');
+  };
+
+  const renderMobileMenuClick = () => {
+    nav.createProjectTasksClick();
+    nav.removeSpecialMobileBindings();
+    removeRenderMobileEvents();
+
+    console.log('render mobile menu click');
+    renderMobileMenu();
+  };
+
+  const renderMobileMenu = (canRemoveMobileMenu) => {
+    dom = getInitialElements();
+    removeMobileBindings();
+    nav.removeNavigationBindings();
+    content.removeTaskBindings();
+    resetMobileMenu();
+
+    if (mobileMenuOn) {
+      dom.navigation.style.display = 'block';
+      dom.exit.style.display = 'block';
+      dom.mobileMenu.style.display = 'none';
     }
 
+    if (removeMobileMenu && canRemoveMobileMenu) {
+      dom.navigation.style.display = 'block';
+      dom.mobileMenu.style.display = 'none';
+      dom.pageContent.style.display = 'flex';
+      dom.exit.style.display = 'none';
 
-
-    const removeRenderProjectBindings = () => {
-        let elements = getUpdatedElements();
-
-        removeBindings(elements.addProjectLabels,renderMobileMenuClick,"click");
-        removeBindings(dom.wholeOverlay, renderMobileMenuClick, "click");
-        removeBindings(window, renderMobileMenuKeys, "keydown");
-
+      nav.addNavigationBindings();
+      content.addTaskBindings();
+      return;
     }
 
+    if (!mobileMenuOn) content.addTaskBindings();
+    addNavigationBindings();
+    addMobileBindings();
+  };
 
-    const addMobileBindings = () => {
-        let elements = getUpdatedElements();
+  const addNavigationBindings = () => {
+    nav.addNavigationBindings();
+    nav.removeSpecialMobileBindings();
+  };
 
-        addBindings(dom.hamburgerMenu, openNavigation, "click");
-        addBindings(dom.exit,openNavigation, "click");
-        addBindings(dom.projectAdder, addRenderProjectBindings, "click")
-        addBindings(elements.projectContainer,openNavigation, "click")
-        addBindings(dom.upComingButton, openNavigation,"click");
-
-
-
-    }
-
-    const openNavigation = () => {
-        mobileMenuOn = !mobileMenuOn;
-        renderMobileMenu()    
-    }
-
-
-
-
-    const resetMobileMenu = () => {
-       dom.exit.style.display = "none";
-       dom.mobileMenu.style.display = "flex";
-       dom.pageContent.style.display = "flex";
-       dom.navigation.style.display = "none";
-    }
-
-
-
-
-
-    const addRenderProjectBindings = () => {
-        nav.activateProjectTask();
-        nav.removeSpecialMobileBindings();
-
-        let elements = getUpdatedElements();
-        addBindings(elements.addProjectLabels,renderMobileMenuClick,"click");
-        addBindings(dom.wholeOverlay, renderMobileMenuClick, "click");
-        addBindings(window, renderMobileMenuKeys, "keydown");
-    }
-
-    const renderMobileMenuKeys = (event) => {
-        nav.createProjectTasksKeys(event);
-
-        if (event.key == "Enter"){
-            nav.removeSpecialMobileBindings();
-            removeRenderMobileEvents();
-            renderMobileMenu();
-        }
-
-    }
-
-    const removeRenderMobileEvents = () => {
-        let elements = getUpdatedElements();
-
-        removeBindings(elements.addProjectLabels,renderMobileMenuClick,"click");
-        removeBindings(dom.wholeOverlay, renderMobileMenuClick, "click");
-        removeBindings(window,renderMobileMenuKeys,"keydown");
-
-    }
-
-
-    const renderMobileMenuClick = () => {
-        nav.createProjectTasksClick();
-        nav.removeSpecialMobileBindings();
-        removeRenderMobileEvents();
+  const watchMedia = (mediaQuery) => {
+    if (media.matches || mediaQuery.matches) {
+      if (!removeMobileMenu) {
+        nav.removeEditor();
         renderMobileMenu();
-    }
 
-    const renderMobileMenu = (canRemoveMobileMenu) => {
-        dom = getInitialElements();
+        removeMobileMenu = true;
+        isMobile = true;
+      }
+    } else {
+      if (removeMobileMenu) {
+        renderMobileMenu(true);
         removeMobileBindings();
+
+        removeRenderProjectBindings();
         nav.removeNavigationBindings();
-        content.removeTaskBindings();
-        resetMobileMenu();
-
-        if (mobileMenuOn){
-            dom.navigation.style.display = "block";
-            dom.exit.style.display = "block";
-            dom.mobileMenu.style.display = "none";
-        } 
-
-        if (removeMobileMenu && canRemoveMobileMenu){
-            dom.navigation.style.display = "block";
-            dom.mobileMenu.style.display = "none";
-            dom.pageContent.style.display  = "flex";
-            dom.exit.style.display = "none";
-
-            nav.addNavigationBindings();
-            content.addTaskBindings();
-            return;
-        }
-
-
-        if (!mobileMenuOn) content.addTaskBindings();
-        addNavigationBindings();
-        addMobileBindings();
-
-    }
-
-
-
-    const addNavigationBindings = () => {
         nav.addNavigationBindings();
-        nav.removeSpecialMobileBindings();;
-        
+        nav.renderOverlay();
+
+        removeMobileMenu = false;
+        isMobile = false;
+        mobileMenuOn = false;
+      }
     }
+  };
 
+  const activateMobileMenu = () => {
+    content = contentMenu;
+    nav = navigation;
 
-    const watchMedia = (mediaQuery) => {       
-        if(media.matches || mediaQuery.matches){
-            if (!removeMobileMenu){
-                nav.removeEditor();
-                renderMobileMenu();
+    addBindings(media, watchMedia, 'change');
+    watchMedia(media);
+  };
 
-                removeMobileMenu = true;
-                isMobile = true;
-                
-            } 
+  return { activateMobileMenu };
+};
 
-
-
-
-        } else {
-            if (removeMobileMenu) {
-                renderMobileMenu(true);
-                removeMobileBindings();
-
-                removeRenderProjectBindings();
-                nav.removeNavigationBindings();
-                nav.addNavigationBindings();
-                nav.renderOverlay();
-
-                removeMobileMenu = false;
-                isMobile = false;
-                mobileMenuOn = false;
-            }
-        }
-        
-
-    }
-
-
-    const activateMobileMenu = () => {
-        content = contentMenu;
-        nav  = navigation;
-
-        addBindings(media,watchMedia,"change");
-        watchMedia(media);
-    }
-
-    return {activateMobileMenu};
-
-}
-
-
-
-let  mobile = Mobile();
-export {mobile};
+let mobile = Mobile();
+export { mobile };

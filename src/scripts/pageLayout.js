@@ -1,7 +1,7 @@
 const createDomElements = () => {
-    let body = document.body;
+  let body = document.body;
 
-    let pageText = `    <div class = "content">
+  let pageText = `    <div class = "content">
     <div class = "wholeOverlay"></div>
     <div class = "errorMessage">
     <div class = "messageHolder">
@@ -57,107 +57,153 @@ const createDomElements = () => {
         </div>
 
 
-    </div>`
+    </div>`;
 
-    body.innerHTML = pageText;
-
-}
-
-
-
+  body.innerHTML = pageText;
+};
 
 const getInitialElements = () => {
-    let section = document.querySelector(".sections");
-    let navigation = document.querySelector(".navigation");
-    let overlay = document.querySelector(".overlay");
-    let exit = document.querySelector(".exit");
-    let elements = document.querySelector(".elements");
-    let listTitle = document.querySelector(".listTitle");
-    let upComingButton = document.querySelector(".upComingButton");
-    let projectAdder = document.querySelector(".projectAdder");
-    let projectText =  document.querySelector(".projectText");
-    let plusSign = document.querySelector(".plusSign");
-    let projectTaskHolder = document.querySelector(".projectTaskHolder");
-    let editProjectButton = document.querySelector(".editProjectButton");
-    let editText = document.querySelector(".editText");
-    let addProjectLabel = document.querySelector(".addProjectLabel");
-    let pageContent = document.querySelector(".pageContent");
-    let wholeOverlay = document.querySelector(".wholeOverlay")
-    let errorMessage = document.querySelector(".errorMessage")
-    let errorMessageText = document.querySelector(".errorMessageText");
-    let exitButton = document.querySelector(".exitButton");
+  let section = document.querySelector('.sections');
+  let navigation = document.querySelector('.navigation');
+  let overlay = document.querySelector('.overlay');
+  let exit = document.querySelector('.exit');
+  let elements = document.querySelector('.elements');
+  let listTitle = document.querySelector('.listTitle');
+  let upComingButton = document.querySelector('.upComingButton');
+  let projectAdder = document.querySelector('.projectAdder');
+  let projectText = document.querySelector('.projectText');
+  let plusSign = document.querySelector('.plusSign');
+  let projectTaskHolder = document.querySelector('.projectTaskHolder');
+  let editProjectButton = document.querySelector('.editProjectButton');
+  let editText = document.querySelector('.editText');
+  let addProjectLabel = document.querySelector('.addProjectLabel');
+  let pageContent = document.querySelector('.pageContent');
+  let wholeOverlay = document.querySelector('.wholeOverlay');
+  let errorMessage = document.querySelector('.errorMessage');
+  let errorMessageText = document.querySelector('.errorMessageText');
+  let exitButton = document.querySelector('.exitButton');
 
-    let hamburgerMenu = document.querySelector(".hamburgerMenu");
-    let mobileMenu = document.querySelector(".mobileMenu");
+  let hamburgerMenu = document.querySelector('.hamburgerMenu');
+  let mobileMenu = document.querySelector('.mobileMenu');
 
+  return {
+    section,
+    navigation,
+    overlay,
+    exit,
+    elements,
+    listTitle,
+    upComingButton,
+    projectAdder,
+    projectText,
+    plusSign,
+    projectTaskHolder,
+    editProjectButton,
+    editText,
+    addProjectLabel,
+    pageContent,
+    wholeOverlay,
+    exitButton,
+    errorMessage,
+    errorMessageText,
+    hamburgerMenu,
+    mobileMenu,
+  };
+};
 
+const getUpdatedElements = () => {
+  let boardTextBox = Array.from(
+    document.getElementsByClassName('addBoarderTextBox')
+  );
+  let boarderButton = Array.from(
+    document.getElementsByClassName('addBoarderButton')
+  );
+  let editItems = Array.from(document.getElementsByClassName('editProject'));
+  let deleteItems = Array.from(document.getElementsByClassName('deleteItem'));
+  let projectContainerText = Array.from(
+    document.getElementsByClassName('projectContainerText')
+  );
+  let projectContainer = Array.from(
+    document.getElementsByClassName('projectContainer')
+  );
+  let addProjectLabels = Array.from(
+    document.getElementsByClassName('addProjectLabel')
+  );
+  let projectButton = Array.from(
+    document.getElementsByClassName('projectButton')
+  );
 
-    return {section, navigation, overlay, exit, elements,
-            listTitle, upComingButton, projectAdder, projectText,
-            plusSign, projectTaskHolder, editProjectButton, editText,
-            addProjectLabel,pageContent, wholeOverlay, exitButton, errorMessage, errorMessageText,
-            hamburgerMenu, mobileMenu
-        
-        }
-    }
+  let projectTaskHolder = document.querySelector('.projectTaskHolder');
 
+  let projectTaskHolderChildren = Array.from(projectTaskHolder.children);
 
-    const getUpdatedElements = () => {
+  let pageContent = document.querySelector('.pageContent');
+  let pageContentChildren = Array.from(pageContent.children);
 
-        let boardTextBox = Array.from(document.getElementsByClassName("addBoarderTextBox"))
-        let boarderButton = Array.from(document.getElementsByClassName("addBoarderButton"))
-        let editItems = Array.from(document.getElementsByClassName("editProject"));
-        let deleteItems = Array.from(document.getElementsByClassName("deleteItem"));
-        let projectContainerText = Array.from(document.getElementsByClassName("projectContainerText"));
-        let projectContainer = Array.from(document.getElementsByClassName("projectContainer"))
-        let addProjectLabels = Array.from(document.getElementsByClassName("addProjectLabel"));
-        let projectButton = Array.from(document.getElementsByClassName("projectButton"));
+  let changeBoardTitleButtons = Array.from(
+    document.getElementsByClassName('changeBoardTitleButton')
+  );
 
-        let projectTaskHolder = document.querySelector(".projectTaskHolder");
+  let deleteBoard = Array.from(document.getElementsByClassName('deleteBoard'));
+  let editBoard = Array.from(document.getElementsByClassName('editBoard'));
+  let taskHolders = Array.from(document.getElementsByClassName('taskHolder'));
+  let taskLists = Array.from(document.getElementsByClassName('taskLists'));
+  let boardContentTextBox = Array.from(
+    document.getElementsByClassName('boardtextBox')
+  );
+  let boardOverlay = Array.from(
+    document.getElementsByClassName('boardOverlay')
+  );
+  let taskAdders = Array.from(document.getElementsByClassName('taskAdder'));
 
+  let exampleBoardText = Array.from(
+    document.getElementsByClassName('exampleBoardText')
+  );
+  let button = Array.from(document.getElementsByClassName('button'));
 
-        let projectTaskHolderChildren = Array.from(projectTaskHolder.children);
-        
-        let pageContent = document.querySelector(".pageContent");
-        let pageContentChildren = Array.from(pageContent.children);
+  let trashIt = Array.from(document.getElementsByClassName('trashIt'));
+  let finished = Array.from(document.getElementsByClassName('finished'));
 
-        let changeBoardTitleButtons = Array.from(document.getElementsByClassName("changeBoardTitleButton"));
+  let taskTextBox = Array.from(document.getElementsByClassName('taskTextBox'));
+  let datePicker = Array.from(document.getElementsByClassName('datePicker'));
 
-        let deleteBoard = Array.from(document.getElementsByClassName("deleteBoard"));
-        let editBoard  = Array.from(document.getElementsByClassName("editBoard"));
-        let taskHolders = Array.from(document.getElementsByClassName("taskHolder"));
-        let taskLists = Array.from(document.getElementsByClassName("taskLists"));
-        let boardContentTextBox = Array.from(document.getElementsByClassName("boardtextBox"));
-        let boardOverlay = Array.from(document.getElementsByClassName("boardOverlay"))
-        let taskAdders = Array.from(document.getElementsByClassName("taskAdder"))
- 
-        let exampleBoardText = Array.from(document.getElementsByClassName("exampleBoardText"))
-        let button = Array.from(document.getElementsByClassName("button"));
+  let circleIcon = Array.from(document.getElementsByClassName('circleIcon'));
+  let edit = Array.from(document.getElementsByClassName('edit'));
+  let dateTools = Array.from(document.getElementsByClassName('dateTool'));
 
-        let trashIt = Array.from(document.getElementsByClassName("trashIt"));
-        let finished = Array.from(document.getElementsByClassName("finished"));
+  let exitEditor = Array.from(document.getElementsByClassName('exitEditor'));
 
-        let taskTextBox = Array.from(document.getElementsByClassName("taskTextBox"));
-        let datePicker = Array.from(document.getElementsByClassName("datePicker"));
+  return {
+    editItems,
+    deleteItems,
+    addProjectLabels,
+    projectButton,
+    projectTaskHolderChildren,
+    projectContainerText,
+    boardTextBox,
+    boarderButton,
+    deleteBoard,
+    editBoard,
+    pageContent,
+    pageContentChildren,
+    taskHolders,
+    exampleBoardText,
+    changeBoardTitleButtons,
+    boardContentTextBox,
+    boardOverlay,
+    taskLists,
+    taskAdders,
+    button,
+    trashIt,
+    finished,
+    taskTextBox,
+    datePicker,
+    circleIcon,
+    edit,
+    dateTools,
+    exitEditor,
+    projectContainer,
+  };
+};
 
-        let circleIcon = Array.from(document.getElementsByClassName("circleIcon"));
-        let edit = Array.from(document.getElementsByClassName("edit"))
-        let dateTools = Array.from(document.getElementsByClassName("dateTool"))
-
-        let exitEditor = Array.from(document.getElementsByClassName("exitEditor"));
-
-
-
-        return {editItems, deleteItems, addProjectLabels, projectButton,
-            projectTaskHolderChildren, projectContainerText, boardTextBox, boarderButton, 
-            deleteBoard, editBoard, pageContent, pageContentChildren, taskHolders, exampleBoardText,
-            changeBoardTitleButtons, boardContentTextBox, boardOverlay, taskLists, taskAdders, button,
-            trashIt, finished, taskTextBox, datePicker, circleIcon, edit, dateTools, exitEditor, projectContainer
-        };
-    
-    }
-    
-
- 
-export  {getInitialElements, createDomElements, getUpdatedElements}
-    
+export { getInitialElements, createDomElements, getUpdatedElements };
