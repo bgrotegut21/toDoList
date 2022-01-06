@@ -4,8 +4,6 @@ import { navigation } from './nav.js';
 
 import { contentMenu } from './content.js';
 
-console.log('ECPI');
-
 const Mobile = () => {
   let dom;
   let isMobile = false;
@@ -100,7 +98,6 @@ const Mobile = () => {
     nav.removeSpecialMobileBindings();
     removeRenderMobileEvents();
 
-    console.log('render mobile menu click');
     renderMobileMenu();
   };
 
