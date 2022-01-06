@@ -1,3 +1,5 @@
+//change public path to '/' or npm run watch will not work.
+
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
@@ -47,7 +49,7 @@ module.exports = {
   },
   output: {
     filename: '[name].bundle.js',
-    publicPath: '/',
+    publicPath: './',
     path: path.resolve(__dirname, 'dist'),
     clean: true,
   },
