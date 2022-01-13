@@ -16,7 +16,6 @@ import { contentMenu } from './content.js';
 
 import { checkSpaces } from './utilities.js';
 
-console.log('somethings');
 const nav = () => {
   let domElements;
   let changedTasks = [];
@@ -216,12 +215,14 @@ const nav = () => {
 
   const deleteItem = (event) => {
     let index = event.target.currentIndex;
+
     staticTasks = removeItem(staticTasks, index);
 
     send.deleteData(index);
     storage.storeData();
 
     let renderIndex = index - 1;
+
     if (renderIndex < 0) {
       renderIndex = staticTasks.length - 1;
       if (staticTasks.length == 0) renderIndex = -1;
@@ -240,13 +241,16 @@ const nav = () => {
     } else if (isUpComing) {
       content.activateContent('upcoming', true);
       setHighlightIndex('upcoming');
-    } else {
+    } else if (contentIndex) {
       let title = staticTasks[contentIndex].task;
       content.activateContent(contentIndex, true, title);
       setHighlightIndex(contentIndex);
+    } else {
+      setHighlightIndex(renderIndex);
     }
 
     changedTasks = setArray(staticTasks);
+
     renderHighlightElements();
     renderProjectTasks();
   };
